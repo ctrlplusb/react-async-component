@@ -1,0 +1,4 @@
+exports[`MyComponent renders 1`] = `
+<MyComponent
+  msg="foo" />
+`;

@@ -25,6 +25,12 @@ function webpackConfigFactory({ target } : Args) {
       library: libraryName,
       libraryTarget: 'umd',
     },
+    externals: {
+      react: {
+        root: 'React',
+        umd: 'react',
+      },
+    },
     plugins: removeEmpty([
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify('production'),
