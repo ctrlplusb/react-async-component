@@ -1,0 +1,17 @@
+sudo: false
+language: node_js
+cache:
+  yarn: true
+  directories:
+    - node_modules
+branches:
+  only:
+    - master
+    - /^greenkeeper-/
+node_js:
+  - '7'
+script:
+  - yarn run check
+after_success:
+  - yarn run test:coverage:deploy
+  - yarn run publish

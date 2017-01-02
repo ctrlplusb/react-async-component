@@ -1,0 +1,18 @@
+{
+  "root": true,
+  "parser": "babel-eslint",
+  "extends": "airbnb-base",
+  "plugins": [
+    "flowtype"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jest": true,
+  },
+  "ecmaFeatures": {
+    "defaultParams": true
+  },
+  "rules": {}
+}

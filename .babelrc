@@ -1,0 +1,24 @@
+{
+  "presets": [
+    ["env", { "targets": { "node": true } }],
+    "stage-3"
+  ],
+  "plugins": [
+    "syntax-flow",
+    "transform-flow-strip-types"
+  ],
+  "env": {
+    "commonjs": {
+      "presets": [
+        "latest",
+        "stage-3"
+      ],
+    },
+    "umd": {
+      "presets": [
+        ["latest", { "es2015": { "modules": false } }],
+        "stage-3"
+      ],
+    }
+  }
+}
