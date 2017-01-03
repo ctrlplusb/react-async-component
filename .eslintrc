@@ -1,7 +1,7 @@
 {
   "root": true,
   "parser": "babel-eslint",
-  "extends": "airbnb-base",
+  "extends": "airbnb",
   "plugins": [
     "flowtype"
   ],
@@ -14,5 +14,7 @@
   "ecmaFeatures": {
     "defaultParams": true
   },
-  "rules": {}
+  "rules": {
+    "react/jsx-filename-extension": 0
+  }
 }
