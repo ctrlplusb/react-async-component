@@ -12,8 +12,7 @@ module.exports = function html(templateParams) {
         <title>${name} example</title>
       </head>
       <body>
-        <div id='app'></div>
-        <script src="/build/library.js" type="text/javascript"></script>
+        <div id='app'></div>>
       </body>
     </html>`;
 };
