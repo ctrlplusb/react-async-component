@@ -14,6 +14,7 @@ coverage
 # Build output
 umd
 commonjs
+build
 
 # Flow
 flow-coverage
