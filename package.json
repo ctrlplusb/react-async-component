@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "babel-node ./tools/scripts/build.js",
-    "check": "yarn run lint && yarn run flow && yarn run test",
+    "check": "yarn run lint && yarn run test",
     "clean": "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./flow-coverage",
     "example:web": "echo 'Make sure to `cd example/web && yarn install`' && cd example/web && yarn run start",
     "flow": "babel-node ./tools/scripts/flow",
@@ -31,7 +31,7 @@
     "prepublish": "yarn run build",
     "test": "jest",
     "test:coverage": "yarn run test -- --coverage",
-    "test:coverage:deploy": "yarn run coverage && codecov"
+    "test:coverage:deploy": "yarn run test:coverage && codecov"
   },
   "devDependencies": {
     "app-root-dir": "1.0.2",
