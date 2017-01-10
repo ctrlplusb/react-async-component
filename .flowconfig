@@ -33,5 +33,11 @@ tools/flow/definitions/
 # and not have flow throw a hissy fit.
 module.name_mapper='^\(.*\)\.\(css\|eot\|gif\|ico\|jpg\|jpeg\|less\|otf\|mp3\|mp4\|ogg\|png\|sass\|scss\|sss\|svg\|swf\|ttf\|webp\|woff\|woff2\)$' -> '<PROJECT_ROOT>/tools/flow/stubs/WebpackAsset.js.flow'
 
+# Sometimes we expect a flow error, and don't want to fix it. e.g. in our tests.
+suppress_comment= \\(.\\|\n\\)*\\$FlowIgnore
+
+# Mark a flow error as to be fixed later
+suppress_comment= \\(.\\|\n\\)*\\$FlowFixMe
+
 [version]
 0.37.4

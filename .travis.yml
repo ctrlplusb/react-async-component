@@ -4,14 +4,18 @@ cache:
   yarn: true
   directories:
     - node_modules
-branches:
-  only:
-    - master
-    - /^greenkeeper-/
+deploy:
+  provider: npm
+  email: sean@ctrlplusb.com
+  # TODO: run:
+  # travis encrypt YOUR_API_KEY --add deploy.api_key
+  on:
+    branch: master
+    tags: true
 node_js:
-  - '7'
+- '7'
 script:
-  - yarn run check
+- yarn run flow:defs
+- yarn run check
 after_success:
-  - yarn run test:coverage:deploy
-  - yarn run publish
+- yarn run test:coverage:deploy

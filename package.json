@@ -7,11 +7,9 @@
   "files": [
     "*.js",
     "*.md",
-    "umd"
+    "umd",
+    "commonjs"
   ],
-  "engines": {
-    "node": ">=7.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ctrlplusb/npm-library-starter.git"
@@ -25,11 +23,11 @@
     "build": "babel-node ./tools/scripts/build.js",
     "check": "yarn run lint && yarn run flow && yarn run test",
     "clean": "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./flow-coverage",
-    "example": "echo 'Make sure to `cd example && yarn install`' && cd example && yarn run start",
+    "example:web": "echo 'Make sure to `cd example/web && yarn install`' && cd example/web && yarn run start",
     "flow": "babel-node ./tools/scripts/flow",
     "flow:coverage": "flow-coverage-report -i 'src/**/*.js' -t html -t json -t text",
     "flow:defs": "flow-typed install --overwrite",
-    "lint": "eslint modules",
+    "lint": "eslint src",
     "prepublish": "yarn run build",
     "test": "jest",
     "test:coverage": "yarn run test -- --coverage",
