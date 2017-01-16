@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "An example of my-library",
   "main": "index.js",
-  "engines": {
-    "node": ">=7.0.0"
-  },
   "scripts": {
     "start": "babel-node server.js"
   },

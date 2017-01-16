@@ -1,7 +1,6 @@
 /* @flow */
 
-// Under test.
-import helloWorld from '../src/helloWorld';
+import helloWorld from '../helloWorld';
 
 describe('helloWorld', () => {
   it('returns the expected result', () => {

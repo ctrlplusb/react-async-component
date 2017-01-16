@@ -4,18 +4,8 @@ cache:
   yarn: true
   directories:
     - node_modules
-deploy:
-  provider: npm
-  email: sean@ctrlplusb.com
-  # TODO: run:
-  # travis encrypt YOUR_API_KEY --add deploy.api_key
-  api_key:
-    secure: vZhrpLeEpHW35blKAklFPUOsulSzoaXitNf2BxUsb03U1721Pe1LUrNfILOYz7hWtv3HWWIoF2HTXoOf4NQV6YKUddArUh+eupeXv9+zrqn3f9jFFZnauCsTWCEKtvK0Ca714Kzg/ngKfshyn/on1p/ZKjAG0KufgkYj5YWUtGzdgtF1uOaXY7GVvBv/CjPkW3SHpC4VFco/0NC9QdqY0wm11CYtwnVHWme1tcj/3h5Po/9NVpGgQKf1etGYDrij1oef6YIb0cS70tCZF5YuQgehTtSqtCOoMppXHzgXYceUcFRq/8Z+Fc1ZITf+T5aus5yGScAUpZy4lynemMfo+im+9aYe06vkMJW0Bu8mjSXt/q2JBkm6JtUAC0SjfLd1t4Hylhmr3F8/auIM3jXI6I8UH4yEkaRNbzMG4MddbJ42W2pjBmLAkbNODksomn9ow1xx6Q6pRlmHz8PZAFI++rRFGL5V4rjrbziUDkIaT6dUKB31u965aJAM6s9v/CVc8w0ylNZXZDeMqvkJrgyjWpFjtXuMo19aHoBF1ScpLcaEEbt3rateszxrTJU1A/M52Qew8CgS8wUuUSuur7BpFP0jRQ6fxN+EqRRXndznS470fYZtrJxvl1VHoaNUjgNMONHb21zkeH1B3WYHUOWKuRS1luRv0GDjhsQZOHMsIfY=
-  on:
-    branch: master
-    tags: true
 node_js:
-- '7'
+- '6'
 script:
 # Unfortunately flow falls over when a dep exists in peer deps and others. :(
 # @see https://github.com/flowtype/flow-typed/issues/528
