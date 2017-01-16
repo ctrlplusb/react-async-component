@@ -1,4 +1,4 @@
-> This is my personal starter kit for an npm libraries.
+> This is my personal starter kit for npm libraries.
 
 # Your Library Name
 
