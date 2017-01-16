@@ -28,7 +28,15 @@ function webpackConfigFactory({ target } : Args) {
     externals: {
       react: {
         root: 'React',
-        umd: 'react',
+        amd: 'react',
+        commonjs: 'react',
+        commonjs2: 'react',
+      },
+      'react-dom': {
+        root: 'ReactDOM',
+        amd: 'react-dom',
+        commonjs: 'react-dom',
+        commonjs2: 'react-dom',
       },
     },
     plugins: removeEmpty([

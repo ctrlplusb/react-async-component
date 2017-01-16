@@ -1,4 +1,4 @@
-> This is a starter kit for an npm library.  See the [STARTER](/docs/STARTER.md) docs for more information on how it is configured and how you should use it.  Delete this message and customise the readme below to your own needs.
+> This is my personal starter kit for an npm libraries.
 
 # Your Library Name
 
