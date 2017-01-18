@@ -1,11 +1,9 @@
 /* @flow */
 
-import helloWorld from './helloWorld';
-import goodbyeWorld from './goodbyeWorld';
-import MyComponent from './MyComponent';
+import createAsyncComponent from './createAsyncComponent';
+import withAsyncComponents from './withAsyncComponents';
 
 export {
-  helloWorld,
-  goodbyeWorld,
-  MyComponent,
+  createAsyncComponent,
+  withAsyncComponents,
 };

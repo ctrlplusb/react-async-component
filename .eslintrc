@@ -15,6 +15,7 @@
     "defaultParams": true
   },
   "rules": {
-    "react/jsx-filename-extension": 0
+    "react/jsx-filename-extension": 0,
+    "react/sort-comp": 0
   }
 }

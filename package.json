@@ -1,7 +1,7 @@
 {
-  "name": "npm-library-starter",
-  "version": "0.0.1",
-  "description": "Starter kit for npm libraries.",
+  "name": "react-async-component",
+  "version": "0.1.0",
+  "description": "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "commonjs/index.js",
   "files": [
@@ -12,12 +12,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/ctrlplusb/npm-library-starter.git"
+    "url": "https://github.com/ctrlplusb/react-async-component.git"
   },
-  "homepage": "https://github.com/ctrlplusb/npm-library-starter#readme",
+  "homepage": "https://github.com/ctrlplusb/react-async-component#readme",
   "author": "Sean Matheson <sean@ctrlplusb.com>",
   "keywords": [
-    "library"
+    "react",
+    "asynchronous",
+    "component",
+    "code splitting",
+    "webpack"
   ],
   "scripts": {
     "build": "babel-node ./tools/scripts/build.js",
@@ -36,6 +40,9 @@
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0-0",
     "react-dom": "^0.14.0 || ^15.0.0-0"
+  },
+  "dependencies": {
+    "react-tree-walker": "^1.0.0"
   },
   "devDependencies": {
     "app-root-dir": "1.0.2",
@@ -60,7 +67,7 @@
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-jsx-a11y": "3.0.2",
     "eslint-plugin-react": "6.9.0",
-    "flow-bin": "0.37.4",
+    "flow-bin": "0.38.0",
     "flow-coverage-report": "0.2.0",
     "flow-typed": "2.0.0",
     "ghooks": "2.0.0",

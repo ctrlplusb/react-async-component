@@ -1,0 +1,71 @@
+exports[`integration works 1`] = `
+<AsyncComponentProvider
+  execContext={
+    Object {
+      "getComponent": [Function],
+      "getResolved": [Function],
+      "registerComponent": [Function],
+    }
+  }>
+  <AsyncBob>
+    <Bob>
+      <div>
+        <h1>
+          bob
+        </h1>
+        <div>
+          <AsyncBobTwo>
+            <Bob>
+              <div>
+                <h1>
+                  bob
+                </h1>
+                <span>
+                  Hello
+                </span>
+              </div>
+            </Bob>
+          </AsyncBobTwo>
+          <DeferredAsyncBob />
+        </div>
+      </div>
+    </Bob>
+  </AsyncBob>
+</AsyncComponentProvider>
+`;
+
+exports[`integration works 2`] = `
+<AsyncComponentProvider
+  execContext={
+    Object {
+      "getComponent": [Function],
+      "getResolved": [Function],
+      "registerComponent": [Function],
+    }
+  }>
+  <AsyncBob>
+    <Bob>
+      <div>
+        <h1>
+          bob
+        </h1>
+        <div>
+          <AsyncBobTwo>
+            <Bob>
+              <div>
+                <h1>
+                  bob
+                </h1>
+                <span>
+                  Hello
+                </span>
+              </div>
+            </Bob>
+          </AsyncBobTwo>
+          <DeferredAsyncBob />
+        </div>
+      </div>
+    </Bob>
+  </AsyncBob>
+</AsyncComponentProvider>
+`;
