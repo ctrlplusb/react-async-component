@@ -96,16 +96,11 @@ Our async Component factory. Config goes in, an async Component comes out.
 
 #### Arguments
 
-  - `config` : _Object_
-    The configuration object for the async Component. It has the following properties available:
-    - `resolve` : _Function => Promise<Component>_
-      A function that should return a `Promise` that will resolve the Component you wish to be async.
-    - `defer` : _Boolean_ (Optional, default: false)
-      Only useful for server side rendering applications. If this is set to true then the async component will only be resolved on the client/browser, not the server. I _highly_ recommend that you consider using this value as much as you can.  Try to relieve the load on your server and use server side rendering to provide an application shell for your users.  They will still get a perceived performance benefit.
-    - `Loading` : _Component_ (Optional, default: null)
-      A Component to be displayed whilst your async Component is being resolved. It will be provided the same props that will be provided to your resovled async Component.
-    - `es6Aware` : _Boolean_ (Optional, default: true)
-      If you are using ES2015 modules with default exports (i.e `export default MyComponent`) then you may need your Component resolver to do syntax such as `require('./MyComp').default`. Forgetting the `.default` can cause havoc with hard to debug error messages. To cover your back we will automatically try to resolve a `.default` on the result that is resolved by your Component. If the `.default` exists it will be used, else we will use the original result.
+  - `config` (_Object_) : The configuration object for the async Component. It has the following properties available:
+    - `resolve` (_Function => Promise<Component>_) :A function that should return a `Promise` that will resolve the Component you wish to be async.
+    - `defer` (_Boolean_, Optional, default: false) : Only useful for server side rendering applications. If this is set to true then the async component will only be resolved on the client/browser, not the server. I _highly_ recommend that you consider using this value as much as you can.  Try to relieve the load on your server and use server side rendering to provide an application shell for your users.  They will still get a perceived performance benefit.
+    - `Loading` (_Component_, Optional, default: null) : A Component to be displayed whilst your async Component is being resolved. It will be provided the same props that will be provided to your resovled async Component.
+    - `es6Aware` (_Boolean_, Optional, default: true) : If you are using ES2015 modules with default exports (i.e `export default MyComponent`) then you may need your Component resolver to do syntax such as `require('./MyComp').default`. Forgetting the `.default` can cause havoc with hard to debug error messages. To cover your back we will automatically try to resolve a `.default` on the result that is resolved by your Component. If the `.default` exists it will be used, else we will use the original result.
 
 #### Returns
 
@@ -188,16 +183,15 @@ Decorates your application with the ability to use async Components in an effici
 
 A promise that resolves in a `result` object.  The `result` object will have the following properties available:
 
-  - `appWithAsyncComponents` _React.Element_
-    Your application imbued with the ability to use async Components. ❗️Use this when rendering your app.
-  - `state` _Object_
-    Only used on the "server" side of server side rendering applications. It represents the state of your async Components (i.e. which ones were rendered) so that the server can feed this information back to the client/browser.
-  - `STATE_IDENTIFIER` _String_
-    Only used on the "server" side of server side rendering applications. The identifier of the property you should bind the `state` object to on the `window` object.
+  - `appWithAsyncComponents` (_React.Element_) : Your application imbued with the ability to use async Components. ❗️Use this when rendering your app.
+  - `state` (_Object_) : Only used on the "server" side of server side rendering applications. It represents the state of your async Components (i.e. which ones were rendered) so that the server can feed this information back to the client/browser.
+  - `STATE_IDENTIFIER` (_String_) : Only used on the "server" side of server side rendering applications. The identifier of the property you should bind the `state` object to on the `window` object.
 
 ### Examples
 
-#### Usage
+#### Standard Usage
+
+This is how you would use this helper in a "normal" React application or on the "client" side of a "server side rendering" React application.
 
 ```jsx
 import React from 'react';
@@ -225,9 +219,9 @@ withAsyncComponents(app)
 
 #### Server Side Rendering Usage
 
-When using this helper on the "server" side of your server side rendering applications you should do the following.
+When using this helper on the "server" side of your "server side rendering" React application you should do the following.
 
-> Note: on the "client" side of a server side rendering application you can use the helper in the "nomral" fashion as detailed in the previous example.
+> Note: on the "client" side of a "server side rendering" application you can use the helper in the "standard" fashion as detailed in the previous example.
 
 ```js
 import React from 'react';
