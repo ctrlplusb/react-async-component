@@ -80,7 +80,13 @@ const AsyncProduct = createAsyncComponent({
 });
 ```
 
-Okay, the above may not look terribly useful at first, but it opens up an easy point to integrating code splitting APIs supported by bundlers such as Webpack. We will provide examples of these as well as details on some other useful configuration options within the [`API`](#api) section.
+Okay, the above may not look terribly useful at first, but it opens up an easy point to integrating code splitting APIs supported by bundlers such as Webpack. We will provide examples of these as well as details on some other useful configuration options within the [`API`](#api) section. To wet your appetite though below is an example of using the `System.import` API provided by Webpack 2 to allow for code splitting on your async Component:
+
+```jsx
+const AsyncProduct = createAsyncComponent({
+  resolve: () => System.import('./components/Product') // 🚀
+});
+```
 
 ## API
 
