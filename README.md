@@ -7,6 +7,14 @@ Create Components that resolve asynchronously, with support for server side rend
 [![Travis](https://img.shields.io/travis/ctrlplusb/react-async-component.svg?style=flat-square)](https://travis-ci.org/ctrlplusb/react-async-component)
 [![Codecov](https://img.shields.io/codecov/c/github/ctrlplusb/react-async-component.svg?style=flat-square)](https://codecov.io/github/ctrlplusb/react-async-component)
 
+```jsx
+const AsyncProduct = createAsyncComponent({
+  resolve: () => import('./components/Product'))
+});
+
+<AsyncProduct productId={1} /> // 🚀
+```
+
 ## TOCs
 
   - [Introduction](#introduction)
