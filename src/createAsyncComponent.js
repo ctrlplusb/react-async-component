@@ -65,9 +65,7 @@ function createAsyncComponent(args) {
     resolveComponent() {
       return getResolver().then(Component =>
         this.setState({
-          Component: es6Aware
-            ? es6Resolve(Component)
-            : Component,
+          Component: es6Resolve(Component),
         }),
       );
     }
@@ -86,7 +84,6 @@ function createAsyncComponent(args) {
   AsyncComponent.contextTypes = {
     asyncComponents: React.PropTypes.shape({
       nextId: React.PropTypes.func.isRequired,
-      registerComponent: React.PropTypes.func.isRequired,
       getComponent: React.PropTypes.func.isRequired,
     }),
   };

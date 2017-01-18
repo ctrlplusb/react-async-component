@@ -25,9 +25,6 @@ class AsyncComponentProvider extends React.Component {
           this.id += 1;
           return this.id;
         },
-        registerComponent: (id, Component) => {
-          this.props.execContext.registerComponent(id, Component);
-        },
         getComponent: id => this.props.execContext.getComponent(id),
       },
     };
@@ -41,7 +38,6 @@ class AsyncComponentProvider extends React.Component {
 AsyncComponentProvider.propTypes = {
   children: React.PropTypes.node.isRequired,
   execContext: React.PropTypes.shape({
-    registerComponent: React.PropTypes.func.isRequired,
     getComponent: React.PropTypes.func.isRequired,
   }).isRequired,
 };
@@ -49,7 +45,6 @@ AsyncComponentProvider.propTypes = {
 AsyncComponentProvider.childContextTypes = {
   asyncComponents: React.PropTypes.shape({
     nextId: React.PropTypes.func.isRequired,
-    registerComponent: React.PropTypes.func.isRequired,
     getComponent: React.PropTypes.func.isRequired,
   }).isRequired,
 };

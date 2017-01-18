@@ -14,7 +14,6 @@ export type ExecContext = {
 export type ProviderChildContext = {
   asyncComponents: {
     nextId : () => number,
-    registerComponent : (number, Function) => void,
     getComponent : (number) => ?Function,
   }
 };
