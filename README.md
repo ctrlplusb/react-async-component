@@ -34,22 +34,18 @@ Firstly, you need to use our helper to allow your application to use asynchronou
 ```jsx
 import { withAsyncComponents } from 'react-async-component'; // 👈
 
-// Declare your application as normal.
 const app = <MyApp />;
 
-// Then provide it to our helper, which returns a Promise.
 //                  👇
-withAsyncComponents(app).then((result) => {
-//                               👆 it resolves a "result" object
-  const {
-    // ❗️ We return a new version of your app that supports
-    //    asynchronous components. 💪
-    appWithAsyncComponents
-  } = result;
-
-  // 🚀 render it!
-  ReactDOM.render(appWithAsyncComponents, document.getElementById('app'));
-});
+withAsyncComponents(app) // returns a Promise
+  .then((result) => {
+    ReactDOM.render(
+      // We return a new version of your app that supports
+      // asynchronous components.
+      result.appWithAsyncComponents, // 👈
+      document.getElementById('app')
+    );
+  });
 ```
 
 Next up, let's make an asynchronous Component!  We provide another helper for this.
@@ -58,8 +54,7 @@ Next up, let's make an asynchronous Component!  We provide another helper for th
 import { createAsyncComponent } from 'react-async-component'; // 👈
 
 const AsyncProduct = createAsyncComponent({
-  // Provide a function that will return a Promise that resolves
-  // as your Component.
+  // Provide a function that returns a Promise to the target Component.
   resolve: function resolveComponent() {
     return new Promise(function (resolve) {
       // The Promise the resolves with a simple require of the
