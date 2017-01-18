@@ -3,15 +3,6 @@ import React from 'react';
 // Duck type promise check.
 const isPromise = x => typeof x === 'object' && typeof x.then === 'function';
 
-// Takes the given module and if it has a ".default" the ".default" will
-// be returned. i.e. handy when you could be dealing with es6 imports.
-const es6Resolve = x => (
-  (typeof x === 'function' || typeof x === 'object')
-  && typeof x.default !== 'undefined'
-    ? x.default
-    : x
-);
-
 function createAsyncComponent(args) {
   const {
     name,
@@ -22,6 +13,16 @@ function createAsyncComponent(args) {
   } = args;
 
   let id = null;
+
+  // Takes the given module and if it has a ".default" the ".default" will
+  // be returned. i.e. handy when you could be dealing with es6 imports.
+  const es6Resolve = x => (
+    es6Aware
+    && (typeof x === 'function' || typeof x === 'object')
+    && typeof x.default !== 'undefined'
+      ? x.default
+      : x
+  );
 
   const getResolver = () => {
     const resolver = resolve();
@@ -42,7 +43,7 @@ function createAsyncComponent(args) {
         if (!id) {
           id = nextId();
         }
-        const Component = getComponent(id);
+        const Component = es6Resolve(getComponent(id));
         if (Component) {
           this.state = { Component };
         } else {
