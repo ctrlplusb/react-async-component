@@ -53,6 +53,7 @@ export default function withAsyncComponents(app : React$Element) {
           if (!rehydrateState.resolved[id]) {
             return false;
           }
+          rehydrateState[id] = false;
         } else if (defer) {
           // Deferred, so return false to stop walking down this branch.
           return false;
@@ -79,6 +80,8 @@ export default function withAsyncComponents(app : React$Element) {
   return doWalk(appWithAsyncComponents, {}, true)
     // Swallow errors.
     .catch(() => undefined)
+    // Ensure that state rehydration is killed
+    .then(() => { if (typeof window === 'object') { window[STATE_IDENTIFIER] = null; } })
     .then(() => ({
       appWithAsyncComponents,
       state: { resolved: execContext.getResolved() },
