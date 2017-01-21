@@ -7,12 +7,7 @@ import { createAsyncComponent, withAsyncComponents } from '../';
 import { STATE_IDENTIFIER } from '../constants';
 
 function Bob({ children }) {
-  return (
-    <div>
-      <h1>bob</h1>
-      {children}
-    </div>
-  );
+  return (<div>{children}</div>);
 }
 Bob.propTypes = { children: React.PropTypes.node };
 Bob.defaultProps = { children: null };
@@ -27,21 +22,38 @@ const AsyncBobTwo = createAsyncComponent({
   name: 'AsyncBobTwo',
 });
 
+const AsyncBobThree = createAsyncComponent({
+  resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
+  name: 'AsyncBobThree',
+});
+
 const DeferredAsyncBob = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
-  defer: true,
+  ssrMode: 'defer',
   name: 'DeferredAsyncBob',
+});
+
+const BoundaryAsyncBob = createAsyncComponent({
+  resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
+  ssrMode: 'boundary',
+  name: 'BoundaryAsyncBob',
 });
 
 const app = (
   <AsyncBob>
     <div>
       <AsyncBobTwo>
-        <span>Hello</span>
+        <span>In Render.</span>
       </AsyncBobTwo>
       <DeferredAsyncBob>
-        <span>World!</span>
+        <span>In Defer.</span>
       </DeferredAsyncBob>
+      <BoundaryAsyncBob>
+        <span>In Boundary but outside an AsyncComponent, server render me!</span>
+        <AsyncBobThree>
+          <span>In Boundary - Do not server render me!</span>
+        </AsyncBobThree>
+      </BoundaryAsyncBob>
     </div>
   </AsyncBob>
 );
@@ -56,17 +68,29 @@ describe('integration', () => {
     withAsyncComponents(app)
       .then(({ appWithAsyncComponents, state, STATE_IDENTIFIER: STATE_ID }) => {
         expect(mount(appWithAsyncComponents)).toMatchSnapshot();
+        const serverString = renderToString(appWithAsyncComponents);
+        expect(serverString).toMatchSnapshot();
         // Attach the state to the "window" for the client
         global.window[STATE_ID] = state;
-        return renderToString(appWithAsyncComponents);
+        return serverString;
       })
       .then(serverHTML =>
         // "Client" side render...
         withAsyncComponents(app)
           .then(({ appWithAsyncComponents }) => {
-            expect(mount(appWithAsyncComponents)).toMatchSnapshot();
+            const clientRenderWrapper = mount(appWithAsyncComponents);
+            expect(clientRenderWrapper).toMatchSnapshot();
             expect(renderToString(appWithAsyncComponents)).toEqual(serverHTML);
-          }),
+            return clientRenderWrapper;
+          })
+          // Now give the client side components time to resolve
+          .then(clientRenderWrapper => new Promise(resolve =>
+            setTimeout(() => resolve(clientRenderWrapper), 100),
+          ))
+          // Now a full render should have occured on client
+          .then(clientRenderWrapper =>
+            expect(clientRenderWrapper).toMatchSnapshot(),
+          ),
       ),
   );
 });

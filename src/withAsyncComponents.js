@@ -60,7 +60,11 @@ export default function withAsyncComponents(app : React$Element) {
         }
 
         const resolver = getResolver().then(C => execContext.registerComponent(id, C));
-        resolvers.push({ resolver, element, context });
+        resolvers.push({
+          resolver,
+          element,
+          context: Object.assign(context, { ASYNC_WALKER_BOUNDARY: true }),
+        });
         return false;
       }
       return undefined;

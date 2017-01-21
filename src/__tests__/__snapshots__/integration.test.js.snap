@@ -10,23 +10,27 @@ exports[`integration works 1`] = `
   <AsyncBob>
     <Bob>
       <div>
-        <h1>
-          bob
-        </h1>
         <div>
           <AsyncBobTwo>
             <Bob>
               <div>
-                <h1>
-                  bob
-                </h1>
                 <span>
-                  Hello
+                  In Render.
                 </span>
               </div>
             </Bob>
           </AsyncBobTwo>
           <DeferredAsyncBob />
+          <BoundaryAsyncBob>
+            <Bob>
+              <div>
+                <span>
+                  In Boundary but outside an AsyncComponent, server render me!
+                </span>
+                <AsyncBobThree />
+              </div>
+            </Bob>
+          </BoundaryAsyncBob>
         </div>
       </div>
     </Bob>
@@ -34,7 +38,9 @@ exports[`integration works 1`] = `
 </AsyncComponentProvider>
 `;
 
-exports[`integration works 2`] = `
+exports[`integration works 2`] = `"<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-636787408\"><div data-reactid=\"2\"><div data-reactid=\"3\"><span data-reactid=\"4\">In Render.</span></div><!-- react-empty: 5 --><div data-reactid=\"6\"><span data-reactid=\"7\">In Boundary but outside an AsyncComponent, server render me!</span><!-- react-empty: 8 --></div></div></div>"`;
+
+exports[`integration works 3`] = `
 <AsyncComponentProvider
   execContext={
     Object {
@@ -46,23 +52,83 @@ exports[`integration works 2`] = `
   <AsyncBob>
     <Bob>
       <div>
-        <h1>
-          bob
-        </h1>
         <div>
           <AsyncBobTwo>
             <Bob>
               <div>
-                <h1>
-                  bob
-                </h1>
                 <span>
-                  Hello
+                  In Render.
                 </span>
               </div>
             </Bob>
           </AsyncBobTwo>
           <DeferredAsyncBob />
+          <BoundaryAsyncBob>
+            <Bob>
+              <div>
+                <span>
+                  In Boundary but outside an AsyncComponent, server render me!
+                </span>
+                <AsyncBobThree />
+              </div>
+            </Bob>
+          </BoundaryAsyncBob>
+        </div>
+      </div>
+    </Bob>
+  </AsyncBob>
+</AsyncComponentProvider>
+`;
+
+exports[`integration works 4`] = `
+<AsyncComponentProvider
+  execContext={
+    Object {
+      "getComponent": [Function],
+      "getResolved": [Function],
+      "registerComponent": [Function],
+    }
+  }>
+  <AsyncBob>
+    <Bob>
+      <div>
+        <div>
+          <AsyncBobTwo>
+            <Bob>
+              <div>
+                <span>
+                  In Render.
+                </span>
+              </div>
+            </Bob>
+          </AsyncBobTwo>
+          <DeferredAsyncBob>
+            <Bob>
+              <div>
+                <span>
+                  In Defer.
+                </span>
+              </div>
+            </Bob>
+          </DeferredAsyncBob>
+          <BoundaryAsyncBob>
+            <Bob>
+              <div>
+                <span>
+                  In Boundary but outside an AsyncComponent, server render me!
+                </span>
+                <AsyncBobThree>
+                  <Bob>
+                    <div>
+                      <span>
+                        In Boundary - Do not server render me!
+                      </span>
+                    </div>
+                  </Bob>
+                </AsyncBobThree>
+              </div>
+            </Bob>
+          </BoundaryAsyncBob>
         </div>
       </div>
     </Bob>

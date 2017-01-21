@@ -3,14 +3,20 @@ import React from 'react';
 // Duck type promise check.
 const isPromise = x => typeof x === 'object' && typeof x.then === 'function';
 
+const validSSRModes = ['render', 'defer', 'boundary'];
+
 function createAsyncComponent(args) {
   const {
     name,
     resolve,
     es6Aware = true,
-    defer = false,
+    ssrMode = 'render',
     Loading,
   } = args;
+
+  if (validSSRModes.indexOf(ssrMode) === -1) {
+    throw new Error('Invalid ssrMode provided to createAsyncComponent');
+  }
 
   let id = null;
 
@@ -36,10 +42,12 @@ function createAsyncComponent(args) {
     constructor(props, context) {
       super(props);
 
+      const { asyncComponents, asyncComponentsAncestor } = context;
+
       this.state = { Component: null };
 
-      if (context.asyncComponents) {
-        const { asyncComponents: { nextId, getComponent } } = context;
+      if (asyncComponents) {
+        const { nextId, getComponent } = asyncComponents;
         if (!id) {
           id = nextId();
         }
@@ -49,11 +57,23 @@ function createAsyncComponent(args) {
         } else {
           this.getAsyncComponentData = () => ({
             id,
-            defer,
+            defer: ssrMode === 'defer'
+              || (asyncComponentsAncestor && asyncComponentsAncestor.isBoundary),
             getResolver,
           });
         }
       }
+    }
+
+    getChildContext() {
+      if (ssrMode !== 'boundary') {
+        return undefined;
+      }
+      return {
+        asyncComponentsAncestor: {
+          isBoundary: true,
+        },
+      };
     }
 
     componentDidMount() {
@@ -88,6 +108,12 @@ function createAsyncComponent(args) {
         : null;
     }
   }
+
+  AsyncComponent.childContextTypes = {
+    asyncComponentsAncestor: React.PropTypes.shape({
+      isBoundary: React.PropTypes.bool,
+    }),
+  };
 
   AsyncComponent.contextTypes = {
     asyncComponents: React.PropTypes.shape({
