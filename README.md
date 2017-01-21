@@ -217,7 +217,6 @@ This is how you would use `react-async-component` in a "browser only" React appl
 
 Let's imagine a Component that describes your application:
 
-__MyApp.js__:
 ```jsx
 //                     👇 create an async component
 const AsyncHome = createAsyncComponent({
@@ -236,7 +235,6 @@ export default function MyApp() {
 
 And then a module that renders it:
 
-__client.js__:
 ```jsx
 import React from 'react';
 import { render } from 'react-dom';
@@ -267,7 +265,6 @@ This is how you would use `react-async-component` in a "server side rendering" R
 
 Let's imagine a Component that describes your application:
 
-__MyApp.js__:
 ```jsx
 //                     👇 create an async component
 const AsyncHome = createAsyncComponent({
@@ -287,7 +284,6 @@ export default function MyApp() {
 
 And then a module that does the browser/client side rendering:
 
-__client.js__:
 ```jsx
 import React from 'react';
 import { render } from 'react-dom';
@@ -314,7 +310,6 @@ withAsyncComponents(app)
 
 And then an express middleware (you could use any http server of your choice) to do the rendering:
 
-__reactApplicationMiddlware.js__:
 ```jsx
 import React from 'react';
 import { withAsyncComponents } from 'react-async-component'; // 👈
