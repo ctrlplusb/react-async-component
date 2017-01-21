@@ -26,14 +26,14 @@ const AsyncProduct = createAsyncComponent({
     - [Creating Async Components](#creating-async-components)
       - [Simple](#simple)
       - [With Loading Component](#with-loading-component)
-      - [Webpack 1/2 `require.ensure` Code Splitting](#webpack-12-require.ensure-code-splitting)
-      - [Webpack 2 `import` / `System.import` Code Splitting](#webpack-2-import-system.import-code-splitting)
+      - [Webpack 1/2 `require.ensure` Code Splitting](#webpack-12-requireensure-code-splitting)
+      - [Webpack 2 `import` / `System.import` Code Splitting](#webpack-2-import--systemimport-code-splitting)
       - [Defer Loading to the Client/Browser](#defer-loading-to-the-clientbrowser)
     - [End to End Examples](#end-to-end-examples)
       - [Browser Only Application](#browser-only-application)
       - [Server Side Rendering Application](#server-side-rendering-application)
-  - [Important Information for using in Server Side Rendering Applications](#important-information-for-using in-server-side-rendering-applications)
-    - [SSR AsyncComponent Resolution Process](#ssr-asyncComponent-resolution-process)
+  - [Important Information for using in Server Side Rendering Applications](#important-information-for-using-in-server-side-rendering-applications)
+    - [SSR AsyncComponent Resolution Process](#ssr-asynccomponent-resolution-process)
     - [SSR Performance Optimisation](#ssr-performance-optimisation)
   - [Caveats](#caveats)
   - [FAQs](#faqs)
@@ -139,11 +139,11 @@ A promise that resolves in a `result` object.  The `result` object will have the
   - `state` (_Object_) : Only used on the "server" side of server side rendering applications. It represents the state of your async Components (i.e. which ones were rendered) so that the server can feed this information back to the client/browser.
   - `STATE_IDENTIFIER` (_String_) : Only used on the "server" side of server side rendering applications. The identifier of the property you should bind the `state` object to on the `window` object.
 
-### Examples
+## Examples
 
-#### Creating Async Components
+### Creating Async Components
 
-##### Simple
+#### Simple
 
 ```jsx
 const AsyncProduct = createAsyncComponent({
@@ -155,7 +155,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-##### With Loading Component
+#### With Loading Component
 
 ```jsx
 const AsyncProduct = createAsyncComponent({
@@ -168,7 +168,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-##### Webpack 1/2 `require.ensure` Code Splitting
+#### Webpack 1/2 `require.ensure` Code Splitting
 
 ```jsx
 const AsyncProduct = createAsyncComponent({
@@ -182,7 +182,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-##### Webpack 2 `import` / `System.import` Code Splitting
+#### Webpack 2 `import` / `System.import` Code Splitting
 
 Note: `System.import` is considered deprecated and will be replaced with `import`, but for now they can be used interchangeably (you may need a Babel plugin for the `import` syntax).
 
@@ -194,7 +194,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-##### Defer Loading to the Client/Browser
+#### Defer Loading to the Client/Browser
 
 i.e. The component won't be resolved and rendered in a server side rendering execution.
 
@@ -205,13 +205,13 @@ const AsyncProduct = createAsyncComponent({
 });
 ```
 
-#### End to End Examples
+### End to End Examples
 
 The below examples show off a full workflow of using the `createAsyncComponent` and `withAsyncComponents` helpers.
 
 In all of our examples below we are going to be making use of the `System.import` API supported by Webpack v2 to do asynchronous resolution of our Components and create code split points.
 
-##### Browser Only Application
+#### Browser Only Application
 
 This is how you would use `react-async-component` in a "browser only" React application.
 
@@ -261,7 +261,7 @@ withAsyncComponents(app)
   });
 ```
 
-##### Server Side Rendering Application
+#### Server Side Rendering Application
 
 This is how you would use `react-async-component` in a "server side rendering" React application.
 
@@ -363,11 +363,11 @@ export default function expressMiddleware(req, res, next) {
 }
 ```
 
-### Important Information for using in Server Side Rendering Applications
+## Important Information for using in Server Side Rendering Applications
 
 This library is built to be used within server side rendering (SSR) applications, however, there are some important points/tips we would like to raise with you so that you can design your application components in an efficient and effective manner.
 
-#### SSR AsyncComponent Resolution Process
+### SSR AsyncComponent Resolution Process
 
 It is worth us highlighting exactly how we go about resolving and rendering your `AsyncComponent` instances on the server. This knowledge will help you become aware of potential issues with your component implementations as well as how to effectively use our provided configuration properties to create more efficient implementations.
 
@@ -375,7 +375,7 @@ When running `react-async-component` on the server the helper has to walk throug
 
 Although this operation isn't as expensive as an actual render as we don't generate the DOM it can still be quite wasteful if you have a deep tree.  Therefore we have provided a set of configuration values that allow you to massively optimise this process. See the next section below.
 
-#### SSR Performance Optimisation
+### SSR Performance Optimisation
 
 As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asyncComponent-resolution-process) section above it is possible to have an inefficient implementation of your async Components.  Therefore we introduced a new configuration object property for the `createAsyncComponent` helper, called `ssrMode`, which provides you with a mechanism to optimise the configuration of your async Component instances.
 
