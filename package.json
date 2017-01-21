@@ -1,6 +1,6 @@
 {
   "name": "react-async-component",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "commonjs/index.js",
