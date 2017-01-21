@@ -63,11 +63,19 @@ function createAsyncComponent(args) {
     }
 
     resolveComponent() {
-      return getResolver().then(Component =>
+      return getResolver().then((Component) => {
+        if (this.unmounted) {
+          // The component is unmounted, so no need to set the state.
+          return;
+        }
         this.setState({
           Component: es6Resolve(Component),
-        }),
-      );
+        });
+      });
+    }
+
+    componentWillUnmount() {
+      this.unmounted = true;
     }
 
     render() {
