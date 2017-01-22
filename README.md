@@ -20,15 +20,12 @@ const AsyncProduct = createAsyncComponent({
 
   - [Introduction](#introduction)
   - [Examples](#examples)
-    - [Creating Async Components](#creating-async-components)
-      - [Simple](#simple)
-      - [With Loading Component](#with-loading-component)
-      - [Webpack 1/2 `require.ensure` Code Splitting](#webpack-12-requireensure-code-splitting)
-      - [Webpack 2 `import` / `System.import` Code Splitting](#webpack-2-import--systemimport-code-splitting)
-      - [Defer Loading to the Client/Browser](#defer-loading-to-the-clientbrowser)
-    - [End to End Examples](#end-to-end-examples)
-      - [Browser Only Application](#browser-only-application)
-      - [Server Side Rendering Application](#server-side-rendering-application)
+    - [Browser Only Application](#browser-only-application)
+    - [Server Side Rendering Application](#server-side-rendering-application)
+    - [Using Loading Components](#using-loading-components)
+    - [Webpack 1/2 `require.ensure` Code Splitting](#webpack-12-requireensure-code-splitting)
+    - [Webpack 2 `import` / `System.import` Code Splitting](#webpack-2-import--systemimport-code-splitting)
+    - [Defer Loading to the Client/Browser](#defer-loading-to-the-clientbrowser)      
   - [API](#api)
     - [createAsyncComponent(config)](#createasynccomponentconfig)
     - [withAsyncComponents(element)](#withasynccomponentselement)
@@ -44,13 +41,11 @@ This library is an evolution of [`code-split-component`](). Unlike `code-split-c
 
 ## Examples
 
-### End to End Examples
-
 The below examples show off a full workflow of using the `createAsyncComponent` and `withAsyncComponents` helpers.
 
-In all of our examples below we are going to be making use of the `System.import` API supported by Webpack v2 to do asynchronous resolution of our Components and create code split points.
+In some of the examples below we are going to be making use of the `System.import` API supported by Webpack v2 which provides us with code splitting on our asynchronous components.
 
-#### Browser Only Application
+### Browser Only Application
 
 This is how you would use `react-async-component` in a "browser only" React application.
 
@@ -136,7 +131,7 @@ export default Root;
 
 You have a lot more power than is shown here. Be sure to check out the [`API`](#api) and [`Examples`](#examples) sections for more.
 
-#### Server Side Rendering Application
+### Server Side Rendering Application
 
 In a "server side rendering" React application you can use the async components in the same manner as described above, but you need to make some adjustments to the way that you render the application on the server.
 
@@ -219,21 +214,7 @@ withAsyncComponents(app)
   });
 ```
 
-### Creating Async Components
-
-#### Simple
-
-```jsx
-const AsyncProduct = createAsyncComponent({
-  resolve: () => new Promise(resolve =>
-    resolve(require('./components/Product'))
-  )
-});
-
-<AsyncProduct productId={1} />
-```
-
-#### With Loading Component
+### Using Loading Components
 
 ```jsx
 const AsyncProduct = createAsyncComponent({
@@ -246,7 +227,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-#### Webpack 1/2 `require.ensure` Code Splitting
+### Webpack 1/2 `require.ensure` Code Splitting
 
 ```jsx
 const AsyncProduct = createAsyncComponent({
@@ -260,7 +241,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-#### Webpack 2 `import` / `System.import` Code Splitting
+### Webpack 2 `import` / `System.import` Code Splitting
 
 Note: `System.import` is considered deprecated and will be replaced with `import`, but for now they can be used interchangeably (you may need a Babel plugin for the `import` syntax).
 
@@ -272,7 +253,7 @@ const AsyncProduct = createAsyncComponent({
 <AsyncProduct productId={1} />
 ```
 
-#### Defer Loading to the Client/Browser
+### Defer Loading to the Client/Browser
 
 i.e. The component won't be resolved and rendered in a server side rendering execution.
 
