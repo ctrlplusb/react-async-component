@@ -37,7 +37,7 @@ const AsyncProduct = createAsyncComponent({
 
 ## Introduction
 
-This library is an evolution of [`code-split-component`](). Unlike `code-split-component` this library does not require that you use either Webpack or Babel.  Instead it provides you a pure Javascript/React API which has been adapted in a manner to make it generically useful for lazy-loaded Components, with support for modern code splitting APIs (e.g `import()`, `System.import`, `require.ensure`).
+This library is an evolution of [`code-split-component`](https://github.com/ctrlplusb/code-split-component). Unlike `code-split-component` this library does not require that you use either Webpack or Babel.  Instead it provides you a pure Javascript/React API which has been adapted in a manner to make it generically useful for lazy-loaded Components, with support for modern code splitting APIs (e.g `import()`, `System.import`, `require.ensure`).
 
 ## Demo
 
