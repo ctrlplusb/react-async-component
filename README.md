@@ -104,7 +104,7 @@ const AsyncProduct = createAsyncComponent({
                  // 🖕 Webpack's code splitting API
 });
 
-export default AsynProduct;
+export default AsyncProduct;
 ```
 
 Now, you can simply import `AsyncProduct` anywhere in your application and not have to worry about having to call `createAsyncComponent` again.
@@ -328,7 +328,7 @@ Understand your own applications needs and use the options appropriately . I per
 
 At the moment there is one known caveat in using this library: it doesn't support React Hot Loader (RHL). You can still use Webpack's standard Hot Module Replacement, however, RHL does not respond nicely to the architecture of `react-async-component`.
 
-TODO: I'll post up some details why and perhaps we could work to find a solution.
+To be clear, using React Hot Loader will not throw errors, your components just won't do any hot reloading.  I am investigating possible solutions and will report back here if and when I discover any workarounds.
 
 ## FAQs
 

@@ -46,22 +46,24 @@ function createAsyncComponent(args) {
 
       this.state = { Component: null };
 
-      if (asyncComponents) {
-        const { nextId, getComponent } = asyncComponents;
-        if (!id) {
-          id = nextId();
-        }
-        const Component = es6Resolve(getComponent(id));
-        if (Component) {
-          this.state = { Component };
-        } else {
-          this.getAsyncComponentData = () => ({
-            id,
-            defer: ssrMode === 'defer'
-              || (asyncComponentsAncestor && asyncComponentsAncestor.isBoundary),
-            getResolver,
-          });
-        }
+      // Assign a unique id to this instance if it hasn't already got one.
+      // Note: the closure usage.
+      const { getNextId, getComponent } = asyncComponents;
+      if (!id) {
+        id = getNextId();
+      }
+
+      // Try resolve the component.
+      const Component = es6Resolve(getComponent(id));
+      if (Component) {
+        this.state = { Component };
+      } else {
+        this.getAsyncComponentData = () => ({
+          id,
+          defer: ssrMode === 'defer'
+            || (asyncComponentsAncestor && asyncComponentsAncestor.isBoundary),
+          getResolver: () => this.resolveComponent(),
+        });
       }
     }
 
@@ -88,9 +90,12 @@ function createAsyncComponent(args) {
           // The component is unmounted, so no need to set the state.
           return;
         }
-        this.setState({
-          Component: es6Resolve(Component),
-        });
+        this.context.asyncComponents.registerComponent(id, Component);
+        if (this.setState) {
+          this.setState({
+            Component: es6Resolve(Component),
+          });
+        }
       });
     }
 
@@ -117,9 +122,10 @@ function createAsyncComponent(args) {
 
   AsyncComponent.contextTypes = {
     asyncComponents: React.PropTypes.shape({
-      nextId: React.PropTypes.func.isRequired,
+      getNextId: React.PropTypes.func.isRequired,
       getComponent: React.PropTypes.func.isRequired,
-    }),
+      registerComponent: React.PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   AsyncComponent.displayName = name || 'AsyncComponent';

@@ -7,8 +7,13 @@ import { STATE_IDENTIFIER } from './constants';
 import type { React$Element } from './types';
 
 function createExecContext() {
+  let idPointer = 0;
   const registry = {};
   return {
+    getNextId: () => {
+      idPointer += 1;
+      return idPointer;
+    },
     registerComponent(id, Component) {
       registry[id] = Component;
     },
@@ -59,7 +64,7 @@ export default function withAsyncComponents(app : React$Element) {
           return false;
         }
 
-        const resolver = getResolver().then(C => execContext.registerComponent(id, C));
+        const resolver = getResolver();
         resolvers.push({
           resolver,
           element,

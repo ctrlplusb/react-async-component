@@ -3,6 +3,7 @@ exports[`integration works 1`] = `
   execContext={
     Object {
       "getComponent": [Function],
+      "getNextId": [Function],
       "getResolved": [Function],
       "registerComponent": [Function],
     }
@@ -45,6 +46,7 @@ exports[`integration works 3`] = `
   execContext={
     Object {
       "getComponent": [Function],
+      "getNextId": [Function],
       "getResolved": [Function],
       "registerComponent": [Function],
     }
@@ -85,6 +87,7 @@ exports[`integration works 4`] = `
   execContext={
     Object {
       "getComponent": [Function],
+      "getNextId": [Function],
       "getResolved": [Function],
       "registerComponent": [Function],
     }

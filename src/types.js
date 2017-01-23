@@ -6,6 +6,7 @@ import { Element } from 'react';
 export type React$Element = Element<*>;
 
 export type ExecContext = {
+  getNextId : () => number,
   registerComponent : (number, Function) => void,
   getComponent : (number) => ?Function,
   getResolved : () => { [key : number] : true },
@@ -13,7 +14,7 @@ export type ExecContext = {
 
 export type ProviderChildContext = {
   asyncComponents: {
-    nextId : () => number,
+    getNextId : () => number,
     getComponent : (number) => ?Function,
   }
 };
