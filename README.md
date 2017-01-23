@@ -32,12 +32,16 @@ const AsyncProduct = createAsyncComponent({
   - [Important Information for using in Server Side Rendering Applications](#important-information-for-using-in-server-side-rendering-applications)
     - [SSR AsyncComponent Resolution Process](#ssr-asynccomponent-resolution-process)
     - [SSR Performance Optimisation](#ssr-performance-optimisation)
-  - [Caveats](#caveats)
+  - [Warnings](#warnings)
   - [FAQs](#faqs)
 
 ## Introduction
 
 This library is an evolution of [`code-split-component`](). Unlike `code-split-component` this library does not require that you use either Webpack or Babel.  Instead it provides you a pure Javascript/React API which has been adapted in a manner to make it generically useful for lazy-loaded Components, with support for modern code splitting APIs (e.g `import()`, `System.import`, `require.ensure`).
+
+## Demo
+
+You can see a "live" version [here](https://react-universally.now.sh/). This is a deployment of the "next" branch of ["React, Universally"](https://github.com/ctrlplusb/react-universally). Open the network tab and then click the menu items to see the asynchronous component resolving in action.
 
 ## Examples
 
@@ -324,11 +328,9 @@ The `ssrMode` configuration property supports the following values:
 
 Understand your own applications needs and use the options appropriately . I personally recommend using mostly "defer" and a bit of "boundary". Try to see code splitting as allowing you to server side render an application shell to give the user perceived performance. Of course there will be requirements otherwise (SEO), but try to isolate these components and use a "boundary" as soon as you feel you can.
 
-## Caveats
+## Warnings
 
-At the moment there is one known caveat in using this library: it doesn't support React Hot Loader (RHL). You can still use Webpack's standard Hot Module Replacement, however, RHL does not respond nicely to the architecture of `react-async-component`.
-
-To be clear, using React Hot Loader will not throw errors, your components just won't do any hot reloading.  I am investigating possible solutions and will report back here if and when I discover any workarounds.
+I have managed to get this library working nicely with React Hot Loader (RHL), without any hacks or workarounds or having to disable the async feature. This is great as you get a closer to production representation when doing development which can be helpful for testing things like "Loading" components. Everything works fine as long as you follow my recommended pattern.  I think that if you veer away from this pattern and do some very complex constructions using `createAsyncComponent` there could be cases where React Hot Loader fails to patch any updates to your component.  I just wanted to highlight this in case you started experiencing this.
 
 ## FAQs
 
