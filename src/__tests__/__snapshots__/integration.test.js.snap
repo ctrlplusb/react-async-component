@@ -1,4 +1,6 @@
-exports[`integration works 1`] = `
+exports[`integration works 1`] = `"<div><div><div><span>In Render.</span></div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
+
+exports[`integration works 2`] = `
 <AsyncComponentProvider
   execContext={
     Object {
@@ -38,51 +40,8 @@ exports[`integration works 1`] = `
   </AsyncBob>
 </AsyncComponentProvider>
 `;
-
-exports[`integration works 2`] = `"<div data-reactroot=\"\" data-reactid=\"1\" data-react-checksum=\"-636787408\"><div data-reactid=\"2\"><div data-reactid=\"3\"><span data-reactid=\"4\">In Render.</span></div><!-- react-empty: 5 --><div data-reactid=\"6\"><span data-reactid=\"7\">In Boundary but outside an AsyncComponent, server render me!</span><!-- react-empty: 8 --></div></div></div>"`;
 
 exports[`integration works 3`] = `
-<AsyncComponentProvider
-  execContext={
-    Object {
-      "getComponent": [Function],
-      "getNextId": [Function],
-      "getResolved": [Function],
-      "registerComponent": [Function],
-    }
-  }>
-  <AsyncBob>
-    <Bob>
-      <div>
-        <div>
-          <AsyncBobTwo>
-            <Bob>
-              <div>
-                <span>
-                  In Render.
-                </span>
-              </div>
-            </Bob>
-          </AsyncBobTwo>
-          <DeferredAsyncBob />
-          <BoundaryAsyncBob>
-            <Bob>
-              <div>
-                <span>
-                  In Boundary but outside an AsyncComponent, server render me!
-                </span>
-                <AsyncBobThree />
-              </div>
-            </Bob>
-          </BoundaryAsyncBob>
-        </div>
-      </div>
-    </Bob>
-  </AsyncBob>
-</AsyncComponentProvider>
-`;
-
-exports[`integration works 4`] = `
 <AsyncComponentProvider
   execContext={
     Object {

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { renderToString } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 import { mount } from 'enzyme';
 import { createAsyncComponent, withAsyncComponents } from '../';
 import { STATE_IDENTIFIER } from '../constants';
@@ -63,14 +63,18 @@ describe('integration', () => {
     delete global.window[STATE_IDENTIFIER];
   });
 
-  it('works', () =>
+  it('works', () => {
+    const windowTemp = global.window;
+    // we have to delete the window to emulate a server only environment
+    delete global.window;
+
     // "Server" side render...
-    withAsyncComponents(app)
+    return withAsyncComponents(app)
       .then(({ appWithAsyncComponents, state, STATE_IDENTIFIER: STATE_ID }) => {
-        expect(mount(appWithAsyncComponents)).toMatchSnapshot();
-        const serverString = renderToString(appWithAsyncComponents);
+        const serverString = renderToStaticMarkup(appWithAsyncComponents);
         expect(serverString).toMatchSnapshot();
-        // Attach the state to the "window" for the client
+        // Restore the window and attach the state to the "window" for the client
+        global.window = windowTemp;
         global.window[STATE_ID] = state;
         return serverString;
       })
@@ -80,7 +84,7 @@ describe('integration', () => {
           .then(({ appWithAsyncComponents }) => {
             const clientRenderWrapper = mount(appWithAsyncComponents);
             expect(clientRenderWrapper).toMatchSnapshot();
-            expect(renderToString(appWithAsyncComponents)).toEqual(serverHTML);
+            expect(renderToStaticMarkup(appWithAsyncComponents)).toEqual(serverHTML);
             return clientRenderWrapper;
           })
           // Now give the client side components time to resolve
@@ -91,6 +95,6 @@ describe('integration', () => {
           .then(clientRenderWrapper =>
             expect(clientRenderWrapper).toMatchSnapshot(),
           ),
-      ),
-  );
+      );
+  });
 });

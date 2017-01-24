@@ -32,7 +32,8 @@ function createExecContext() {
 export default function withAsyncComponents(app : React$Element) {
   const execContext = createExecContext();
 
-  const rehydrateState = typeof window !== 'undefined'
+  const isBrowser = typeof window !== 'undefined';
+  const rehydrateState = isBrowser
     && typeof window[STATE_IDENTIFIER] !== 'undefined'
     ? window[STATE_IDENTIFIER]
     : null;
@@ -42,6 +43,12 @@ export default function withAsyncComponents(app : React$Element) {
       {app}
     </AsyncComponentProvider>
   );
+
+  if (isBrowser && !rehydrateState) {
+    return Promise.resolve({
+      appWithAsyncComponents,
+    });
+  }
 
   const doWalk = (el, ctx = {}, fetchRoot = false) => {
     const resolvers = [];
