@@ -1,6 +1,16 @@
-exports[`integration works 1`] = `"<div><div><div><span>In Render.</span></div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
+exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
 
-exports[`integration works 2`] = `
+exports[`integration tests render server and client 2`] = `
+Object {
+  "resolved": Object {
+    "1": true,
+    "2": true,
+    "4": true,
+  },
+}
+`;
+
+exports[`integration tests render server and client 3`] = `
 <AsyncComponentProvider
   execContext={
     Object {
@@ -41,7 +51,7 @@ exports[`integration works 2`] = `
 </AsyncComponentProvider>
 `;
 
-exports[`integration works 3`] = `
+exports[`integration tests render server and client 4`] = `
 <AsyncComponentProvider
   execContext={
     Object {

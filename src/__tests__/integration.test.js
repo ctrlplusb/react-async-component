@@ -3,6 +3,7 @@
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
+
 import { createAsyncComponent, withAsyncComponents } from '../'
 import { STATE_IDENTIFIER } from '../constants'
 
@@ -58,7 +59,7 @@ const app = (
   </AsyncBob>
 )
 
-describe('integration', () => {
+describe('integration tests', () => {
   afterEach(() => {
     delete global.window[STATE_IDENTIFIER]
   })
@@ -73,6 +74,7 @@ describe('integration', () => {
       .then(({ appWithAsyncComponents, state, STATE_IDENTIFIER: STATE_ID }) => {
         const serverString = renderToStaticMarkup(appWithAsyncComponents)
         expect(serverString).toMatchSnapshot()
+        expect(state).toMatchSnapshot()
         // Restore the window and attach the state to the "window" for the client
         global.window = windowTemp
         global.window[STATE_ID] = state
@@ -96,5 +98,23 @@ describe('integration', () => {
             expect(clientRenderWrapper).toMatchSnapshot(),
           ),
       )
+  })
+
+  it('a component only gets resolved once', () => {
+    let resolveCount = 0
+
+    const Foo = createAsyncComponent({
+      resolve: () => {
+        resolveCount += 1
+        return () => <div>foo</div>
+      },
+    })
+
+    withAsyncComponents(<Foo />).then(({ appWithAsyncComponents }) => {
+      mount(appWithAsyncComponents)
+      expect(resolveCount).toEqual(1)
+      mount(appWithAsyncComponents)
+      expect(resolveCount).toEqual(1)
+    })
   })
 })
