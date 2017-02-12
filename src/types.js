@@ -1,7 +1,7 @@
 /* @flow */
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { Element } from 'react';
+import { Element } from 'react'
 
 export type React$Element = Element<*>;
 

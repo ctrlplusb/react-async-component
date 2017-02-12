@@ -1,12 +1,12 @@
 /* @flow */
 
-import { execSync } from 'child_process';
-import appRootDir from 'app-root-dir';
-import { resolve as resolvePath } from 'path';
-import { readFileSync } from 'fs';
+import { execSync } from 'child_process'
+import appRootDir from 'app-root-dir'
+import { resolve as resolvePath } from 'path'
+import { readFileSync } from 'fs'
 
 export function removeEmpty<A>(x : Array<A>) : Array<A> {
-  return x.filter(y => y != null);
+  return x.filter(y => y != null)
 }
 
 // This is a higher order function that accepts a boolean condition and will
@@ -37,17 +37,17 @@ export function removeEmpty<A>(x : Array<A>) : Array<A> {
 // e.g. ifDev(() => 'lazy', 'not lazy');
 export function ifElse(condition : boolean) {
   return function ifElseResolver<A, B>(then : A, or : B) : A|B {
-    const execIfFuc = x => (typeof x === 'function' ? x() : x);
-    return condition ? execIfFuc(then) : (or);
-  };
+    const execIfFuc = x => (typeof x === 'function' ? x() : x)
+    return condition ? execIfFuc(then) : (or)
+  }
 }
 
 export function getPackageJson() {
   return JSON.parse(
     readFileSync(resolvePath(appRootDir.get(), './package.json'), 'utf-8'),
-  );
+  )
 }
 
 export function exec(command : string) {
-  execSync(command, { stdio: 'inherit', cwd: appRootDir.get() });
+  execSync(command, { stdio: 'inherit', cwd: appRootDir.get() })
 }

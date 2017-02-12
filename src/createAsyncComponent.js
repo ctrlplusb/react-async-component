@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 // Duck type promise check.
-const isPromise = x => typeof x === 'object' && typeof x.then === 'function';
+const isPromise = x => typeof x === 'object' && typeof x.then === 'function'
 
-const validSSRModes = ['render', 'defer', 'boundary'];
+const validSSRModes = ['render', 'defer', 'boundary']
 
 function createAsyncComponent(args) {
   const {
@@ -12,13 +12,13 @@ function createAsyncComponent(args) {
     es6Aware = true,
     ssrMode = 'render',
     Loading,
-  } = args;
+  } = args
 
   if (validSSRModes.indexOf(ssrMode) === -1) {
-    throw new Error('Invalid ssrMode provided to createAsyncComponent');
+    throw new Error('Invalid ssrMode provided to createAsyncComponent')
   }
 
-  let id = null;
+  let id = null
 
   // Takes the given module and if it has a ".default" the ".default" will
   // be returned. i.e. handy when you could be dealing with es6 imports.
@@ -28,59 +28,59 @@ function createAsyncComponent(args) {
     && typeof x.default !== 'undefined'
       ? x.default
       : x
-  );
+  )
 
   const getResolver = () => {
-    const resolver = resolve();
+    const resolver = resolve()
     if (!isPromise(resolver)) {
-      throw new Error('The "resolve" function on an AsyncComponent should return a Promise');
+      throw new Error('The "resolve" function on an AsyncComponent should return a Promise')
     }
-    return resolver;
-  };
+    return resolver
+  }
 
   class AsyncComponent extends React.Component {
     constructor(props, context) {
-      super(props);
+      super(props)
 
-      const { asyncComponents, asyncComponentsAncestor } = context;
+      const { asyncComponents, asyncComponentsAncestor } = context
 
-      this.state = { Component: null };
+      this.state = { Component: null }
 
       // Assign a unique id to this instance if it hasn't already got one.
       // Note: the closure usage.
-      const { getNextId, getComponent } = asyncComponents;
+      const { getNextId, getComponent } = asyncComponents
       if (!id) {
-        id = getNextId();
+        id = getNextId()
       }
 
       // Try resolve the component.
-      const Component = es6Resolve(getComponent(id));
+      const Component = es6Resolve(getComponent(id))
       if (Component) {
-        this.state = { Component };
+        this.state = { Component }
       } else {
         this.getAsyncComponentData = () => ({
           id,
           defer: ssrMode === 'defer'
             || (asyncComponentsAncestor && asyncComponentsAncestor.isBoundary),
           getResolver: () => this.resolveComponent(),
-        });
+        })
       }
     }
 
     getChildContext() {
       if (ssrMode !== 'boundary') {
-        return undefined;
+        return undefined
       }
       return {
         asyncComponentsAncestor: {
           isBoundary: true,
         },
-      };
+      }
     }
 
     componentDidMount() {
       if (!this.state.Component) {
-        this.resolveComponent(this.props);
+        this.resolveComponent(this.props)
       }
     }
 
@@ -88,29 +88,29 @@ function createAsyncComponent(args) {
       return getResolver().then((Component) => {
         if (this.unmounted) {
           // The component is unmounted, so no need to set the state.
-          return;
+          return
         }
-        this.context.asyncComponents.registerComponent(id, Component);
+        this.context.asyncComponents.registerComponent(id, Component)
         if (this.setState) {
           this.setState({
             Component: es6Resolve(Component),
-          });
+          })
         }
-      });
+      })
     }
 
     componentWillUnmount() {
-      this.unmounted = true;
+      this.unmounted = true
     }
 
     render() {
-      const { Component } = this.state;
+      const { Component } = this.state
       // eslint-disable-next-line no-nested-ternary
       return Component
         ? <Component {...this.props} />
         : Loading
         ? <Loading {...this.props} />
-        : null;
+        : null
     }
   }
 
@@ -118,7 +118,7 @@ function createAsyncComponent(args) {
     asyncComponentsAncestor: React.PropTypes.shape({
       isBoundary: React.PropTypes.bool,
     }),
-  };
+  }
 
   AsyncComponent.contextTypes = {
     asyncComponents: React.PropTypes.shape({
@@ -126,11 +126,11 @@ function createAsyncComponent(args) {
       getComponent: React.PropTypes.func.isRequired,
       registerComponent: React.PropTypes.func.isRequired,
     }).isRequired,
-  };
+  }
 
-  AsyncComponent.displayName = name || 'AsyncComponent';
+  AsyncComponent.displayName = name || 'AsyncComponent'
 
-  return AsyncComponent;
+  return AsyncComponent
 }
 
-export default createAsyncComponent;
+export default createAsyncComponent

@@ -1,17 +1,17 @@
 /* @flow */
 
-import { resolve as resolvePath } from 'path';
-import webpack from 'webpack';
-import appRootDir from 'app-root-dir';
-import { getPackageJson, removeEmpty, ifElse } from '../utils';
+import { resolve as resolvePath } from 'path'
+import webpack from 'webpack'
+import appRootDir from 'app-root-dir'
+import { getPackageJson, removeEmpty, ifElse } from '../utils'
 
 type Args = {
   target: 'umd'|'umd-min',
 };
 
 function webpackConfigFactory({ target } : Args) {
-  const libraryName = getPackageJson().name;
-  const minimize = target === 'umd-min';
+  const libraryName = getPackageJson().name
+  const minimize = target === 'umd-min'
 
   return {
     entry: {
@@ -73,7 +73,7 @@ function webpackConfigFactory({ target } : Args) {
         },
       ],
     },
-  };
+  }
 }
 
-module.exports = webpackConfigFactory;
+module.exports = webpackConfigFactory

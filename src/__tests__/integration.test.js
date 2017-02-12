@@ -1,43 +1,43 @@
 /* @flow */
 
-import React from 'react';
-import { renderToStaticMarkup } from 'react-dom/server';
-import { mount } from 'enzyme';
-import { createAsyncComponent, withAsyncComponents } from '../';
-import { STATE_IDENTIFIER } from '../constants';
+import React from 'react'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { mount } from 'enzyme'
+import { createAsyncComponent, withAsyncComponents } from '../'
+import { STATE_IDENTIFIER } from '../constants'
 
 function Bob({ children }) {
-  return (<div>{children}</div>);
+  return (<div>{children}</div>)
 }
-Bob.propTypes = { children: React.PropTypes.node };
-Bob.defaultProps = { children: null };
+Bob.propTypes = { children: React.PropTypes.node }
+Bob.defaultProps = { children: null }
 
 const AsyncBob = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBob',
-});
+})
 
 const AsyncBobTwo = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBobTwo',
-});
+})
 
 const AsyncBobThree = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBobThree',
-});
+})
 
 const DeferredAsyncBob = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   ssrMode: 'defer',
   name: 'DeferredAsyncBob',
-});
+})
 
 const BoundaryAsyncBob = createAsyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   ssrMode: 'boundary',
   name: 'BoundaryAsyncBob',
-});
+})
 
 const app = (
   <AsyncBob>
@@ -56,36 +56,36 @@ const app = (
       </BoundaryAsyncBob>
     </div>
   </AsyncBob>
-);
+)
 
 describe('integration', () => {
   afterEach(() => {
-    delete global.window[STATE_IDENTIFIER];
-  });
+    delete global.window[STATE_IDENTIFIER]
+  })
 
-  it('works', () => {
-    const windowTemp = global.window;
+  it('render server and client', () => {
+    const windowTemp = global.window
     // we have to delete the window to emulate a server only environment
-    delete global.window;
+    delete global.window
 
     // "Server" side render...
     return withAsyncComponents(app)
       .then(({ appWithAsyncComponents, state, STATE_IDENTIFIER: STATE_ID }) => {
-        const serverString = renderToStaticMarkup(appWithAsyncComponents);
-        expect(serverString).toMatchSnapshot();
+        const serverString = renderToStaticMarkup(appWithAsyncComponents)
+        expect(serverString).toMatchSnapshot()
         // Restore the window and attach the state to the "window" for the client
-        global.window = windowTemp;
-        global.window[STATE_ID] = state;
-        return serverString;
+        global.window = windowTemp
+        global.window[STATE_ID] = state
+        return serverString
       })
       .then(serverHTML =>
         // "Client" side render...
         withAsyncComponents(app)
           .then(({ appWithAsyncComponents }) => {
-            const clientRenderWrapper = mount(appWithAsyncComponents);
-            expect(clientRenderWrapper).toMatchSnapshot();
-            expect(renderToStaticMarkup(appWithAsyncComponents)).toEqual(serverHTML);
-            return clientRenderWrapper;
+            const clientRenderWrapper = mount(appWithAsyncComponents)
+            expect(clientRenderWrapper).toMatchSnapshot()
+            expect(renderToStaticMarkup(appWithAsyncComponents)).toEqual(serverHTML)
+            return clientRenderWrapper
           })
           // Now give the client side components time to resolve
           .then(clientRenderWrapper => new Promise(resolve =>
@@ -95,6 +95,6 @@ describe('integration', () => {
           .then(clientRenderWrapper =>
             expect(clientRenderWrapper).toMatchSnapshot(),
           ),
-      );
-  });
-});
+      )
+  })
+})
