@@ -105,7 +105,7 @@ import { createAsyncComponent } from 'react-async-component'; // 👈
 //                     👇 create an async component
 const AsyncProduct = createAsyncComponent({
   resolve: () => System.import('./Product')
-                 // 🖕 Webpack's code splitting API
+                 // 👆 Webpack's code splitting API
 });
 
 export default AsyncProduct;
