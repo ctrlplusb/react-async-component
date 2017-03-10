@@ -1,3 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
 exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
 
 exports[`integration tests render server and client 2`] = `
@@ -19,7 +21,8 @@ exports[`integration tests render server and client 3`] = `
       "getResolved": [Function],
       "registerComponent": [Function],
     }
-  }>
+  }
+>
   <AsyncBob>
     <Bob>
       <div>
@@ -60,7 +63,8 @@ exports[`integration tests render server and client 4`] = `
       "getResolved": [Function],
       "registerComponent": [Function],
     }
-  }>
+  }
+>
   <AsyncBob>
     <Bob>
       <div>
