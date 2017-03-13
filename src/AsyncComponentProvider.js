@@ -1,27 +1,15 @@
-/* @flow */
-
 import React from 'react'
-import type { ExecContext, ProviderChildContext } from './types'
 
 import createContext from './createContext'
 
-type Props = {
-  // eslint-disable-next-line
-  children?: any,
-  execContext?: ExecContext,
-};
-
 class AsyncComponentProvider extends React.Component {
-  props: Props
-  execContext: ExecContext
-
-  constructor(props : Props, context : Object) {
+  constructor(props, context) {
     super(props, context)
 
     this.execContext = props.execContext || createContext()
   }
 
-  getChildContext() : ProviderChildContext {
+  getChildContext() {
     return {
       asyncComponents: {
         getNextId: this.execContext.getNextId,

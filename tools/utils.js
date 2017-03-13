@@ -1,11 +1,11 @@
-/* @flow */
+/*  */
 
 import { execSync } from 'child_process'
 import appRootDir from 'app-root-dir'
 import { resolve as resolvePath } from 'path'
 import { readFileSync } from 'fs'
 
-export function removeEmpty<A>(x : Array<A>) : Array<A> {
+export function removeEmpty(x) {
   return x.filter(y => y != null)
 }
 
@@ -35,19 +35,17 @@ export function removeEmpty<A>(x : Array<A>) : Array<A> {
 // then this function will only be interpretted after the ifElse has run. This
 // can be handy for values that require some complex initialization process.
 // e.g. ifDev(() => 'lazy', 'not lazy');
-export function ifElse(condition : boolean) {
-  return function ifElseResolver<A, B>(then : A, or : B) : A|B {
-    const execIfFuc = x => (typeof x === 'function' ? x() : x)
-    return condition ? execIfFuc(then) : (or)
+export function ifElse(condition) {
+  return function ifElseResolver(then, or) {
+    const execIfFuc = x => typeof x === 'function' ? x() : x
+    return condition ? execIfFuc(then) : or
   }
 }
 
 export function getPackageJson() {
-  return JSON.parse(
-    readFileSync(resolvePath(appRootDir.get(), './package.json'), 'utf-8'),
-  )
+  return JSON.parse(readFileSync(resolvePath(appRootDir.get(), './package.json'), 'utf-8'))
 }
 
-export function exec(command : string) {
+export function exec(command) {
   execSync(command, { stdio: 'inherit', cwd: appRootDir.get() })
 }

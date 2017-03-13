@@ -1,5 +1,3 @@
-/* @flow */
-
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
@@ -13,7 +11,7 @@ import {
 } from '../'
 
 function Bob({ children }) {
-  return (<div>{children}</div>)
+  return <div>{children}</div>
 }
 Bob.propTypes = { children: React.PropTypes.node }
 Bob.defaultProps = { children: null }
@@ -56,7 +54,9 @@ const app = execContext => (
           <span>In Defer.</span>
         </DeferredAsyncBob>
         <BoundaryAsyncBob>
-          <span>In Boundary but outside an AsyncComponent, server render me!</span>
+          <span>
+            In Boundary but outside an AsyncComponent, server render me!
+          </span>
           <AsyncBobThree>
             <span>In Boundary - Do not server render me!</span>
           </AsyncBobThree>
@@ -93,21 +93,22 @@ describe('integration tests', () => {
         // "Client" side render...
         const clientContext = createContext()
         const clientApp = app(clientContext)
-        return withAsyncComponents(clientApp)
-          .then(() => {
-            const clientRenderWrapper = mount(clientApp)
-            expect(clientRenderWrapper).toMatchSnapshot()
-            expect(renderToStaticMarkup(clientApp)).toEqual(serverHTML)
-            return clientRenderWrapper
-          })
-          // Now give the client side components time to resolve
-          .then(clientRenderWrapper => new Promise(resolve =>
-            setTimeout(() => resolve(clientRenderWrapper), 100),
-          ))
-          // Now a full render should have occured on client
-          .then(clientRenderWrapper =>
-            expect(clientRenderWrapper).toMatchSnapshot(),
-          )
+        return (
+          withAsyncComponents(clientApp)
+            .then(() => {
+              const clientRenderWrapper = mount(clientApp)
+              expect(clientRenderWrapper).toMatchSnapshot()
+              expect(renderToStaticMarkup(clientApp)).toEqual(serverHTML)
+              return clientRenderWrapper
+            })
+            // Now give the client side components time to resolve
+            .then(
+              clientRenderWrapper =>
+                new Promise(resolve => setTimeout(() => resolve(clientRenderWrapper), 100)),
+            )
+            // Now a full render should have occured on client
+            .then(clientRenderWrapper => expect(clientRenderWrapper).toMatchSnapshot())
+        )
       })
   })
 

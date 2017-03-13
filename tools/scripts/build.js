@@ -1,4 +1,4 @@
-/* @flow */
+/*  */
 
 import { readFileSync } from 'fs'
 import { inInstall } from 'in-publish'
@@ -19,12 +19,8 @@ exec('cross-env BABEL_ENV=commonjs babel --ignore **/__tests__ ./src -d ./common
 exec('cross-env BABEL_ENV=umd webpack --config ./tools/webpack/umd.config.babel.js', nodeEnv)
 exec('cross-env BABEL_ENV=umd webpack --config ./tools/webpack/umd-min.config.babel.js', nodeEnv)
 
-function fileGZipSize(path : string) : string {
-  return pipe(
-    readFileSync,
-    gzipSizeSync,
-    prettyBytes,
-  )(path)
+function fileGZipSize(path) {
+  return pipe(readFileSync, gzipSizeSync, prettyBytes)(path)
 }
 
 const umdMinFilePath = `umd/${getPackageJson().name}.min.js`

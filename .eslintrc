@@ -2,9 +2,7 @@
   "root": true,
   "parser": "babel-eslint",
   "extends": "airbnb",
-  "plugins": [
-    "flowtype"
-  ],
+  "plugins": [],
   "env": {
     "browser": true,
     "es6": true,

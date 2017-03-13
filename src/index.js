@@ -1,5 +1,3 @@
-/* @flow */
-
 import AsyncComponentProvider from './AsyncComponentProvider'
 import createContext from './createContext'
 import createAsyncComponent from './createAsyncComponent'

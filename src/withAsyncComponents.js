@@ -1,13 +1,9 @@
-/* @flow */
-
 import reactTreeWalker from 'react-tree-walker'
 import { STATE_IDENTIFIER } from './constants'
-import type { React$Element } from './types'
 
-export default function withAsyncComponents(app : React$Element) : Promise<any> {
+export default function withAsyncComponents(app) {
   const isBrowser = typeof window !== 'undefined'
-  const rehydrateState = isBrowser
-    && typeof window[STATE_IDENTIFIER] !== 'undefined'
+  const rehydrateState = isBrowser && typeof window[STATE_IDENTIFIER] !== 'undefined'
     ? window[STATE_IDENTIFIER]
     : null
 
@@ -36,7 +32,9 @@ export default function withAsyncComponents(app : React$Element) : Promise<any> 
     return true
   }
 
-  return reactTreeWalker(app, visitor, {})
-    // Swallow errors.
-    .catch(() => undefined)
+  return (
+    reactTreeWalker(app, visitor, {})
+      // Swallow errors.
+      .catch(() => undefined)
+  )
 }

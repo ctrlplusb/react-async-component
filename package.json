@@ -24,18 +24,22 @@
     "webpack"
   ],
   "scripts": {
+    "precommit": "lint-staged && npm run test",
     "build": "babel-node ./tools/scripts/build.js",
     "check": "yarn run lint && yarn run test",
     "clean": "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./flow-coverage && rimraf ./umd",
     "example:web": "echo 'Make sure to `cd example/web && yarn install`' && cd example/web && yarn run start",
-    "flow": "babel-node ./tools/scripts/flow",
-    "flow:coverage": "flow-coverage-report -i 'src/**/*.js' -t html -t json -t text",
-    "flow:defs": "flow-typed install --overwrite",
-    "lint": "eslint src",
+    "lint": "eslint src,tools",
     "prepublish": "yarn run build",
     "test": "jest",
     "test:coverage": "yarn run test -- --coverage",
     "test:coverage:deploy": "yarn run test:coverage && codecov"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier-eslint --write",
+      "git add"
+    ]
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0-0",
@@ -63,17 +67,17 @@
     "enzyme-to-json": "1.5.0",
     "eslint": "3.17.1",
     "eslint-config-airbnb": "14.1.0",
-    "eslint-plugin-flowtype": "2.30.3",
     "eslint-plugin-import": "2.2.0",
     "eslint-plugin-jsx-a11y": "4.0.0",
     "eslint-plugin-react": "6.10.0",
-    "flow-bin": "0.41.0",
-    "flow-coverage-report": "0.3.0",
-    "flow-typed": "2.0.0",
-    "ghooks": "2.0.0",
     "gzip-size": "3.0.0",
+    "husky": "0.13.2",
     "in-publish": "2.0.0",
     "jest": "19.0.2",
+    "lint-staged": "3.4.0",
+    "prettier": "0.22.0",
+    "prettier-eslint": "4.2.1",
+    "prettier-eslint-cli": "^3.1.2",
     "pretty-bytes": "4.0.2",
     "ramda": "0.23.0",
     "react": "15.4.2",
@@ -85,11 +89,6 @@
     "webpack": "2.2.1",
     "webpack-dev-middleware": "1.10.1",
     "webpack-hot-middleware": "2.17.1"
-  },
-  "config": {
-    "ghooks": {
-      "pre-commit": "yarn run check"
-    }
   },
   "jest": {
     "collectCoverageFrom": [
