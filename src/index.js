@@ -1,12 +1,15 @@
 /* @flow */
 
+import AsyncComponentProvider from './AsyncComponentProvider'
+import createContext from './createContext'
 import createAsyncComponent from './createAsyncComponent'
 import withAsyncComponents from './withAsyncComponents'
-
-// create context
-// pass context into createAsyncComponentFactory
+import { STATE_IDENTIFIER } from './constants'
 
 export {
+  AsyncComponentProvider,
+  createContext,
   createAsyncComponent,
   withAsyncComponents,
+  STATE_IDENTIFIER,
 }

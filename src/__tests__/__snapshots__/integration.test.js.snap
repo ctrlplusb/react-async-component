@@ -18,7 +18,7 @@ exports[`integration tests render server and client 3`] = `
     Object {
       "getComponent": [Function],
       "getNextId": [Function],
-      "getResolved": [Function],
+      "getState": [Function],
       "registerComponent": [Function],
     }
   }
@@ -60,7 +60,7 @@ exports[`integration tests render server and client 4`] = `
     Object {
       "getComponent": [Function],
       "getNextId": [Function],
-      "getResolved": [Function],
+      "getState": [Function],
       "registerComponent": [Function],
     }
   }

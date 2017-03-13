@@ -4,8 +4,13 @@ import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
 
-import { createAsyncComponent, withAsyncComponents } from '../'
-import { STATE_IDENTIFIER } from '../constants'
+import {
+  AsyncComponentProvider,
+  createContext,
+  createAsyncComponent,
+  withAsyncComponents,
+  STATE_IDENTIFIER,
+} from '../'
 
 function Bob({ children }) {
   return (<div>{children}</div>)
@@ -40,23 +45,25 @@ const BoundaryAsyncBob = createAsyncComponent({
   name: 'BoundaryAsyncBob',
 })
 
-const app = (
-  <AsyncBob>
-    <div>
-      <AsyncBobTwo>
-        <span>In Render.</span>
-      </AsyncBobTwo>
-      <DeferredAsyncBob>
-        <span>In Defer.</span>
-      </DeferredAsyncBob>
-      <BoundaryAsyncBob>
-        <span>In Boundary but outside an AsyncComponent, server render me!</span>
-        <AsyncBobThree>
-          <span>In Boundary - Do not server render me!</span>
-        </AsyncBobThree>
-      </BoundaryAsyncBob>
-    </div>
-  </AsyncBob>
+const app = execContext => (
+  <AsyncComponentProvider execContext={execContext}>
+    <AsyncBob>
+      <div>
+        <AsyncBobTwo>
+          <span>In Render.</span>
+        </AsyncBobTwo>
+        <DeferredAsyncBob>
+          <span>In Defer.</span>
+        </DeferredAsyncBob>
+        <BoundaryAsyncBob>
+          <span>In Boundary but outside an AsyncComponent, server render me!</span>
+          <AsyncBobThree>
+            <span>In Boundary - Do not server render me!</span>
+          </AsyncBobThree>
+        </BoundaryAsyncBob>
+      </div>
+    </AsyncBob>
+  </AsyncComponentProvider>
 )
 
 describe('integration tests', () => {
@@ -70,23 +77,27 @@ describe('integration tests', () => {
     delete global.window
 
     // "Server" side render...
-    return withAsyncComponents(app)
-      .then(({ appWithAsyncComponents, state, STATE_IDENTIFIER: STATE_ID }) => {
-        const serverString = renderToStaticMarkup(appWithAsyncComponents)
+    const serverContext = createContext()
+    const serverApp = app(serverContext)
+    return withAsyncComponents(serverApp)
+      .then(() => {
+        const serverString = renderToStaticMarkup(serverApp)
         expect(serverString).toMatchSnapshot()
-        expect(state).toMatchSnapshot()
+        expect(serverContext.getState()).toMatchSnapshot()
         // Restore the window and attach the state to the "window" for the client
         global.window = windowTemp
-        global.window[STATE_ID] = state
+        global.window[STATE_IDENTIFIER] = serverContext.getState()
         return serverString
       })
-      .then(serverHTML =>
+      .then((serverHTML) => {
         // "Client" side render...
-        withAsyncComponents(app)
-          .then(({ appWithAsyncComponents }) => {
-            const clientRenderWrapper = mount(appWithAsyncComponents)
+        const clientContext = createContext()
+        const clientApp = app(clientContext)
+        return withAsyncComponents(clientApp)
+          .then(() => {
+            const clientRenderWrapper = mount(clientApp)
             expect(clientRenderWrapper).toMatchSnapshot()
-            expect(renderToStaticMarkup(appWithAsyncComponents)).toEqual(serverHTML)
+            expect(renderToStaticMarkup(clientApp)).toEqual(serverHTML)
             return clientRenderWrapper
           })
           // Now give the client side components time to resolve
@@ -96,8 +107,8 @@ describe('integration tests', () => {
           // Now a full render should have occured on client
           .then(clientRenderWrapper =>
             expect(clientRenderWrapper).toMatchSnapshot(),
-          ),
-      )
+          )
+      })
   })
 
   it('a component only gets resolved once', () => {
