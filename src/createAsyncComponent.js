@@ -42,7 +42,7 @@ function createAsyncComponent(args) {
     constructor(props, context) {
       super(props)
 
-      const { asyncComponents, asyncComponentsAncestor } = context
+      const { asyncComponents } = context
 
       this.state = { Component: null }
 
@@ -57,23 +57,20 @@ function createAsyncComponent(args) {
       const Component = es6Resolve(getComponent(id))
       if (Component) {
         this.state = { Component }
-      } else {
-        this.getAsyncComponentData = () => ({
-          id,
-          defer: ssrMode === 'defer'
-            || (asyncComponentsAncestor && asyncComponentsAncestor.isBoundary),
-          getResolver: () => this.resolveComponent(),
-        })
       }
+
+      // Bind the function to be used by our tree walking (re)hydrator
+      this.getAsyncComponentData = () => ({
+        id,
+        ssrMode,
+        getResolver: () => this.resolveComponent(),
+      })
     }
 
     getChildContext() {
-      if (ssrMode !== 'boundary') {
-        return undefined
-      }
       return {
         asyncComponentsAncestor: {
-          isBoundary: true,
+          isBoundary: ssrMode === 'boundary',
         },
       }
     }
@@ -117,10 +114,13 @@ function createAsyncComponent(args) {
   AsyncComponent.childContextTypes = {
     asyncComponentsAncestor: React.PropTypes.shape({
       isBoundary: React.PropTypes.bool,
-    }),
+    }).isRequired,
   }
 
   AsyncComponent.contextTypes = {
+    asyncComponentsAncestor: React.PropTypes.shape({
+      isBoundary: React.PropTypes.bool,
+    }),
     asyncComponents: React.PropTypes.shape({
       getNextId: React.PropTypes.func.isRequired,
       getComponent: React.PropTypes.func.isRequired,

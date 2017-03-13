@@ -56,50 +56,28 @@ export default function withAsyncComponents(app : React$Element) : Promise<Resul
     })
   }
 
-  const doWalk = (el, ctx = {}, fetchRoot = false) => {
-    const resolvers = []
+  const visitor = (element, instance, context) => {
+    if (instance && typeof instance.getAsyncComponentData === 'function') {
+      const { id, ssrMode, getResolver } = instance.getAsyncComponentData()
 
-    const visitor = (element, instance, context) => {
-      const skipRoot = !fetchRoot && (element === el)
-      if (instance
-        && typeof instance.getAsyncComponentData === 'function'
-        && !skipRoot
-      ) {
-        const { id, defer, getResolver } = instance.getAsyncComponentData()
+      const isBoundary = context.asyncComponentsAncestor &&
+        context.asyncComponentsAncestor.isBoundary
 
-        if (rehydrateState) {
-          if (!rehydrateState.resolved[id]) {
-            return false
-          }
-          rehydrateState[id] = false
-        } else if (defer) {
-          // Deferred, so return false to stop walking down this branch.
+      if (rehydrateState != null) {
+        if (!rehydrateState.resolved[id]) {
           return false
         }
-
-        const resolver = getResolver()
-        resolvers.push({
-          resolver,
-          element,
-          context: Object.assign(context, { ASYNC_WALKER_BOUNDARY: true }),
-        })
+        rehydrateState[id] = false
+      } else if (ssrMode === 'defer' || isBoundary) {
+        // Deferred, so return false to stop walking down this branch.
         return false
       }
-      return undefined
+      return getResolver()
     }
-
-    reactTreeWalker(el, visitor, ctx)
-
-    const nestedPromises = resolvers.map(({ resolver, element, context }) =>
-      resolver.then(() => doWalk(element, context)),
-    )
-
-    return nestedPromises.length > 0
-      ? Promise.all(nestedPromises)
-      : Promise.resolve([])
+    return true
   }
 
-  return doWalk(appWithAsyncComponents, {}, true)
+  return reactTreeWalker(appWithAsyncComponents, visitor, {})
     // Swallow errors.
     .catch(() => undefined)
     // Ensure that state rehydration is killed

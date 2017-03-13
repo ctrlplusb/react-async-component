@@ -42,7 +42,7 @@
     "react-dom": "^0.14.0 || ^15.0.0-0"
   },
   "dependencies": {
-    "react-tree-walker": "^1.0.0"
+    "react-tree-walker": "2.0.0-alpha.1"
   },
   "devDependencies": {
     "app-root-dir": "1.0.2",

@@ -8,7 +8,6 @@ import { createAsyncComponent, withAsyncComponents } from '../'
 import { STATE_IDENTIFIER } from '../constants'
 
 function Bob({ children }) {
-  console.log(this)
   return (<div>{children}</div>)
 }
 Bob.propTypes = { children: React.PropTypes.node }
