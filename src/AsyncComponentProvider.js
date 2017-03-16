@@ -13,8 +13,10 @@ class AsyncComponentProvider extends React.Component {
     return {
       asyncComponents: {
         getNextId: this.execContext.getNextId,
-        getComponent: this.execContext.getComponent,
         registerComponent: this.execContext.registerComponent,
+        getComponent: this.execContext.getComponent,
+        registerError: this.execContext.registerError,
+        getError: this.execContext.getError,
       },
     }
   }
@@ -28,8 +30,10 @@ AsyncComponentProvider.propTypes = {
   children: React.PropTypes.node.isRequired,
   execContext: React.PropTypes.shape({
     getNextId: React.PropTypes.func.isRequired,
-    getComponent: React.PropTypes.func.isRequired,
     registerComponent: React.PropTypes.func.isRequired,
+    getComponent: React.PropTypes.func.isRequired,
+    registerError: React.PropTypes.func.isRequired,
+    getError: React.PropTypes.func.isRequired,
   }),
 }
 
@@ -40,8 +44,10 @@ AsyncComponentProvider.defaultProps = {
 AsyncComponentProvider.childContextTypes = {
   asyncComponents: React.PropTypes.shape({
     getNextId: React.PropTypes.func.isRequired,
-    getComponent: React.PropTypes.func.isRequired,
     registerComponent: React.PropTypes.func.isRequired,
+    getComponent: React.PropTypes.func.isRequired,
+    registerError: React.PropTypes.func.isRequired,
+    getError: React.PropTypes.func.isRequired,
   }).isRequired,
 }
 

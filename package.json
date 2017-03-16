@@ -35,6 +35,17 @@
     "test:coverage": "yarn run test -- --coverage",
     "test:coverage:deploy": "yarn run test:coverage && codecov"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "snapshotSerializers": [
+      "<rootDir>/node_modules/enzyme-to-json/serializer"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/(commonjs|coverage|flow-typed|node_modules|tools|umd)/"
+    ]
+  },
   "lint-staged": {
     "*.js": [
       "prettier-eslint --write",
@@ -46,7 +57,7 @@
     "react-dom": "^0.14.0 || ^15.0.0-0"
   },
   "dependencies": {
-    "react-tree-walker": "2.0.0-alpha.1"
+    "react-async-bootstrapper": "^0.0.2"
   },
   "devDependencies": {
     "app-root-dir": "1.0.2",
@@ -61,8 +72,8 @@
     "babel-preset-react": "6.23.0",
     "babel-preset-stage-3": "6.22.0",
     "babel-register": "6.24.0",
-    "codecov": "1.0.1",
-    "cross-env": "3.2.3",
+    "codecov": "2.0.1",
+    "cross-env": "3.2.4",
     "enzyme": "2.7.1",
     "enzyme-to-json": "1.5.0",
     "eslint": "3.17.1",
@@ -76,7 +87,7 @@
     "jest": "19.0.2",
     "lint-staged": "3.4.0",
     "prettier": "0.22.0",
-    "prettier-eslint": "4.2.1",
+    "prettier-eslint": "4.3.2",
     "prettier-eslint-cli": "^3.1.2",
     "pretty-bytes": "4.0.2",
     "ramda": "0.23.0",
@@ -85,20 +96,9 @@
     "react-dom": "15.4.2",
     "readline-sync": "1.4.6",
     "rimraf": "2.6.1",
-    "sinon": "1.17.7",
+    "sinon": "2.0.0",
     "webpack": "2.2.1",
     "webpack-dev-middleware": "1.10.1",
     "webpack-hot-middleware": "2.17.1"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ],
-    "snapshotSerializers": [
-      "<rootDir>/node_modules/enzyme-to-json/serializer"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/(commonjs|coverage|flow-typed|node_modules|tools|umd)/"
-    ]
   }
 }

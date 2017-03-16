@@ -13,6 +13,17 @@
     "defaultParams": true
   },
   "rules": {
+    "no-confusing-arrow": 0,
+
+    "max-len": [
+      "error",
+      {
+        "ignoreComments": false,
+        "ignoreStrings": true,
+        "code": 80
+      }
+    ],
+
     // Going hipster
     "semi": [2, "never"],
 

@@ -1,9 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
+exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div>DeferredAsyncBob Loading</div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div><div>This always errors</div></div></div>"`;
 
 exports[`integration tests render server and client 2`] = `
 Object {
+  "errors": Object {
+    "6": "This always errors",
+  },
   "resolved": Object {
     "1": true,
     "2": true,
@@ -17,9 +20,11 @@ exports[`integration tests render server and client 3`] = `
   execContext={
     Object {
       "getComponent": [Function],
+      "getError": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "registerComponent": [Function],
+      "registerError": [Function],
     }
   }
 >
@@ -36,7 +41,13 @@ exports[`integration tests render server and client 3`] = `
               </div>
             </Bob>
           </AsyncBobTwo>
-          <DeferredAsyncBob />
+          <DeferredAsyncBob>
+            <LoadingComponent>
+              <div>
+                DeferredAsyncBob Loading
+              </div>
+            </LoadingComponent>
+          </DeferredAsyncBob>
           <BoundaryAsyncBob>
             <Bob>
               <div>
@@ -47,6 +58,15 @@ exports[`integration tests render server and client 3`] = `
               </div>
             </Bob>
           </BoundaryAsyncBob>
+          <ErrorAsyncComponent>
+            <ErrorComponent
+              message="This always errors"
+            >
+              <div>
+                This always errors
+              </div>
+            </ErrorComponent>
+          </ErrorAsyncComponent>
         </div>
       </div>
     </Bob>
@@ -59,9 +79,11 @@ exports[`integration tests render server and client 4`] = `
   execContext={
     Object {
       "getComponent": [Function],
+      "getError": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "registerComponent": [Function],
+      "registerError": [Function],
     }
   }
 >
@@ -105,9 +127,66 @@ exports[`integration tests render server and client 4`] = `
               </div>
             </Bob>
           </BoundaryAsyncBob>
+          <ErrorAsyncComponent>
+            <ErrorComponent
+              message="This always errors"
+            >
+              <div>
+                This always errors
+              </div>
+            </ErrorComponent>
+          </ErrorAsyncComponent>
         </div>
       </div>
     </Bob>
   </AsyncBob>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests renders the ErrorComponent 1`] = `
+<AsyncComponentProvider
+  execContext={
+    Object {
+      "getComponent": [Function],
+      "getError": [Function],
+      "getNextId": [Function],
+      "getState": [Function],
+      "registerComponent": [Function],
+      "registerError": [Function],
+    }
+  }
+>
+  <AsyncComponent>
+    <ErrorComponent
+      message="An error occurred"
+    >
+      <div>
+        An error occurred
+      </div>
+    </ErrorComponent>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests renders the LoadingComponent 1`] = `
+<AsyncComponentProvider
+  execContext={
+    Object {
+      "getComponent": [Function],
+      "getError": [Function],
+      "getNextId": [Function],
+      "getState": [Function],
+      "registerComponent": [Function],
+      "registerError": [Function],
+    }
+  }
+>
+  <AsyncComponent>
+    <LoadingComponent>
+      <div>
+        Loading...
+      </div>
+    </LoadingComponent>
+  </AsyncComponent>
 </AsyncComponentProvider>
 `;
