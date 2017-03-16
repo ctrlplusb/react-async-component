@@ -27,6 +27,12 @@ exports[`integration tests render server and client 3`] = `
       "registerError": [Function],
     }
   }
+  initialState={
+    Object {
+      "errors": Object {},
+      "resolved": Object {},
+    }
+  }
 >
   <AsyncBob>
     <Bob>
@@ -84,6 +90,12 @@ exports[`integration tests render server and client 4`] = `
       "getState": [Function],
       "registerComponent": [Function],
       "registerError": [Function],
+    }
+  }
+  initialState={
+    Object {
+      "errors": Object {},
+      "resolved": Object {},
     }
   }
 >
@@ -155,6 +167,12 @@ exports[`integration tests renders the ErrorComponent 1`] = `
       "registerError": [Function],
     }
   }
+  initialState={
+    Object {
+      "errors": Object {},
+      "resolved": Object {},
+    }
+  }
 >
   <AsyncComponent>
     <ErrorComponent
@@ -178,6 +196,12 @@ exports[`integration tests renders the LoadingComponent 1`] = `
       "getState": [Function],
       "registerComponent": [Function],
       "registerError": [Function],
+    }
+  }
+  initialState={
+    Object {
+      "errors": Object {},
+      "resolved": Object {},
     }
   }
 >

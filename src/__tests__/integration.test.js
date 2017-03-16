@@ -7,7 +7,6 @@ import {
   createContext,
   createAsyncComponent,
   asyncBootstrapper,
-  STATE_IDENTIFIER,
 } from '../'
 
 function Bob({ children }) {
@@ -54,8 +53,11 @@ const ErrorAsyncComponent = createAsyncComponent({
   ErrorComponent: ({ message }) => <div>{message}</div>,
 })
 
-const createApp = execContext => (
-  <AsyncComponentProvider execContext={execContext}>
+const createApp = (execContext, stateForClient) => (
+  <AsyncComponentProvider
+    execContext={execContext}
+    initialState={stateForClient}
+  >
     <AsyncBob>
       <div>
         <AsyncBobTwo>
@@ -79,13 +81,9 @@ const createApp = execContext => (
 )
 
 describe('integration tests', () => {
-  afterEach(() => {
-    delete global.window[STATE_IDENTIFIER]
-  })
-
   it('render server and client', () => {
-    const windowTemp = global.window
     // we have to delete the window to emulate a server only environment
+    const windowTemp = global.window
     delete global.window
 
     // "Server" side render...
@@ -95,17 +93,17 @@ describe('integration tests', () => {
       .then(() => {
         const serverString = renderToStaticMarkup(serverApp)
         expect(serverString).toMatchSnapshot()
-        expect(serverContext.getState()).toMatchSnapshot()
+        const stateForClient = serverContext.getState()
+        expect(stateForClient).toMatchSnapshot()
         // Restore the window and attach the state to the "window" for the
         // client
         global.window = windowTemp
-        global.window[STATE_IDENTIFIER] = serverContext.getState()
-        return serverString
+        return { serverHTML: serverString, stateForClient }
       })
-      .then((serverHTML) => {
+      .then(({ serverHTML, stateForClient }) => {
         // "Client" side render...
         const clientContext = createContext()
-        const clientApp = createApp(clientContext)
+        const clientApp = createApp(clientContext, stateForClient)
         return (
           asyncBootstrapper(clientApp)
             .then(() => {

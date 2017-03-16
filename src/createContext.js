@@ -1,4 +1,4 @@
-export default function createExecContext() {
+export default function createContext() {
   let idPointer = 0
   const registry = {}
   const errorRegistry = {}

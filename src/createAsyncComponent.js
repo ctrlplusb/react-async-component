@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { STATE_IDENTIFIER } from './constants'
-
 const validSSRModes = ['render', 'defer', 'boundary']
 
 function createAsyncComponent(args) {
@@ -72,29 +70,34 @@ function createAsyncComponent(args) {
       }
     }
 
+    // @see react-async-bootstrapper
     asyncBootstrapperTarget() {
       const { asyncComponents } = this.context
-      const { registerError } = asyncComponents
+      const {
+        registerError,
+        getRehydrate,
+      } = asyncComponents
+
+      const doResolve = () =>
+        this.resolveComponent().then(
+          Component => typeof Component === 'function',
+        )
 
       if (typeof window !== 'undefined') {
-        // Browser based logic
-        if (window[STATE_IDENTIFIER]) {
-          if (window[STATE_IDENTIFIER].errors[id]) {
-            registerError(id, window[STATE_IDENTIFIER].errors[id])
-          } else if (window[STATE_IDENTIFIER].resolved[id]) {
-            return this.resolveComponent().then((Component) => {
-              if (typeof Component === 'function') {
-                delete window[STATE_IDENTIFIER].resolved[id]
-                return true
-              }
-              return false
-            })
-          }
+        // BROWSER BASED LOGIC
+
+        const { type, error } = getRehydrate(id)
+        if (type === 'unresolved') {
+          return false
         }
-        return false
+        if (type === 'error') {
+          registerError(id, error)
+          return false
+        }
+        return doResolve()
       }
 
-      // Node based logic
+      // NODE BASED LOGIC
 
       const { asyncComponentsAncestor } = this.context
       const isChildOfBoundary = asyncComponentsAncestor &&
@@ -104,9 +107,7 @@ function createAsyncComponent(args) {
         return false
       }
 
-      return this.resolveComponent().then(
-        Component => typeof Component === 'function',
-      )
+      return doResolve()
     }
 
     resolveComponent() {
