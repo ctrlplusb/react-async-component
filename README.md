@@ -262,17 +262,24 @@ Then on the "client" side you would do the following:
 ```jsx
 import React from 'react';
 import { render } from 'react-dom';
-import { AsyncComponentProvider } from 'react-async-component'; // 👈
+import { AsyncComponentProvider, createAsyncContext } from 'react-async-component'; // 👈
 import asyncBootstrapper from 'react-async-bootstrapper'; // 👈
 import MyApp from './components/MyApp';
 
 // 👇 Get any "rehydrate" state sent back by the server
-const rehydrateState = window.ASYNC_COMPONENTS_STATE
+const rehydrateState = window.ASYNC_COMPONENTS_STATE;
+
+//   Create an async context so that state can be tracked
+// 👇 across the bootstrapping and rendering process.
+const asyncContext = createAsyncContext();
 
 //   Ensure you wrap your application with the provider,
 // 👇 and pass in the rehydrateState.
 const app = (
-  <AsyncComponentProvider rehydrateState={rehydrateState}>
+  <AsyncComponentProvider
+    rehydrateState={rehydrateState}
+    asyncContext={asyncContext}
+  >
     <MyApp />
   </AsyncComponentProvider>
 );
