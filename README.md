@@ -190,10 +190,8 @@ Wraps your application allowing for efficient and effective use of asynchronous 
 
 #### Props
 
- - `asyncContext` (_Object_, Optional)
-   You can optionally provide an asynchronous context (created using `createAsyncContext`).  If you don't provide one then an instance will be created automatically internally.  It can be useful to create and provide your own instance so that you can gain hooks into the context for advanced use cases such as server side rendering state rehydration or hot module replacement interoperability.
- - `rehydrateState` (_Object_, Optional)
-   Only useful in a server side rendering application (see the docs).  This allows you to provide the state returned by the server to be used to rehydrate the client appropriately, ensuring that it's rendered checksum will match that of the content rendered by the server.
+ - `asyncContext` (_Object_, Optional) : You can optionally provide an asynchronous context (created using `createAsyncContext`).  If you don't provide one then an instance will be created automatically internally.  It can be useful to create and provide your own instance so that you can gain hooks into the context for advanced use cases such as server side rendering state rehydration or hot module replacement interoperability.
+ - `rehydrateState` (_Object_, Optional) : Only useful in a server side rendering application (see the docs).  This allows you to provide the state returned by the server to be used to rehydrate the client appropriately, ensuring that it's rendered checksum will match that of the content rendered by the server.
 
 ### `createAsyncContext()`
 
