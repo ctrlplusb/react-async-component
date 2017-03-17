@@ -1,12 +1,12 @@
 import React from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
+import asyncBootstrapper from 'react-async-bootstrapper'
 
 import {
   AsyncComponentProvider,
-  createContext,
-  createAsyncComponent,
-  asyncBootstrapper,
+  createAsyncContext,
+  asyncComponent,
 } from '../'
 
 function Bob({ children }) {
@@ -15,35 +15,35 @@ function Bob({ children }) {
 Bob.propTypes = { children: React.PropTypes.node }
 Bob.defaultProps = { children: null }
 
-const AsyncBob = createAsyncComponent({
+const AsyncBob = asyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBob',
 })
 
-const AsyncBobTwo = createAsyncComponent({
+const AsyncBobTwo = asyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBobTwo',
 })
 
-const AsyncBobThree = createAsyncComponent({
+const AsyncBobThree = asyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   name: 'AsyncBobThree',
 })
 
-const DeferredAsyncBob = createAsyncComponent({
+const DeferredAsyncBob = asyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   ssrMode: 'defer',
   name: 'DeferredAsyncBob',
   LoadingComponent: () => <div>DeferredAsyncBob Loading</div>,
 })
 
-const BoundaryAsyncBob = createAsyncComponent({
+const BoundaryAsyncBob = asyncComponent({
   resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
   ssrMode: 'boundary',
   name: 'BoundaryAsyncBob',
 })
 
-const ErrorAsyncComponent = createAsyncComponent({
+const ErrorAsyncComponent = asyncComponent({
   resolve: () =>
     new Promise(() => {
       throw new Error('This always errors')
@@ -53,10 +53,10 @@ const ErrorAsyncComponent = createAsyncComponent({
   ErrorComponent: ({ message }) => <div>{message}</div>,
 })
 
-const createApp = (execContext, stateForClient) => (
+const createApp = (asyncContext, stateForClient) => (
   <AsyncComponentProvider
-    execContext={execContext}
-    initialState={stateForClient}
+    asyncContext={asyncContext}
+    rehydrateState={stateForClient}
   >
     <AsyncBob>
       <div>
@@ -87,7 +87,7 @@ describe('integration tests', () => {
     delete global.window
 
     // "Server" side render...
-    const serverContext = createContext()
+    const serverContext = createAsyncContext()
     const serverApp = createApp(serverContext)
     return asyncBootstrapper(serverApp)
       .then(() => {
@@ -102,7 +102,7 @@ describe('integration tests', () => {
       })
       .then(({ serverHTML, stateForClient }) => {
         // "Client" side render...
-        const clientContext = createContext()
+        const clientContext = createAsyncContext()
         const clientApp = createApp(clientContext, stateForClient)
         return (
           asyncBootstrapper(clientApp)
@@ -126,17 +126,17 @@ describe('integration tests', () => {
   })
 
   it('renders the LoadingComponent', () => {
-    const Foo = createAsyncComponent({
+    const Foo = asyncComponent({
       resolve: () =>
         new Promise(resolve =>
           setTimeout(() => resolve(() => <div>foo</div>), 100)),
       LoadingComponent: () => <div>Loading...</div>,
     })
 
-    const execContext = createContext()
+    const asyncContext = createAsyncContext()
 
     const app = (
-      <AsyncComponentProvider execContext={execContext}>
+      <AsyncComponentProvider asyncContext={asyncContext}>
         <Foo />
       </AsyncComponentProvider>
     )
@@ -147,7 +147,7 @@ describe('integration tests', () => {
   })
 
   it('renders the ErrorComponent', () => {
-    const Foo = createAsyncComponent({
+    const Foo = asyncComponent({
       resolve: () => {
         throw new Error('An error occurred')
       },
@@ -155,10 +155,10 @@ describe('integration tests', () => {
       ErrorComponent: ({ message }) => <div>{message}</div>,
     })
 
-    const execContext = createContext()
+    const asyncContext = createAsyncContext()
 
     const app = (
-      <AsyncComponentProvider execContext={execContext}>
+      <AsyncComponentProvider asyncContext={asyncContext}>
         <Foo />
       </AsyncComponentProvider>
     )
@@ -177,17 +177,17 @@ describe('integration tests', () => {
   it('a component only gets resolved once', () => {
     let resolveCount = 0
 
-    const Foo = createAsyncComponent({
+    const Foo = asyncComponent({
       resolve: () => {
         resolveCount += 1
         return () => <div>foo</div>
       },
     })
 
-    const execContext = createContext()
+    const asyncContext = createAsyncContext()
 
     const app = (
-      <AsyncComponentProvider execContext={execContext}>
+      <AsyncComponentProvider asyncContext={asyncContext}>
         <Foo />
       </AsyncComponentProvider>
     )

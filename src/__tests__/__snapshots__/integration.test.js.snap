@@ -17,7 +17,7 @@ Object {
 
 exports[`integration tests render server and client 3`] = `
 <AsyncComponentProvider
-  execContext={
+  asyncContext={
     Object {
       "getComponent": [Function],
       "getError": [Function],
@@ -27,7 +27,7 @@ exports[`integration tests render server and client 3`] = `
       "registerError": [Function],
     }
   }
-  initialState={
+  rehydrateState={
     Object {
       "errors": Object {},
       "resolved": Object {},
@@ -82,7 +82,7 @@ exports[`integration tests render server and client 3`] = `
 
 exports[`integration tests render server and client 4`] = `
 <AsyncComponentProvider
-  execContext={
+  asyncContext={
     Object {
       "getComponent": [Function],
       "getError": [Function],
@@ -92,7 +92,7 @@ exports[`integration tests render server and client 4`] = `
       "registerError": [Function],
     }
   }
-  initialState={
+  rehydrateState={
     Object {
       "errors": Object {},
       "resolved": Object {},
@@ -157,7 +157,7 @@ exports[`integration tests render server and client 4`] = `
 
 exports[`integration tests renders the ErrorComponent 1`] = `
 <AsyncComponentProvider
-  execContext={
+  asyncContext={
     Object {
       "getComponent": [Function],
       "getError": [Function],
@@ -167,7 +167,7 @@ exports[`integration tests renders the ErrorComponent 1`] = `
       "registerError": [Function],
     }
   }
-  initialState={
+  rehydrateState={
     Object {
       "errors": Object {},
       "resolved": Object {},
@@ -188,7 +188,7 @@ exports[`integration tests renders the ErrorComponent 1`] = `
 
 exports[`integration tests renders the LoadingComponent 1`] = `
 <AsyncComponentProvider
-  execContext={
+  asyncContext={
     Object {
       "getComponent": [Function],
       "getError": [Function],
@@ -198,7 +198,7 @@ exports[`integration tests renders the LoadingComponent 1`] = `
       "registerError": [Function],
     }
   }
-  initialState={
+  rehydrateState={
     Object {
       "errors": Object {},
       "resolved": Object {},

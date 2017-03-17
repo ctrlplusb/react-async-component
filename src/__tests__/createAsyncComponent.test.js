@@ -2,9 +2,9 @@ import React from 'react'
 import sinon from 'sinon'
 import { mount } from 'enzyme'
 
-import createAsyncComponent from '../createAsyncComponent'
+import asyncComponent from '../asyncComponent'
 
-describe('createAsyncComponent', () => {
+describe('asyncComponent', () => {
   const contextStub = {
     asyncComponents: {
       getNextId: () => 1,
@@ -17,7 +17,7 @@ describe('createAsyncComponent', () => {
 
   it('should handle unmounting ensuring that resolved promises do not call setState', () => {
     const resolveDelay = 10
-    const Bob = createAsyncComponent({
+    const Bob = asyncComponent({
       resolve: () =>
         new Promise(resolve =>
           setTimeout(() => resolve(() => <div>bob</div>), resolveDelay)),

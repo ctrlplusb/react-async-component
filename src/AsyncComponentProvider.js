@@ -1,21 +1,21 @@
 import React from 'react'
 
-import createContext from './createContext'
+import createAsyncContext from './createAsyncContext'
 
 class AsyncComponentProvider extends React.Component {
   componentWillMount() {
-    this.execContext = this.props.execContext || createContext()
-    this.rehydrateState = this.props.initialState
+    this.asyncContext = this.props.asyncContext || createAsyncContext()
+    this.rehydrateState = this.props.rehydrateState
   }
 
   getChildContext() {
     return {
       asyncComponents: {
-        getNextId: this.execContext.getNextId,
-        registerComponent: this.execContext.registerComponent,
-        getComponent: this.execContext.getComponent,
-        registerError: this.execContext.registerError,
-        getError: this.execContext.getError,
+        getNextId: this.asyncContext.getNextId,
+        registerComponent: this.asyncContext.registerComponent,
+        getComponent: this.asyncContext.getComponent,
+        registerError: this.asyncContext.registerError,
+        getError: this.asyncContext.getError,
         getRehydrate: (id) => {
           const error = this.rehydrateState.errors[id]
           const resolved = this.rehydrateState.resolved[id]
@@ -38,22 +38,22 @@ class AsyncComponentProvider extends React.Component {
 
 AsyncComponentProvider.propTypes = {
   children: React.PropTypes.node.isRequired,
-  execContext: React.PropTypes.shape({
+  asyncContext: React.PropTypes.shape({
     getNextId: React.PropTypes.func.isRequired,
     registerComponent: React.PropTypes.func.isRequired,
     getComponent: React.PropTypes.func.isRequired,
     registerError: React.PropTypes.func.isRequired,
     getError: React.PropTypes.func.isRequired,
   }),
-  initialState: React.PropTypes.shape({
+  rehydrateState: React.PropTypes.shape({
     resolved: React.PropTypes.object,
     errors: React.PropTypes.object,
   }),
 }
 
 AsyncComponentProvider.defaultProps = {
-  execContext: undefined,
-  initialState: {
+  asyncContext: undefined,
+  rehydrateState: {
     resolved: {},
     errors: {},
   },

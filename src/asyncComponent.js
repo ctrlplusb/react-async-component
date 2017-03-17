@@ -2,7 +2,7 @@ import React from 'react'
 
 const validSSRModes = ['render', 'defer', 'boundary']
 
-function createAsyncComponent(args) {
+function asyncComponent(args) {
   const {
     name,
     resolve,
@@ -13,7 +13,7 @@ function createAsyncComponent(args) {
   } = args
 
   if (validSSRModes.indexOf(ssrMode) === -1) {
-    throw new Error('Invalid ssrMode provided to createAsyncComponent')
+    throw new Error('Invalid ssrMode provided to asyncComponent')
   }
 
   let id = null
@@ -182,4 +182,4 @@ function createAsyncComponent(args) {
   return AsyncComponent
 }
 
-export default createAsyncComponent
+export default asyncComponent

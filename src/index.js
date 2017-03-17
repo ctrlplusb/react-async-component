@@ -1,11 +1,5 @@
-import asyncBootstrapper from 'react-async-bootstrapper'
 import AsyncComponentProvider from './AsyncComponentProvider'
-import createContext from './createContext'
-import createAsyncComponent from './createAsyncComponent'
+import createAsyncContext from './createAsyncContext'
+import asyncComponent from './asyncComponent'
 
-export {
-  AsyncComponentProvider,
-  createContext,
-  createAsyncComponent,
-  asyncBootstrapper,
-}
+export { AsyncComponentProvider, createAsyncContext, asyncComponent }

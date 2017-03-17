@@ -1,4 +1,4 @@
-export default function createContext() {
+export default function createAsyncContext() {
   let idPointer = 0
   const registry = {}
   const errorRegistry = {}
