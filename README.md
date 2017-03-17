@@ -162,7 +162,7 @@ export default asyncComponent({
 });
 ```
 
-### Webpack `require.ensure` Code Splitting API
+##### Webpack `require.ensure` Code Splitting API
 
 ```jsx
 export default asyncComponent({
@@ -174,7 +174,7 @@ export default asyncComponent({
 });
 ```
 
-### Webpack `import` / `System.import` Code Splitting API
+##### Webpack `import` / `System.import` Code Splitting API
 
 Note: `System.import` is considered deprecated and will be replaced with `import`, but for now they can be used interchangeably (you may need a Babel plugin for the `import` syntax).
 
