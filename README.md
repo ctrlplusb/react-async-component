@@ -201,7 +201,7 @@ Creates an asynchronous context that can be used by the `<AsyncComponentProvider
 
 ## Server Side Rendering
 
-This library has been designed for generic interoperability with [`react-async-bootstrapper`](https://github.com/ctrlplusb/react-async-bootstrapper). The `react-async-bootstrapper` allows us to do a "pre-render parse" of a React Element tree and execute any "bootstrapping" process that may be attached to a components within the tree.  In our case the "bootstrapping" process involves the resolution of the asynchronous components so that they can be rendered by the server.  We use this generic library approach as it allows interoperability with other libraries that have "bootstrapping" needs (e.g. data preloading as done by `react-jobs`).
+This library has been designed for generic interoperability with [`react-async-bootstrapper`](https://github.com/ctrlplusb/react-async-bootstrapper). The `react-async-bootstrapper` utility allows us to do a "pre-render parse" of a React Element tree and execute any "bootstrapping" functions that are attached to a components within the tree. In our case the "bootstrapping" process involves the resolution of asynchronous components so that they can be rendered "synchronously" by the server.  We use this 3rd party library as it allows interoperability with other libraries which also require a "bootstrapping" process (e.g. data preloading as supported by [`react-jobs`](https://github.com/ctrlplusb/react-jobs)).
 
 Firstly, install `react-async-bootstrapper`:
 
@@ -209,7 +209,7 @@ Firstly, install `react-async-bootstrapper`:
 npm install react-async-bootstrapper
 ```
 
-Now, let's configure the "server" side.  You could use a similar `express` (or other HTTP server) middleware:
+Now, let's configure the "server" side.  You could use a similar `express` (or other HTTP server) middleware configuration:
 
 ```jsx
 import React from 'react';
