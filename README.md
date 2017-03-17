@@ -1,6 +1,6 @@
-# react-async-component 😴
+# react-async-component 📬
 
-Create Components that resolve asynchronously, with support for server side rendering and code splitting.
+Resolve components asynchronously, with support for code splitting and advanced server side rendering use cases.
 
 [![npm](https://img.shields.io/npm/v/react-async-component.svg?style=flat-square)](http://npm.im/react-async-component)
 [![MIT License](https://img.shields.io/npm/l/react-async-component.svg?style=flat-square)](http://opensource.org/licenses/MIT)
@@ -8,28 +8,31 @@ Create Components that resolve asynchronously, with support for server side rend
 [![Codecov](https://img.shields.io/codecov/c/github/ctrlplusb/react-async-component.svg?style=flat-square)](https://codecov.io/github/ctrlplusb/react-async-component)
 
 ```jsx
-const AsyncProduct = createAsyncComponent({
-  //               👇 Webpack 2 code splitting API
-  resolve: () => import('./components/Product'))
+const Product = asyncComponent({
+  resolve: () => System.import('./AsyncProduct'),
+  LoadingComponent: ({ productId }) => <div>Loading {productId}</div>,
+  ErrorComponent: ({ error }) => <div>{error.message}</div>
 });
 
-<AsyncProduct productId={1} /> // 🚀
+<Product productId={1} /> // 🚀
 ```
 
 ## TOCs
 
   - [Introduction](#introduction)
+  - [Features](#features)
   - [Examples](#examples)
-    - [Browser Only Application](#browser-only-application)
-    - [Server Side Rendering Application](#server-side-rendering-application)
-    - [Using Loading Components](#using-loading-components)
+    - [Standard Usage](#standard-usage)
+    - [Using a LoadingComponent](#using-a-loadingcomponent)
+    - [Using an ErrorComponent](#using-an-errorcomponent)
     - [Webpack 1/2 `require.ensure` Code Splitting](#webpack-12-requireensure-code-splitting)
     - [Webpack 2 `import` / `System.import` Code Splitting](#webpack-2-import--systemimport-code-splitting)
-    - [Defer Loading to the Client/Browser](#defer-loading-to-the-clientbrowser)      
   - [API](#api)
     - [createAsyncComponent(config)](#createasynccomponentconfig)
     - [withAsyncComponents(element)](#withasynccomponentselement)
-  - [Important Information for using in Server Side Rendering Applications](#important-information-for-using-in-server-side-rendering-applications)
+  - [Server Side Rendering](#server-side-rendering)
+    - [Defer Loading to the Client/Browser](#defer-loading-to-the-clientbrowser)      
+    - [Important Information](#important-information)
     - [SSR AsyncComponent Resolution Process](#ssr-asynccomponent-resolution-process)
     - [SSR Performance Optimisation](#ssr-performance-optimisation)
   - [Warnings](#warnings)
@@ -37,7 +40,16 @@ const AsyncProduct = createAsyncComponent({
 
 ## Introduction
 
-This library is an evolution of [`code-split-component`](https://github.com/ctrlplusb/code-split-component). Unlike `code-split-component` this library does not require that you use either Webpack or Babel.  Instead it provides you a pure Javascript/React API which has been adapted in a manner to make it generically useful for lazy-loaded Components, with support for modern code splitting APIs (e.g `import()`, `System.import`, `require.ensure`).
+This library does not require that you use either Webpack or Babel.  Instead it provides you a generic and "pure" Javascript/React API which allows for the expression of lazy-loaded Components.  It's `Promise`-based API naturally allows you to take advantage of modern code splitting APIs (e.g `import()`, `System.import`, `require.ensure`).
+
+## Features
+
+ - Supports _any_ major code splitting API.
+ - Show a `LoadingComponent` until your component is resolved.
+ - Show an `ErrorComponent` if your component resolution fails.
+ - Prevents flash-of-content by tracking already resolved Components.
+ - Full server side rendering support, allowing client side state rehydration, and avoiding React checksum errors.
+ - Uses the generalised [`react-async-bootstrapper`](https://github.com/ctrlplusb/react-async-bootstrapper) allowing you to optimally integrate with other async pre-loader libraries, such as [`react-jobs`](https://github.com/ctrlplusb/react-jobs) for your async data loading needs.
 
 ## Demo
 
@@ -45,90 +57,77 @@ You can see a "live" version [here](https://react-universally.now.sh/). This is 
 
 ## Examples
 
-The below examples show off a full workflow of using the `createAsyncComponent` and `withAsyncComponents` helpers.
+The examples below make use of the `System.import` API supported by Webpack v2 which provides us with code splitting on our asynchronous components.
 
-In some of the examples below we are going to be making use of the `System.import` API supported by Webpack v2 which provides us with code splitting on our asynchronous components.
+### Standard Usage
 
-### Browser Only Application
+This is how you would use `react-async-component` in a "standard" React application (i.e. browser side only).
 
-This is how you would use `react-async-component` in a "browser only" React application.
-
-Firsly you need to wrap the rendering of your application with our helper:
+Firsly you need to wrap the rendering of your application with the `AsyncComponentProvider`:
 
 ```jsx
 import React from 'react';
-import { render } from 'react-dom';
-import { withAsyncComponents } from 'react-async-component'; // 👈
+import ReactDOM from 'react-dom';
+import { AsyncComponentProvider } from 'react-async-component'; // 👈
 import MyApp from './components/MyApp';
 
-const app = <MyApp />;
+const app = (
+  // 👇
+  <AsyncComponentProvider>
+    <MyApp />
+  </AsyncComponentProvider>
+);
 
-// 👇 run helper on your app.
-withAsyncComponents(app)
-  //        👇 and you get back a result object.
-  .then((result) => {
-    const {
-      // ❗️ The result includes a decorated version of your app
-      // that will allow your application to use async components
-      // in an efficient manner.
-      appWithAsyncComponents
-    } = result;
-
-    // Now you can render the app.
-    render(appWithAsyncComponents, document.getElementById('app'));
-  });
+ReactDOM.render(app, document.getElementById('app'));
 ```
 
 Now, let's create an async `Product` component that will be used within your application.  I recommend that you use the following folder/file for your components:
 
 ```
- |- AsyncProduct
+ |- Product
     |- index.js
-    |- Product.js
+    |- AsyncProduct.js
 ```
 
-The `./AsyncProduct/Product.js` could have the following example contents:
+__`./Product/index.js`__:
+
+```js
+import { createAsyncComponent } from 'react-async-component';
+
+// Create an async component 👇 
+export default createAsyncComponent({
+  resolve: () => System.import('./AsyncProduct')
+                 // That resolves to 👆
+});
+```
+
+__`./Product/AsyncProduct.js`__
 
 ```jsx
 import React from 'react';
 
-export default function Product({ params }) {
-  return <div>You are viewing product {params.productId}</div>;
+export default function Product({ productId }) {
+  return <div>You are viewing product {productId}</div>;
 }
 ```
 
-The `./AsyncProduct/index.js` could have then following contents:
+Now, you can simply import `Product` anywhere in your application and not have to worry about having to call `createAsyncComponent` again.
 
-```js
-import { createAsyncComponent } from 'react-async-component'; // 👈
-
-//                     👇 create an async component
-const AsyncProduct = createAsyncComponent({
-  resolve: () => System.import('./Product')
-                 // 👆 Webpack's code splitting API
-});
-
-export default AsyncProduct;
-```
-
-Now, you can simply import `AsyncProduct` anywhere in your application and not have to worry about having to call `createAsyncComponent` again.
-
-For example, let's image the following implementation of your `MyApp` component, which uses the React Router v4 `Match` API.
+For example:
 
 ```jsx
 import React from 'react';
-import { Match } from 'react-router';
-import AsyncProduct from './AsyncProduct';
+import Product from './components/Product';
 
-const Root = () => (
-  <div className="container">
+const MyApp = () => (
+  <div>
     <h1>Welcome to My App</h1>
-
-    <Match exactly pattern="/products/:productId" component={AsyncProduct} />
+    // 👇 Use as "normal"
+    <Product productId={1337} />
   </div>
 );
 
-export default Root;
+export default MyApp;
 ```
 
 🚀
@@ -143,18 +142,27 @@ Let's imagine the following Express middleware (you could use any HTTP server of
 
 ```jsx
 import React from 'react';
-import { withAsyncComponents } from 'react-async-component'; // 👈
+import { 
+  asyncBootstrapper, 
+  AsyncComponentProvider, 
+  createContext 
+} from 'react-async-component'; // 👈
 import { renderToString } from 'react-dom/server';
 import serialize from 'serialize-javascript';
 import MyApp from './shared/components/MyApp';
 
 export default function expressMiddleware(req, res, next) {
-  const app = <MyApp />;
+  //    Create an execution context for our provider, this grants
+  // 👇 us the ability to tap into the state.
+  const execContext = createExecContext();
 
-  // 👇 run helper on your app.
-  withAsyncComponents(app)
-    //        👇 and you get back a result object.
-    .then((result) => {
+  // 👇 Ensure you wrap your application with the provider.
+  const app = (
+    <MyApp />
+  );
+
+  // 👇 This makes sure we first resolve any async components before the render
+  asyncBootstrapper(app).then(() => {
       const {
         // ❗️ The result includes a decorated version of your app
         // that will have the async components initialised for
