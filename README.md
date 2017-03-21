@@ -130,7 +130,7 @@ The asynchronous component factory. Config goes in, an asynchronous component co
     - `LoadingComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed until your async Component is resolved. All props will be passed to it.
     - `ErrorComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed if any error occurred whilst trying to resolve your component. All props will be passed to it as well as an `error` prop which is an object with a `message` and  `stack` property.
     - `name` (_String_, Optional, default: `'AsyncComponent'`) : Use this if you would like to name the created async Component, which helps when firing up the React Dev Tools for example.
-    - `es6Aware` (_Boolean_, Optional, default: `true`) : Especially useful if you are resolving ES2015 modules. The resolved module will be checked to see if it has a `.default` and if so then the value attached to `.default` will be used.
+    - `autoResolveES2015Default` (_Boolean_, Optional, default: `true`) : Especially useful if you are resolving ES2015 modules. The resolved module will be checked to see if it has a `.default` and if so then the value attached to `.default` will be used. So easy to forget to do that. 😀
     - `ssrMode` (_Boolean_, Optional, default: `'render'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
       - __`'render'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
       be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `ssrMode` value that was associated with them.

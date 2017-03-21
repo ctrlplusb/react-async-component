@@ -6,7 +6,7 @@ function asyncComponent(args) {
   const {
     name,
     resolve,
-    es6Aware = true,
+    autoResolveES2015Default = true,
     ssrMode = 'render',
     LoadingComponent,
     ErrorComponent,
@@ -21,9 +21,11 @@ function asyncComponent(args) {
   // Takes the given module and if it has a ".default" the ".default" will
   // be returned. i.e. handy when you could be dealing with es6 imports.
   const es6Resolve = x =>
-    es6Aware &&
+    autoResolveES2015Default &&
       (typeof x === 'function' || typeof x === 'object') &&
-      typeof x.default !== 'undefined'
+      // eslint-disable-next-line no-underscore-dangle
+      x.__esModule &&
+      x.default
       ? x.default
       : x
 
