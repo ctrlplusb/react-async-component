@@ -10,7 +10,7 @@ Create Components that resolve asynchronously, with support for server side rend
 ```jsx
 const AsyncProduct = createAsyncComponent({
   //               👇 Webpack 2 code splitting API
-  resolve: () => import('./components/Product'))
+  resolve: () => import('./components/Product')
 });
 
 <AsyncProduct productId={1} /> // 🚀
