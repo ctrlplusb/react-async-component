@@ -7,134 +7,145 @@ function asyncComponent(args) {
     name,
     resolve,
     autoResolveES2015Default = true,
-    ssrMode = 'render',
+    serverMode = 'render',
     LoadingComponent,
     ErrorComponent,
   } = args
 
-  if (validSSRModes.indexOf(ssrMode) === -1) {
-    throw new Error('Invalid ssrMode provided to asyncComponent')
+  if (validSSRModes.indexOf(serverMode) === -1) {
+    throw new Error('Invalid serverMode provided to asyncComponent')
   }
 
-  let id = null
+  const env = typeof window === 'undefined' ? 'node' : 'browser'
+
+  const sharedState = {
+    // A unique id we will assign to our async component which is especially
+    // useful when rehydrating server side rendered async components.
+    id: null,
+    // This will be use to hold the resolved module allowing sharing across
+    // instances.
+    // NOTE: When using React Hot Loader this reference will become null.
+    module: null,
+    // If an error occurred during a resolution it will be stored here.
+    error: null,
+    // Allows us to share the resolver promise across instances.
+    resolver: null,
+  }
 
   // Takes the given module and if it has a ".default" the ".default" will
   // be returned. i.e. handy when you could be dealing with es6 imports.
   const es6Resolve = x =>
     autoResolveES2015Default &&
+      x != null &&
       (typeof x === 'function' || typeof x === 'object') &&
-      // eslint-disable-next-line no-underscore-dangle
-      x.__esModule &&
       x.default
       ? x.default
       : x
 
   const getResolver = () => {
-    let resolver
-    try {
-      resolver = resolve()
-    } catch (err) {
-      return Promise.reject(err)
+    if (sharedState.resolver == null) {
+      try {
+        // Wrap whatever the user returns in Promise.resolve to ensure a Promise
+        // is always returned.
+        const resolver = resolve()
+        sharedState.resolver = Promise.resolve(resolver)
+      } catch (err) {
+        sharedState.resolver = Promise.reject(err)
+      }
     }
-
-    // Just in case the user is returning the component synchronously, we
-    // will ensure it gets wrapped into a promise
-    return Promise.resolve(resolver)
+    return sharedState.resolver
   }
 
   class AsyncComponent extends React.Component {
     constructor(props, context) {
-      super(props)
+      super(props, context)
 
-      this.state = { Component: null }
-
-      // Assign a unique id to this instance if it hasn't already got one.
-      const { asyncComponents } = context
-      const { getNextId } = asyncComponents
-      if (!id) {
-        id = getNextId()
+      // We have to set the id in the constructor because a RHL seems
+      // to recycle the module and therefore the id closure will be null.
+      // We can't put it in componentWillMount as RHL hot swaps the new code
+      // so the mount call will not happen (but the ctor does).
+      if (this.context.asyncComponents && !sharedState.id) {
+        sharedState.id = this.context.asyncComponents.getNextId()
       }
     }
 
     getChildContext() {
+      if (!this.context.asyncComponents) {
+        return undefined
+      }
+
       return {
         asyncComponentsAncestor: {
-          isBoundary: ssrMode === 'boundary',
+          isBoundary: serverMode === 'boundary',
         },
       }
     }
 
+    componentWillMount() {
+      this.setState({ module: sharedState.module })
+      if (sharedState.error) {
+        this.registerErrorState(sharedState.error)
+      }
+    }
+
     componentDidMount() {
-      const { asyncComponents } = this.context
-      const { getComponent, getError } = asyncComponents
-      if (!getError(id) && !getComponent(id)) {
-        this.resolveComponent()
+      if (!this.state.module) {
+        this.resolveModule()
       }
     }
 
     // @see react-async-bootstrapper
-    asyncBootstrapperTarget() {
-      const { asyncComponents } = this.context
-      const {
-        registerError,
-        getRehydrate,
-      } = asyncComponents
+    asyncBootstrap() {
+      const { asyncComponents, asyncComponentsAncestor } = this.context
+      const { shouldRehydrate } = asyncComponents
 
       const doResolve = () =>
-        this.resolveComponent().then(
-          Component => typeof Component === 'function',
-        )
+        this.resolveModule().then(module => module !== undefined)
 
       if (typeof window !== 'undefined') {
         // BROWSER BASED LOGIC
-
-        const { type, error } = getRehydrate(id)
-        if (type === 'unresolved') {
-          return false
-        }
-        if (type === 'error') {
-          registerError(id, error)
-          return false
-        }
-        return doResolve()
+        return shouldRehydrate(sharedState.id) ? doResolve() : false
       }
 
-      // NODE BASED LOGIC
-
-      const { asyncComponentsAncestor } = this.context
+      // SERVER BASED LOGIC
       const isChildOfBoundary = asyncComponentsAncestor &&
         asyncComponentsAncestor.isBoundary
-
-      if (ssrMode === 'defer' || isChildOfBoundary) {
-        return false
-      }
-
-      return doResolve()
+      return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
-    resolveComponent() {
+    resolveModule() {
+      this.resolving = true
+
       return getResolver()
-        .then((Component) => {
+        .then((module) => {
           if (this.unmounted) {
             return undefined
           }
-          this.context.asyncComponents.registerComponent(id, Component)
-          if (this.setState) {
-            this.setState({
-              Component: es6Resolve(Component),
-            })
+          if (this.context.asyncComponents) {
+            this.context.asyncComponents.resolved(sharedState.id)
           }
-          return Component
+          sharedState.module = module
+          if (env === 'browser') {
+            this.setState({ module })
+          }
+          this.resolving = false
+          return module
         })
         .catch((error) => {
-          if (process.env.NODE_ENV === 'development') {
-            // eslint-disable-next-line no-console
-            console.log('Error resolving async component:')
-            // eslint-disable-next-line no-console
-            console.log(error)
+          if (this.unmounted) {
+            return undefined
           }
-          this.context.asyncComponents.registerError(id, error.message)
-          this.setState({ error: error.message })
+          if (env === 'node' || !ErrorComponent) {
+            // We will at least log the error so that user isn't completely
+            // unaware of an error occurring.
+            // eslint-disable-next-line no-console
+            // console.warn('Failed to resolve asyncComponent')
+            // eslint-disable-next-line no-console
+            // console.warn(error)
+          }
+          sharedState.error = error
+          this.registerErrorState(error)
+          this.resolving = false
           return undefined
         })
     }
@@ -143,16 +154,39 @@ function asyncComponent(args) {
       this.unmounted = true
     }
 
-    render() {
-      const { asyncComponents } = this.context
-      const { getComponent, getError } = asyncComponents
+    registerErrorState(error) {
+      if (env === 'browser') {
+        setTimeout(
+          () => {
+            if (!this.unmounted) {
+              this.setState({ error })
+            }
+          },
+          16,
+        )
+      }
+    }
 
-      const error = getError(id)
-      if (error) {
-        return ErrorComponent ? <ErrorComponent message={error} /> : null
+    render() {
+      const { module, error } = this.state
+
+      // This is as workaround for React Hot Loader support.  When using
+      // RHL the local component reference will be killed by any change
+      // to the component, this will be our signal to know that we need to
+      // re-resolve it.
+      if (
+        sharedState.module == null &&
+        !this.resolving &&
+        typeof window !== 'undefined'
+      ) {
+        this.resolveModule()
       }
 
-      const Component = es6Resolve(getComponent(id))
+      if (error) {
+        return ErrorComponent ? <ErrorComponent error={error} /> : null
+      }
+
+      const Component = es6Resolve(module)
       // eslint-disable-next-line no-nested-ternary
       return Component
         ? <Component {...this.props} />
@@ -163,7 +197,7 @@ function asyncComponent(args) {
   AsyncComponent.childContextTypes = {
     asyncComponentsAncestor: React.PropTypes.shape({
       isBoundary: React.PropTypes.bool,
-    }).isRequired,
+    }),
   }
 
   AsyncComponent.contextTypes = {
@@ -172,11 +206,9 @@ function asyncComponent(args) {
     }),
     asyncComponents: React.PropTypes.shape({
       getNextId: React.PropTypes.func.isRequired,
-      getComponent: React.PropTypes.func.isRequired,
-      registerComponent: React.PropTypes.func.isRequired,
-      registerError: React.PropTypes.func.isRequired,
-      getError: React.PropTypes.func.isRequired,
-    }).isRequired,
+      resolved: React.PropTypes.func.isRequired,
+      shouldRehydrate: React.PropTypes.func.isRequired,
+    }),
   }
 
   AsyncComponent.displayName = name || 'AsyncComponent'

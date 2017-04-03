@@ -12,8 +12,8 @@ Resolve components asynchronously, with support for code splitting and advanced 
 ```jsx
 const Product = asyncComponent({
   resolve: () => System.import('./AsyncProduct'),
-  LoadingComponent: ({ productId }) => <div>Loading {productId}</div>,
-  ErrorComponent: ({ error }) => <div>{error.message}</div>
+  LoadingComponent: ({ productId }) => <div>Loading {productId}</div>, // Optional
+  ErrorComponent: ({ error }) => <div>{error.message}</div> // Optional
 });
 
 <Product productId={1} /> // 🚀
@@ -45,25 +45,7 @@ This library does not require that you use either Webpack or Babel.  Instead it 
 
 ## Usage
 
-Firstly, you need to wrap the rendering of your application with the `AsyncComponentProvider`:
-
-```jsx
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { AsyncComponentProvider } from 'react-async-component'; // 👈
-import MyApp from './components/MyApp';
-
-const app = (
-  // 👇
-  <AsyncComponentProvider>
-    <MyApp />
-  </AsyncComponentProvider>
-);
-
-ReactDOM.render(app, document.getElementById('app'));
-```
-
-Now, let's create an asynchronous `Product` component.  I recommend that you use the following folder/file for your asynchronous components:
+When creating your asynchronous components I recommend that you use the following folder/file structure:
 
 ```
  |- components
@@ -77,7 +59,7 @@ __`./components/Product/index.js`__:
 ```js
 import { asyncComponent } from 'react-async-component';
 
-// Create async component 👇
+// Create an async component👇
 export default asyncComponent({
   resolve: () => System.import('./AsyncProduct')
                  // That resolves to 👆
@@ -94,7 +76,7 @@ export default function Product({ productId }) {
 }
 ```
 
-Now, you can simply import `Product` anywhere in your application and not have to worry about having to call `createAsyncComponent` again.
+Now, you can simply import `Product` anywhere in your application and use it exactly as you would any other component.
 
 For example:
 
@@ -131,9 +113,9 @@ The asynchronous component factory. Config goes in, an asynchronous component co
     - `ErrorComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed if any error occurred whilst trying to resolve your component. All props will be passed to it as well as an `error` prop which is an object with a `message` and  `stack` property.
     - `name` (_String_, Optional, default: `'AsyncComponent'`) : Use this if you would like to name the created async Component, which helps when firing up the React Dev Tools for example.
     - `autoResolveES2015Default` (_Boolean_, Optional, default: `true`) : Especially useful if you are resolving ES2015 modules. The resolved module will be checked to see if it has a `.default` and if so then the value attached to `.default` will be used. So easy to forget to do that. 😀
-    - `ssrMode` (_Boolean_, Optional, default: `'render'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
+    - `serverMode` (_Boolean_, Optional, default: `'render'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
       - __`'render'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
-      be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `ssrMode` value that was associated with them.
+      be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `serverMode` value that was associated with them.
       - __`'defer'`__ - Your asynchronous component will _not_ be rendered on the server, instead deferring rendering to the client/browser.
       - __`'boundary'`__ - Your asynchronous component will be resolved and rendered on the server. However, if it has a nested asynchronous component instance within it's children that component will be ignored and treated as being deferred for rendering in the client/browser instead.
     We highly recommend that you consider using `defer` as much as you can.
@@ -186,12 +168,12 @@ export default asyncComponent({
 
 ### `<AsyncComponentProvider />`
 
-Wraps your application allowing for efficient and effective use of asynchronous components.
+Currently only useful when building server side rendering applications. Wraps your application allowing for efficient and effective use of asynchronous components.
 
 #### Props
 
- - `asyncContext` (_Object_, Optional) : You can optionally provide an asynchronous context (created using `createAsyncContext`).  If you don't provide one then an instance will be created automatically internally.  It can be useful to create and provide your own instance so that you can gain hooks into the context for advanced use cases such as server side rendering state rehydration or hot module replacement interoperability.
- - `rehydrateState` (_Object_, Optional) : Only useful in a server side rendering application (see the docs).  This allows you to provide the state returned by the server to be used to rehydrate the client appropriately, ensuring that it's rendered checksum will match that of the content rendered by the server.
+ - `asyncContext` (_Object_) : Used so that you can gain hooks into the context for server side rendering render tracking and rehydration. See the `createAsyncContext` helper for creating an instance.
+ - `rehydrateState` (_Object_, Optional) : Used on the "browser-side" of a server side rendering application (see the docs).  This allows you to provide the state returned by the server to be used to rehydrate the client appropriately.
 
 ### `createAsyncContext()`
 
@@ -201,7 +183,13 @@ Creates an asynchronous context that can be used by the `<AsyncComponentProvider
 
 ## Server Side Rendering
 
-This library has been designed for generic interoperability with [`react-async-bootstrapper`](https://github.com/ctrlplusb/react-async-bootstrapper). The `react-async-bootstrapper` utility allows us to do a "pre-render parse" of a React Element tree and execute any "bootstrapping" functions that are attached to a components within the tree. In our case the "bootstrapping" process involves the resolution of asynchronous components so that they can be rendered "synchronously" by the server.  We use this 3rd party library as it allows interoperability with other libraries which also require a "bootstrapping" process (e.g. data preloading as supported by [`react-jobs`](https://github.com/ctrlplusb/react-jobs)).
+> NOTE: This section only really applies if you would like to have control over the behaviour of how your asyncComponent instances are rendered on the server.  If you don't mind your asyncComponents always being resolved on the client only then you need not do any of the below.  In my opinion there is great value in just server rendering your app shell and having everything else resolve on the client, however, you may have very strict SEO needs - in which case, we have your back.
+
+This library has been designed for interoperability with [`react-async-bootstrapper`](https://github.com/ctrlplusb/react-async-bootstrapper).
+
+`react-async-bootstrapper` allows us to do a "pre-render parse" of our React Element tree and execute an `asyncBootstrap` function that are attached to a components within the tree. In our case the "bootstrapping" process involves the resolution of asynchronous components so that they can be rendered "synchronously" by the server.  We use this 3rd party library as it allows interoperability with other libraries which also require a "bootstrapping" process (e.g. data preloading as supported by [`react-jobs`](https://github.com/ctrlplusb/react-jobs)).
+
+> NOTE: I have not updated `react-jobs` to make use of `react-async-bootstrapper` as of yet.
 
 Firstly, install `react-async-bootstrapper`:
 
@@ -303,7 +291,7 @@ Although this operation isn't as expensive as an actual render as we don't gener
 
 ### SSR Performance Optimisation
 
-As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asyncComponent-resolution-process) section above it is possible to have an inefficient implementation of your `asyncComponent` instances.  Therefore we introduced a new configuration object property for the `asyncComponent` factory, called `ssrMode`, which provides you with a mechanism to optimise the configuration of your async Component instances.  Please see the API documentation for more information.
+As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asyncComponent-resolution-process) section above it is possible to have an inefficient implementation of your `asyncComponent` instances.  Therefore we introduced a new configuration object property for the `asyncComponent` factory, called `serverMode`, which provides you with a mechanism to optimise the configuration of your async Component instances.  Please see the API documentation for more information.
 
 Understand your own applications needs and use the options appropriately . I personally recommend using mostly "defer" and a bit of "boundary". Try to see code splitting as allowing you to server side render an application shell to give the user perceived performance. Of course there will be requirements otherwise (SEO), but try to isolate these components and use a "boundary" as soon as you feel you can.
 

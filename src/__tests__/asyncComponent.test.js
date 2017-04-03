@@ -5,16 +5,6 @@ import { mount } from 'enzyme'
 import asyncComponent from '../asyncComponent'
 
 describe('asyncComponent', () => {
-  const contextStub = {
-    asyncComponents: {
-      getNextId: () => 1,
-      registerComponent: () => undefined,
-      getComponent: () => undefined,
-      registerError: () => undefined,
-      getError: () => undefined,
-    },
-  }
-
   it('should handle unmounting ensuring that resolved promises do not call setState', () => {
     const resolveDelay = 10
     const Bob = asyncComponent({
@@ -23,11 +13,12 @@ describe('asyncComponent', () => {
           setTimeout(() => resolve(() => <div>bob</div>), resolveDelay)),
     })
     const setStateSpy = sinon.spy(Bob.prototype, 'setState')
-    const renderWrapper = mount(<Bob />, { context: contextStub })
-    expect(setStateSpy.callCount).toEqual(0)
+    const renderWrapper = mount(<Bob />)
+    // Should have 1 initial setState call for mounting
+    expect(setStateSpy.callCount).toEqual(1)
     renderWrapper.unmount()
     return new Promise(resolve =>
-      setTimeout(resolve, resolveDelay + 2)).then(() =>
-      expect(setStateSpy.callCount).toEqual(0))
+      setTimeout(resolve, resolveDelay + 10)).then(() =>
+      expect(setStateSpy.callCount).toEqual(1))
   })
 })

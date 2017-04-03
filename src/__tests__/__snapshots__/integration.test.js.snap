@@ -1,12 +1,80 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div>DeferredAsyncBob Loading</div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div><div>This always errors</div></div></div>"`;
+exports[`integration tests browser rendering renders the ErrorComponent 1`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent />
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent>
+    <ErrorComponent
+      error={[Error: An error occurred]}
+    >
+      <div>
+        An error occurred
+      </div>
+    </ErrorComponent>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering renders the LoadingComponent 1`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent>
+    <LoadingComponent>
+      <div>
+        Loading...
+      </div>
+    </LoadingComponent>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div>DeferredAsyncBob Loading</div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
 
 exports[`integration tests render server and client 2`] = `
 Object {
-  "errors": Object {
-    "6": "This always errors",
-  },
   "resolved": Object {
     "1": true,
     "2": true,
@@ -19,17 +87,13 @@ exports[`integration tests render server and client 3`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getComponent": [Function],
-      "getError": [Function],
       "getNextId": [Function],
       "getState": [Function],
-      "registerComponent": [Function],
-      "registerError": [Function],
+      "resolved": [Function],
     }
   }
   rehydrateState={
     Object {
-      "errors": Object {},
       "resolved": Object {},
     }
   }
@@ -64,15 +128,7 @@ exports[`integration tests render server and client 3`] = `
               </div>
             </Bob>
           </BoundaryAsyncBob>
-          <ErrorAsyncComponent>
-            <ErrorComponent
-              message="This always errors"
-            >
-              <div>
-                This always errors
-              </div>
-            </ErrorComponent>
-          </ErrorAsyncComponent>
+          <ErrorAsyncComponent />
         </div>
       </div>
     </Bob>
@@ -84,17 +140,13 @@ exports[`integration tests render server and client 4`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getComponent": [Function],
-      "getError": [Function],
       "getNextId": [Function],
       "getState": [Function],
-      "registerComponent": [Function],
-      "registerError": [Function],
+      "resolved": [Function],
     }
   }
   rehydrateState={
     Object {
-      "errors": Object {},
       "resolved": Object {},
     }
   }
@@ -141,7 +193,7 @@ exports[`integration tests render server and client 4`] = `
           </BoundaryAsyncBob>
           <ErrorAsyncComponent>
             <ErrorComponent
-              message="This always errors"
+              error={[Error: This always errors]}
             >
               <div>
                 This always errors
@@ -155,62 +207,4 @@ exports[`integration tests render server and client 4`] = `
 </AsyncComponentProvider>
 `;
 
-exports[`integration tests renders the ErrorComponent 1`] = `
-<AsyncComponentProvider
-  asyncContext={
-    Object {
-      "getComponent": [Function],
-      "getError": [Function],
-      "getNextId": [Function],
-      "getState": [Function],
-      "registerComponent": [Function],
-      "registerError": [Function],
-    }
-  }
-  rehydrateState={
-    Object {
-      "errors": Object {},
-      "resolved": Object {},
-    }
-  }
->
-  <AsyncComponent>
-    <ErrorComponent
-      message="An error occurred"
-    >
-      <div>
-        An error occurred
-      </div>
-    </ErrorComponent>
-  </AsyncComponent>
-</AsyncComponentProvider>
-`;
-
-exports[`integration tests renders the LoadingComponent 1`] = `
-<AsyncComponentProvider
-  asyncContext={
-    Object {
-      "getComponent": [Function],
-      "getError": [Function],
-      "getNextId": [Function],
-      "getState": [Function],
-      "registerComponent": [Function],
-      "registerError": [Function],
-    }
-  }
-  rehydrateState={
-    Object {
-      "errors": Object {},
-      "resolved": Object {},
-    }
-  }
->
-  <AsyncComponent>
-    <LoadingComponent>
-      <div>
-        Loading...
-      </div>
-    </LoadingComponent>
-  </AsyncComponent>
-</AsyncComponentProvider>
-`;
+exports[`integration tests server rendering should not render errors 1`] = `""`;
