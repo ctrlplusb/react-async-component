@@ -11,11 +11,6 @@ npm-debug.log
 # Jest
 coverage
 
-# Build output
-umd
-commonjs
-build
-
 # Flow
 flow-coverage
 flow-typed

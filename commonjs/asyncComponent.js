@@ -1,0 +1,258 @@
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var validSSRModes = ['render', 'defer', 'boundary'];
+
+function asyncComponent(args) {
+  var name = args.name,
+      resolve = args.resolve,
+      _args$autoResolveES = args.autoResolveES2015Default,
+      autoResolveES2015Default = _args$autoResolveES === undefined ? true : _args$autoResolveES,
+      _args$serverMode = args.serverMode,
+      serverMode = _args$serverMode === undefined ? 'render' : _args$serverMode,
+      LoadingComponent = args.LoadingComponent,
+      ErrorComponent = args.ErrorComponent;
+
+
+  if (validSSRModes.indexOf(serverMode) === -1) {
+    throw new Error('Invalid serverMode provided to asyncComponent');
+  }
+
+  var env = typeof window === 'undefined' ? 'node' : 'browser';
+
+  var sharedState = {
+    // A unique id we will assign to our async component which is especially
+    // useful when rehydrating server side rendered async components.
+    id: null,
+    // This will be use to hold the resolved module allowing sharing across
+    // instances.
+    // NOTE: When using React Hot Loader this reference will become null.
+    module: null,
+    // If an error occurred during a resolution it will be stored here.
+    error: null,
+    // Allows us to share the resolver promise across instances.
+    resolver: null
+  };
+
+  // Takes the given module and if it has a ".default" the ".default" will
+  // be returned. i.e. handy when you could be dealing with es6 imports.
+  var es6Resolve = function es6Resolve(x) {
+    return autoResolveES2015Default && x != null && (typeof x === 'function' || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object') && x.default ? x.default : x;
+  };
+
+  var getResolver = function getResolver() {
+    if (sharedState.resolver == null) {
+      try {
+        // Wrap whatever the user returns in Promise.resolve to ensure a Promise
+        // is always returned.
+        var resolver = resolve();
+        sharedState.resolver = Promise.resolve(resolver);
+      } catch (err) {
+        sharedState.resolver = Promise.reject(err);
+      }
+    }
+    return sharedState.resolver;
+  };
+
+  var AsyncComponent = function (_React$Component) {
+    _inherits(AsyncComponent, _React$Component);
+
+    function AsyncComponent(props, context) {
+      _classCallCheck(this, AsyncComponent);
+
+      // We have to set the id in the constructor because a RHL seems
+      // to recycle the module and therefore the id closure will be null.
+      // We can't put it in componentWillMount as RHL hot swaps the new code
+      // so the mount call will not happen (but the ctor does).
+      var _this = _possibleConstructorReturn(this, (AsyncComponent.__proto__ || Object.getPrototypeOf(AsyncComponent)).call(this, props, context));
+
+      if (_this.context.asyncComponents && !sharedState.id) {
+        sharedState.id = _this.context.asyncComponents.getNextId();
+      }
+      return _this;
+    }
+
+    _createClass(AsyncComponent, [{
+      key: 'getChildContext',
+      value: function getChildContext() {
+        if (!this.context.asyncComponents) {
+          return undefined;
+        }
+
+        return {
+          asyncComponentsAncestor: {
+            isBoundary: serverMode === 'boundary'
+          }
+        };
+      }
+    }, {
+      key: 'componentWillMount',
+      value: function componentWillMount() {
+        this.setState({ module: sharedState.module });
+        if (sharedState.error) {
+          this.registerErrorState(sharedState.error);
+        }
+      }
+    }, {
+      key: 'componentDidMount',
+      value: function componentDidMount() {
+        if (!this.state.module) {
+          this.resolveModule();
+        }
+      }
+
+      // @see react-async-bootstrapper
+
+    }, {
+      key: 'asyncBootstrap',
+      value: function asyncBootstrap() {
+        var _this2 = this;
+
+        var _context = this.context,
+            asyncComponents = _context.asyncComponents,
+            asyncComponentsAncestor = _context.asyncComponentsAncestor;
+        var shouldRehydrate = asyncComponents.shouldRehydrate;
+
+
+        var doResolve = function doResolve() {
+          return _this2.resolveModule().then(function (module) {
+            return module !== undefined;
+          });
+        };
+
+        if (typeof window !== 'undefined') {
+          // BROWSER BASED LOGIC
+          return shouldRehydrate(sharedState.id) ? doResolve() : false;
+        }
+
+        // SERVER BASED LOGIC
+        var isChildOfBoundary = asyncComponentsAncestor && asyncComponentsAncestor.isBoundary;
+        return serverMode === 'defer' || isChildOfBoundary ? false : doResolve();
+      }
+    }, {
+      key: 'resolveModule',
+      value: function resolveModule() {
+        var _this3 = this;
+
+        this.resolving = true;
+
+        return getResolver().then(function (module) {
+          if (_this3.unmounted) {
+            return undefined;
+          }
+          if (_this3.context.asyncComponents) {
+            _this3.context.asyncComponents.resolved(sharedState.id);
+          }
+          sharedState.module = module;
+          if (env === 'browser') {
+            _this3.setState({ module: module });
+          }
+          _this3.resolving = false;
+          return module;
+        }).catch(function (error) {
+          if (_this3.unmounted) {
+            return undefined;
+          }
+          if (env === 'node' || !ErrorComponent) {
+            // We will at least log the error so that user isn't completely
+            // unaware of an error occurring.
+            // eslint-disable-next-line no-console
+            // console.warn('Failed to resolve asyncComponent')
+            // eslint-disable-next-line no-console
+            // console.warn(error)
+          }
+          sharedState.error = error;
+          _this3.registerErrorState(error);
+          _this3.resolving = false;
+          return undefined;
+        });
+      }
+    }, {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        this.unmounted = true;
+      }
+    }, {
+      key: 'registerErrorState',
+      value: function registerErrorState(error) {
+        var _this4 = this;
+
+        if (env === 'browser') {
+          setTimeout(function () {
+            if (!_this4.unmounted) {
+              _this4.setState({ error: error });
+            }
+          }, 16);
+        }
+      }
+    }, {
+      key: 'render',
+      value: function render() {
+        var _state = this.state,
+            module = _state.module,
+            error = _state.error;
+
+        // This is as workaround for React Hot Loader support.  When using
+        // RHL the local component reference will be killed by any change
+        // to the component, this will be our signal to know that we need to
+        // re-resolve it.
+
+        if (sharedState.module == null && !this.resolving && typeof window !== 'undefined') {
+          this.resolveModule();
+        }
+
+        if (error) {
+          return ErrorComponent ? _react2.default.createElement(ErrorComponent, { error: error }) : null;
+        }
+
+        var Component = es6Resolve(module);
+        // eslint-disable-next-line no-nested-ternary
+        return Component ? _react2.default.createElement(Component, this.props) : LoadingComponent ? _react2.default.createElement(LoadingComponent, this.props) : null;
+      }
+    }]);
+
+    return AsyncComponent;
+  }(_react2.default.Component);
+
+  AsyncComponent.childContextTypes = {
+    asyncComponentsAncestor: _react2.default.PropTypes.shape({
+      isBoundary: _react2.default.PropTypes.bool
+    })
+  };
+
+  AsyncComponent.contextTypes = {
+    asyncComponentsAncestor: _react2.default.PropTypes.shape({
+      isBoundary: _react2.default.PropTypes.bool
+    }),
+    asyncComponents: _react2.default.PropTypes.shape({
+      getNextId: _react2.default.PropTypes.func.isRequired,
+      resolved: _react2.default.PropTypes.func.isRequired,
+      shouldRehydrate: _react2.default.PropTypes.func.isRequired
+    })
+  };
+
+  AsyncComponent.displayName = name || 'AsyncComponent';
+
+  return AsyncComponent;
+}
+
+exports.default = asyncComponent;
