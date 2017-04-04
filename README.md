@@ -10,13 +10,13 @@ Resolve components asynchronously, with support for code splitting and advanced 
 [![Codecov](https://img.shields.io/codecov/c/github/ctrlplusb/react-async-component.svg?style=flat-square)](https://codecov.io/github/ctrlplusb/react-async-component)
 
 ```jsx
-const Product = asyncComponent({
-  resolve: () => System.import('./AsyncProduct'),
+const AsyncProduct = asyncComponent({
+  resolve: () => System.import('./Product'),
   LoadingComponent: ({ productId }) => <div>Loading {productId}</div>, // Optional
   ErrorComponent: ({ error }) => <div>{error.message}</div> // Optional
 });
 
-<Product productId={1} /> // 🚀
+<AsyncProduct productId={1} /> // 🚀
 ```
 
 ## TOCs
@@ -45,59 +45,49 @@ This library does not require that you use either Webpack or Babel.  Instead it 
 
 ## Usage
 
-When creating your asynchronous components I recommend that you use the following folder/file structure:
-
-```
- |- components
-    |- Product
-       |- index.js
-       |- AsyncProduct.js
-```
-
-__`./components/Product/index.js`__:
-
-```js
-import { asyncComponent } from 'react-async-component';
-
-// Create an async component👇
-export default asyncComponent({
-  resolve: () => System.import('./AsyncProduct')
-                 // That resolves to 👆
-});
-```
-
-__`./components/Product/AsyncProduct.js`__
+Imagine you had the following `Product` component:
 
 ```jsx
-import React from 'react';
-
-export default function Product({ productId }) {
-  return <div>You are viewing product {productId}</div>;
+export default function Product({ id }) {
+  return <div>Product {id}</div>
 }
 ```
 
-Now, you can simply import `Product` anywhere in your application and use it exactly as you would any other component.
+To make this asynchronous create a new file that wraps it with `asyncComponent`, like so:
+
+```jsx
+import { asyncComponent } from 'react-async-component';
+
+export default asyncComponent({
+  resolve: () => System.import('./Product')
+});
+```
+
+I recommend that you use the following folder/file structure:
+
+```
+ |- components
+    |- AsyncProduct
+       |- index.js   // contains asyncComponent
+       |- Product.js // The component you want resolved asynchronously
+```
+
+Now, you can simply import `AsyncProduct` anywhere in your application and use it exactly as you would any other component.
 
 For example:
 
 ```jsx
-import React from 'react';
-import Product from './components/Product';
+import AsyncProduct from './components/AsyncProduct'
 
-const MyApp = () => (
-  <div>
-    <h1>Welcome to My App</h1>
-    // 👇 Use as "normal"
-    <Product productId={1337} />
-  </div>
-);
-
-export default MyApp;
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to My App</h1>
+      <AsyncProduct id={1337} />
+    </div>
+  )
+}
 ```
-
-🚀
-
-You have a lot more power than is shown here. Be sure to check out the [`API`](#api) for more.
 
 ## API
 
@@ -117,7 +107,7 @@ The asynchronous component factory. Config goes in, an asynchronous component co
       - __`'render'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
       be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `serverMode` value that was associated with them.
       - __`'defer'`__ - Your asynchronous component will _not_ be rendered on the server, instead deferring rendering to the client/browser.
-      - __`'boundary'`__ - Your asynchronous component will be resolved and rendered on the server. However, if it has a nested asynchronous component instance within it's children that component will be ignored and treated as being deferred for rendering in the client/browser instead.
+      - __`'boundary'`__ - Your asynchronous component will be resolved and rendered on the server. However, if it has a nested asynchronous component instance within it's children that component will be ignored and treated as being deferred for rendering in the client/browser instead (it's serverMode will be ignored).
     We highly recommend that you consider using `defer` as much as you can.
 
 #### Returns
@@ -130,40 +120,35 @@ A React Component.
 
 ```jsx
 export default asyncComponent({
-  resolve: () => import('./AsyncProduct'),
-  LoadingComponent: ({ productId }) => <div>Loading product {productId}</div>
-});
+  resolve: () => import('./Product'),
+  LoadingComponent: ({ id }) => <div>Loading product {id}</div>
+})
 ```
 
 ##### `ErrorComponent`
 
 ```jsx
 export default asyncComponent({
-  resolve: () => import('./AsyncProduct'),
-  LoadingComponent: ({ productId }) => <div>Loading product {productId}</div>
-});
+  resolve: () => import('./Product'),
+  ErrorComponent: ({ error }) => <div>{error.message}</div>
+})
 ```
 
-##### Webpack `require.ensure` Code Splitting API
+##### Named chunks
 
 ```jsx
 export default asyncComponent({
   resolve: () => new Promise(resolve =>
-    require.ensure([], (require) => {
-      resolve(require('./components/Product'));
-    });
+    // Webpack's code splitting API w/naming
+    require.ensure(
+      [],
+      (require) => {
+        resolve(require('./Product'));
+      },
+      'ChunkName'
+    )
   )
-});
-```
-
-##### Webpack `import` / `System.import` Code Splitting API
-
-Note: `System.import` is considered deprecated and will be replaced with `import`, but for now they can be used interchangeably (you may need a Babel plugin for the `import` syntax).
-
-```jsx
-export default asyncComponent({
-  resolve: () => System.import('./components/Product')
-});
+})
 ```
 
 ### `<AsyncComponentProvider />`
@@ -177,7 +162,7 @@ Currently only useful when building server side rendering applications. Wraps yo
 
 ### `createAsyncContext()`
 
-Creates an asynchronous context that can be used by the `<AsyncComponentProvider />`.  The context is an object that exposes the following properties to you:
+Creates an asynchronous context for use by the `<AsyncComponentProvider />`.  The context is an object that exposes the following properties to you:
 
   - `getState()` (_() => Object_) : A function that when executed gets the current state of the `<AsyncComponentProvider />`. i.e. which async components resolved / failed to resolve etc.  This is especially useful for server sider rendering applications where you need to provide the server rendered state to the client instance in order to ensure the required asynchronous component instances are resolved prior to render.
 
@@ -200,32 +185,33 @@ npm install react-async-bootstrapper
 Now, let's configure the "server" side.  You could use a similar `express` (or other HTTP server) middleware configuration:
 
 ```jsx
-import React from 'react';
-import { AsyncComponentProvider, createAsyncContext } from 'react-async-component'; // 👈
-import asyncBootstrapper from 'react-async-bootstrapper'; // 👈
-import { renderToString } from 'react-dom/server';
-import serialize from 'serialize-javascript';
-import MyApp from './shared/components/MyApp';
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+import { AsyncComponentProvider, createAsyncContext } from 'react-async-component' // 👈
+import asyncBootstrapper from 'react-async-bootstrapper' // 👈
+import serialize from 'serialize-javascript'
+
+import MyApp from './shared/components/MyApp'
 
 export default function expressMiddleware(req, res, next) {
   //    Create the async context for our provider, this grants
   // 👇 us the ability to tap into the state to send back to the client.
-  const asyncContext = createAsyncContext();
+  const asyncContext = createAsyncContext()
 
   // 👇 Ensure you wrap your application with the provider.
   const app = (
     <AsyncComponentProvider asyncContext={asyncContext}>
       <MyApp />
     </AsyncComponentProvider>
-  );
+  )
 
   // 👇 This makes sure we "bootstrap" resolve any async components prior to rendering
   asyncBootstrapper(app).then(() => {
-      // It's now safe to render 👇
-      const appString = renderToString(app);
+      // We can now render our app 👇
+      const appString = renderToString(app)
 
       // 👇 Get the async component state.
-      const asyncState = asyncContext.getState();
+      const asyncState = asyncContext.getState()
 
       const html = `
         <html>
@@ -239,27 +225,28 @@ export default function expressMiddleware(req, res, next) {
               window.ASYNC_COMPONENTS_STATE = ${serialize(asyncState)}
             </script>
           </body>
-        </html>`;
-      res.send(html);
-    });
+        </html>`
+
+      res.send(html)
+    })
 }
 ```
 
 Then on the "client" side you would do the following:
 
 ```jsx
-import React from 'react';
-import { render } from 'react-dom';
-import { AsyncComponentProvider, createAsyncContext } from 'react-async-component'; // 👈
-import asyncBootstrapper from 'react-async-bootstrapper'; // 👈
-import MyApp from './components/MyApp';
+import React from 'react'
+import { render } from 'react-dom'
+import { AsyncComponentProvider, createAsyncContext } from 'react-async-component' // 👈
+import asyncBootstrapper from 'react-async-bootstrapper' // 👈
+import MyApp from './components/MyApp'
 
 // 👇 Get any "rehydrate" state sent back by the server
-const rehydrateState = window.ASYNC_COMPONENTS_STATE;
+const rehydrateState = window.ASYNC_COMPONENTS_STATE
 
 //   Create an async context so that state can be tracked
 // 👇 across the bootstrapping and rendering process.
-const asyncContext = createAsyncContext();
+const asyncContext = createAsyncContext()
 
 //   Ensure you wrap your application with the provider,
 // 👇 and pass in the rehydrateState.
@@ -270,14 +257,14 @@ const app = (
   >
     <MyApp />
   </AsyncComponentProvider>
-);
+)
 
 //   We run the bootstrapper again, which in this context will
 //   ensure that all components specified by the rehydrateState
 // 👇 will be resolved prior to render.
 asyncBootstrapper(app).then(() => {
   // 👇 Render the app
-  render(app, document.getElementById('app'));
+  render(app, document.getElementById('app'))
 });
 ```
 
