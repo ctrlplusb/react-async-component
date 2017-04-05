@@ -103,6 +103,7 @@ The asynchronous component factory. Config goes in, an asynchronous component co
     - `ErrorComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed if any error occurred whilst trying to resolve your component. All props will be passed to it as well as an `error` prop containing the `Error`.
     - `name` (_String_, Optional, default: `'AsyncComponent'`) : Use this if you would like to name the created async Component, which helps when firing up the React Dev Tools for example.
     - `autoResolveES2015Default` (_Boolean_, Optional, default: `true`) : Especially useful if you are resolving ES2015 modules. The resolved module will be checked to see if it has a `.default` and if so then the value attached to `.default` will be used. So easy to forget to do that. 😀
+    - `env` (_String_, Optional) : Provide either `'node'` or `'browser'` so you can write your own environment detection. Especially useful when using PhantomJS or ElectronJS to prerender the React App.
     - `serverMode` (_Boolean_, Optional, default: `'resolve'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
       - __`'resolve'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
       be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `serverMode` value that was associated with them.

@@ -39,7 +39,7 @@ function asyncComponent(config) {
     throw new Error('Invalid serverMode provided to asyncComponent');
   }
 
-  var env = typeof window === 'undefined' ? 'node' : 'browser';
+  var env = ['node', 'browser'].indexOf(config.env) > -1 ? config.env : typeof window === 'undefined' ? 'node' : 'browser';
 
   var sharedState = {
     // A unique id we will assign to our async component which is especially
