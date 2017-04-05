@@ -174,8 +174,6 @@ This library has been designed for interoperability with [`react-async-bootstrap
 
 `react-async-bootstrapper` allows us to do a "pre-render parse" of our React Element tree and execute an `asyncBootstrap` function that are attached to a components within the tree. In our case the "bootstrapping" process involves the resolution of asynchronous components so that they can be rendered "synchronously" by the server.  We use this 3rd party library as it allows interoperability with other libraries which also require a "bootstrapping" process (e.g. data preloading as supported by [`react-jobs`](https://github.com/ctrlplusb/react-jobs)).
 
-> NOTE: I have not updated `react-jobs` to make use of `react-async-bootstrapper` as of yet.
-
 Firstly, install `react-async-bootstrapper`:
 
 ```
