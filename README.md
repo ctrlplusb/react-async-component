@@ -1,4 +1,4 @@
-> ___NOTE:___ This is an alpha release of the library.  The previous "stable" version is on the `0.x.x` branch.
+> ___NOTE:___ This is an beta release of the library.  I am using it in production myself however it hasn't been used for a considerable length of time.  There _may_ be API changes, however, I expect them to be absolutely minimal.
 
 # react-async-component 📬
 
