@@ -468,6 +468,10 @@ babel-plugin-syntax-async-generators@^6.5.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-async-generators/-/babel-plugin-syntax-async-generators-6.13.0.tgz#6bc963ebb16eccbae6b92b596eb7f35c342a8b9a"
 
+babel-plugin-syntax-class-properties@^6.8.0:
+  version "6.13.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-syntax-class-properties/-/babel-plugin-syntax-class-properties-6.13.0.tgz#d7eb23b79a317f8543962c505b827c7d6cac27de"
+
 babel-plugin-syntax-exponentiation-operator@^6.8.0:
   version "6.13.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-exponentiation-operator/-/babel-plugin-syntax-exponentiation-operator-6.13.0.tgz#9ee7e8337290da95288201a6a57f4170317830de"
@@ -503,6 +507,15 @@ babel-plugin-transform-async-to-generator@^6.22.0:
     babel-helper-remap-async-to-generator "^6.22.0"
     babel-plugin-syntax-async-functions "^6.8.0"
     babel-runtime "^6.22.0"
+
+babel-plugin-transform-class-properties@6.23.0:
+  version "6.23.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-class-properties/-/babel-plugin-transform-class-properties-6.23.0.tgz#187b747ee404399013563c993db038f34754ac3b"
+  dependencies:
+    babel-helper-function-name "^6.23.0"
+    babel-plugin-syntax-class-properties "^6.8.0"
+    babel-runtime "^6.22.0"
+    babel-template "^6.23.0"
 
 babel-plugin-transform-es2015-arrow-functions@^6.22.0:
   version "6.22.0"
@@ -3906,11 +3919,11 @@ react-addons-test-utils@15.4.2:
     fbjs "^0.8.4"
     object-assign "^4.1.0"
 
-react-async-bootstrapper@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-async-bootstrapper/-/react-async-bootstrapper-1.0.0.tgz#a04d4131abba2b6730432484c7385e35af3f6a2b"
+react-async-bootstrapper@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-async-bootstrapper/-/react-async-bootstrapper-1.0.1.tgz#8a7ce80547ee274d2dd9c355329029c3f0cf1027"
   dependencies:
-    react-tree-walker "^2.0.0"
+    react-tree-walker "^2.0.1"
 
 react-dom@15.4.2:
   version "15.4.2"
@@ -3920,9 +3933,9 @@ react-dom@15.4.2:
     loose-envify "^1.1.0"
     object-assign "^4.1.0"
 
-react-tree-walker@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-tree-walker/-/react-tree-walker-2.0.0.tgz#7eb739b6d45bf5260d1141dd2bfbab680e5d7276"
+react-tree-walker@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-tree-walker/-/react-tree-walker-2.0.1.tgz#42141f1e4564f6ab0adbdf6054b221092338cfd1"
 
 react@15.4.2:
   version "15.4.2"

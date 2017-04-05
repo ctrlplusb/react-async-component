@@ -1,16 +1,16 @@
 import React from 'react'
 
-const validSSRModes = ['render', 'defer', 'boundary']
+const validSSRModes = ['resolve', 'defer', 'boundary']
 
-function asyncComponent(args) {
+function asyncComponent(config) {
   const {
     name,
     resolve,
     autoResolveES2015Default = true,
-    serverMode = 'render',
+    serverMode = 'resolve',
     LoadingComponent,
     ErrorComponent,
-  } = args
+  } = config
 
   if (validSSRModes.indexOf(serverMode) === -1) {
     throw new Error('Invalid serverMode provided to asyncComponent')
@@ -57,6 +57,25 @@ function asyncComponent(args) {
   }
 
   class AsyncComponent extends React.Component {
+    static displayName = name || 'AsyncComponent';
+
+    static contextTypes = {
+      asyncComponentsAncestor: React.PropTypes.shape({
+        isBoundary: React.PropTypes.bool,
+      }),
+      asyncComponents: React.PropTypes.shape({
+        getNextId: React.PropTypes.func.isRequired,
+        resolved: React.PropTypes.func.isRequired,
+        shouldRehydrate: React.PropTypes.func.isRequired,
+      }),
+    };
+
+    static childContextTypes = {
+      asyncComponentsAncestor: React.PropTypes.shape({
+        isBoundary: React.PropTypes.bool,
+      }),
+    };
+
     constructor(props, context) {
       super(props, context)
 
@@ -67,6 +86,24 @@ function asyncComponent(args) {
       if (this.context.asyncComponents && !sharedState.id) {
         sharedState.id = this.context.asyncComponents.getNextId()
       }
+    }
+
+    // @see react-async-bootstrapper
+    asyncBootstrap() {
+      const { asyncComponents, asyncComponentsAncestor } = this.context
+      const { shouldRehydrate } = asyncComponents
+
+      const doResolve = () =>
+        this.resolveModule().then(module => module !== undefined)
+
+      if (env === 'browser') {
+        return shouldRehydrate(sharedState.id) ? doResolve() : false
+      }
+
+      // node
+      const isChildOfBoundary = asyncComponentsAncestor &&
+        asyncComponentsAncestor.isBoundary
+      return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
     getChildContext() {
@@ -94,25 +131,6 @@ function asyncComponent(args) {
       }
     }
 
-    // @see react-async-bootstrapper
-    asyncBootstrap() {
-      const { asyncComponents, asyncComponentsAncestor } = this.context
-      const { shouldRehydrate } = asyncComponents
-
-      const doResolve = () =>
-        this.resolveModule().then(module => module !== undefined)
-
-      if (typeof window !== 'undefined') {
-        // BROWSER BASED LOGIC
-        return shouldRehydrate(sharedState.id) ? doResolve() : false
-      }
-
-      // SERVER BASED LOGIC
-      const isChildOfBoundary = asyncComponentsAncestor &&
-        asyncComponentsAncestor.isBoundary
-      return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
-    }
-
     resolveModule() {
       this.resolving = true
 
@@ -135,13 +153,13 @@ function asyncComponent(args) {
           if (this.unmounted) {
             return undefined
           }
-          if (env === 'node' || !ErrorComponent) {
+          if (env === 'node' || (env === 'browser' && !ErrorComponent)) {
             // We will at least log the error so that user isn't completely
             // unaware of an error occurring.
             // eslint-disable-next-line no-console
-            // console.warn('Failed to resolve asyncComponent')
+            console.warn('Failed to resolve asyncComponent')
             // eslint-disable-next-line no-console
-            // console.warn(error)
+            console.warn(error)
           }
           sharedState.error = error
           this.registerErrorState(error)
@@ -183,7 +201,9 @@ function asyncComponent(args) {
       }
 
       if (error) {
-        return ErrorComponent ? <ErrorComponent error={error} /> : null
+        return ErrorComponent
+          ? <ErrorComponent {...this.props} error={error} />
+          : null
       }
 
       const Component = es6Resolve(module)
@@ -193,25 +213,6 @@ function asyncComponent(args) {
         : LoadingComponent ? <LoadingComponent {...this.props} /> : null
     }
   }
-
-  AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: React.PropTypes.shape({
-      isBoundary: React.PropTypes.bool,
-    }),
-  }
-
-  AsyncComponent.contextTypes = {
-    asyncComponentsAncestor: React.PropTypes.shape({
-      isBoundary: React.PropTypes.bool,
-    }),
-    asyncComponents: React.PropTypes.shape({
-      getNextId: React.PropTypes.func.isRequired,
-      resolved: React.PropTypes.func.isRequired,
-      shouldRehydrate: React.PropTypes.func.isRequired,
-    }),
-  }
-
-  AsyncComponent.displayName = name || 'AsyncComponent'
 
   return AsyncComponent
 }

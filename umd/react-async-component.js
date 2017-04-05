@@ -199,14 +199,12 @@ AsyncComponentProvider.propTypes = {
     resolved: _react2.default.PropTypes.object
   })
 };
-
 AsyncComponentProvider.defaultProps = {
   asyncContext: undefined,
   rehydrateState: {
     resolved: {}
   }
 };
-
 AsyncComponentProvider.childContextTypes = {
   asyncComponents: _react2.default.PropTypes.shape({
     getNextId: _react2.default.PropTypes.func.isRequired,
@@ -214,7 +212,6 @@ AsyncComponentProvider.childContextTypes = {
     shouldRehydrate: _react2.default.PropTypes.func.isRequired
   }).isRequired
 };
-
 exports.default = AsyncComponentProvider;
 
 /***/ }),
@@ -227,6 +224,8 @@ exports.default = AsyncComponentProvider;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -244,17 +243,17 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var validSSRModes = ['render', 'defer', 'boundary'];
+var validSSRModes = ['resolve', 'defer', 'boundary'];
 
-function asyncComponent(args) {
-  var name = args.name,
-      resolve = args.resolve,
-      _args$autoResolveES = args.autoResolveES2015Default,
-      autoResolveES2015Default = _args$autoResolveES === undefined ? true : _args$autoResolveES,
-      _args$serverMode = args.serverMode,
-      serverMode = _args$serverMode === undefined ? 'render' : _args$serverMode,
-      LoadingComponent = args.LoadingComponent,
-      ErrorComponent = args.ErrorComponent;
+function asyncComponent(config) {
+  var name = config.name,
+      resolve = config.resolve,
+      _config$autoResolveES = config.autoResolveES2015Default,
+      autoResolveES2015Default = _config$autoResolveES === undefined ? true : _config$autoResolveES,
+      _config$serverMode = config.serverMode,
+      serverMode = _config$serverMode === undefined ? 'resolve' : _config$serverMode,
+      LoadingComponent = config.LoadingComponent,
+      ErrorComponent = config.ErrorComponent;
 
 
   if (validSSRModes.indexOf(serverMode) === -1) {
@@ -315,7 +314,35 @@ function asyncComponent(args) {
       return _this;
     }
 
+    // @see react-async-bootstrapper
+
+
     _createClass(AsyncComponent, [{
+      key: 'asyncBootstrap',
+      value: function asyncBootstrap() {
+        var _this2 = this;
+
+        var _context = this.context,
+            asyncComponents = _context.asyncComponents,
+            asyncComponentsAncestor = _context.asyncComponentsAncestor;
+        var shouldRehydrate = asyncComponents.shouldRehydrate;
+
+
+        var doResolve = function doResolve() {
+          return _this2.resolveModule().then(function (module) {
+            return module !== undefined;
+          });
+        };
+
+        if (env === 'browser') {
+          return shouldRehydrate(sharedState.id) ? doResolve() : false;
+        }
+
+        // node
+        var isChildOfBoundary = asyncComponentsAncestor && asyncComponentsAncestor.isBoundary;
+        return serverMode === 'defer' || isChildOfBoundary ? false : doResolve();
+      }
+    }, {
       key: 'getChildContext',
       value: function getChildContext() {
         if (!this.context.asyncComponents) {
@@ -343,35 +370,6 @@ function asyncComponent(args) {
           this.resolveModule();
         }
       }
-
-      // @see react-async-bootstrapper
-
-    }, {
-      key: 'asyncBootstrap',
-      value: function asyncBootstrap() {
-        var _this2 = this;
-
-        var _context = this.context,
-            asyncComponents = _context.asyncComponents,
-            asyncComponentsAncestor = _context.asyncComponentsAncestor;
-        var shouldRehydrate = asyncComponents.shouldRehydrate;
-
-
-        var doResolve = function doResolve() {
-          return _this2.resolveModule().then(function (module) {
-            return module !== undefined;
-          });
-        };
-
-        if (typeof window !== 'undefined') {
-          // BROWSER BASED LOGIC
-          return shouldRehydrate(sharedState.id) ? doResolve() : false;
-        }
-
-        // SERVER BASED LOGIC
-        var isChildOfBoundary = asyncComponentsAncestor && asyncComponentsAncestor.isBoundary;
-        return serverMode === 'defer' || isChildOfBoundary ? false : doResolve();
-      }
     }, {
       key: 'resolveModule',
       value: function resolveModule() {
@@ -396,13 +394,13 @@ function asyncComponent(args) {
           if (_this3.unmounted) {
             return undefined;
           }
-          if (env === 'node' || !ErrorComponent) {
+          if (env === 'node' || env === 'browser' && !ErrorComponent) {
             // We will at least log the error so that user isn't completely
             // unaware of an error occurring.
             // eslint-disable-next-line no-console
-            // console.warn('Failed to resolve asyncComponent')
+            console.warn('Failed to resolve asyncComponent');
             // eslint-disable-next-line no-console
-            // console.warn(error)
+            console.warn(error);
           }
           sharedState.error = error;
           _this3.registerErrorState(error);
@@ -445,7 +443,7 @@ function asyncComponent(args) {
         }
 
         if (error) {
-          return ErrorComponent ? _react2.default.createElement(ErrorComponent, { error: error }) : null;
+          return ErrorComponent ? _react2.default.createElement(ErrorComponent, _extends({}, this.props, { error: error })) : null;
         }
 
         var Component = es6Resolve(module);
@@ -457,12 +455,7 @@ function asyncComponent(args) {
     return AsyncComponent;
   }(_react2.default.Component);
 
-  AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: _react2.default.PropTypes.shape({
-      isBoundary: _react2.default.PropTypes.bool
-    })
-  };
-
+  AsyncComponent.displayName = name || 'AsyncComponent';
   AsyncComponent.contextTypes = {
     asyncComponentsAncestor: _react2.default.PropTypes.shape({
       isBoundary: _react2.default.PropTypes.bool
@@ -473,8 +466,12 @@ function asyncComponent(args) {
       shouldRehydrate: _react2.default.PropTypes.func.isRequired
     })
   };
+  AsyncComponent.childContextTypes = {
+    asyncComponentsAncestor: _react2.default.PropTypes.shape({
+      isBoundary: _react2.default.PropTypes.bool
+    })
+  };
 
-  AsyncComponent.displayName = name || 'AsyncComponent';
 
   return AsyncComponent;
 }

@@ -4,6 +4,9 @@
     "stage-3",
     "react"
   ],
+  "plugins": [
+    "transform-class-properties"
+  ],
   "env": {
     "commonjs": {
       "presets": [
@@ -11,6 +14,9 @@
         "stage-3",
         "react"
       ],
+      "plugins": [
+        "transform-class-properties"
+      ]
     },
     "umd": {
       "presets": [
@@ -18,6 +24,9 @@
         "stage-3",
         "react"
       ],
+      "plugins": [
+        "transform-class-properties"
+      ]
     }
   }
 }

@@ -100,11 +100,11 @@ The asynchronous component factory. Config goes in, an asynchronous component co
   - `config` (_Object_) : The configuration object for the async Component. It has the following properties available:
     - `resolve` (_() => Promise<Component>_) : A function that should return a `Promise` that will resolve the Component you wish to be async.
     - `LoadingComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed until your async Component is resolved. All props will be passed to it.
-    - `ErrorComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed if any error occurred whilst trying to resolve your component. All props will be passed to it as well as an `error` prop which is an object with a `message` and  `stack` property.
+    - `ErrorComponent` (_Component_, Optional, default: `null`) : A Component that will be displayed if any error occurred whilst trying to resolve your component. All props will be passed to it as well as an `error` prop containing the `Error`.
     - `name` (_String_, Optional, default: `'AsyncComponent'`) : Use this if you would like to name the created async Component, which helps when firing up the React Dev Tools for example.
     - `autoResolveES2015Default` (_Boolean_, Optional, default: `true`) : Especially useful if you are resolving ES2015 modules. The resolved module will be checked to see if it has a `.default` and if so then the value attached to `.default` will be used. So easy to forget to do that. 😀
-    - `serverMode` (_Boolean_, Optional, default: `'render'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
-      - __`'render'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
+    - `serverMode` (_Boolean_, Optional, default: `'resolve'`) : Only applies for server side rendering applications. Please see the documentation on server side rendering. The following values are allowed.
+      - __`'resolve'`__ - Your asynchronous component will be resolved and rendered on the server.  It's children will
       be checked to see if there are any nested asynchronous component instances, which will then be processed based on the `serverMode` value that was associated with them.
       - __`'defer'`__ - Your asynchronous component will _not_ be rendered on the server, instead deferring rendering to the client/browser.
       - __`'boundary'`__ - Your asynchronous component will be resolved and rendered on the server. However, if it has a nested asynchronous component instance within it's children that component will be ignored and treated as being deferred for rendering in the client/browser instead (it's serverMode will be ignored).
@@ -210,7 +210,7 @@ export default function expressMiddleware(req, res, next) {
       // We can now render our app 👇
       const appString = renderToString(app)
 
-      // 👇 Get the async component state.
+      // Get the async component state. 👇
       const asyncState = asyncContext.getState()
 
       const html = `
@@ -244,17 +244,10 @@ import MyApp from './components/MyApp'
 // 👇 Get any "rehydrate" state sent back by the server
 const rehydrateState = window.ASYNC_COMPONENTS_STATE
 
-//   Create an async context so that state can be tracked
-// 👇 across the bootstrapping and rendering process.
-const asyncContext = createAsyncContext()
-
 //   Ensure you wrap your application with the provider,
 // 👇 and pass in the rehydrateState.
 const app = (
-  <AsyncComponentProvider
-    rehydrateState={rehydrateState}
-    asyncContext={asyncContext}
-  >
+  <AsyncComponentProvider  rehydrateState={rehydrateState}>
     <MyApp />
   </AsyncComponentProvider>
 )
