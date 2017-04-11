@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("react"));
+		module.exports = factory(require("prop-types"), require("react"));
 	else if(typeof define === 'function' && define.amd)
-		define(["react"], factory);
+		define(["prop-types", "react"], factory);
 	else if(typeof exports === 'object')
-		exports["ReactAsyncComponent"] = factory(require("react"));
+		exports["ReactAsyncComponent"] = factory(require("prop-types"), require("react"));
 	else
-		root["ReactAsyncComponent"] = factory(root["React"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+		root["ReactAsyncComponent"] = factory(root["PropTypes"], root["React"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -119,6 +119,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -130,9 +136,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _createAsyncContext = __webpack_require__(0);
 
@@ -189,14 +199,14 @@ var AsyncComponentProvider = function (_React$Component) {
 }(_react2.default.Component);
 
 AsyncComponentProvider.propTypes = {
-  children: _react2.default.PropTypes.node.isRequired,
-  asyncContext: _react2.default.PropTypes.shape({
-    getNextId: _react2.default.PropTypes.func.isRequired,
-    resolved: _react2.default.PropTypes.func.isRequired,
-    getState: _react2.default.PropTypes.func.isRequired
+  children: _propTypes2.default.node.isRequired,
+  asyncContext: _propTypes2.default.shape({
+    getNextId: _propTypes2.default.func.isRequired,
+    resolved: _propTypes2.default.func.isRequired,
+    getState: _propTypes2.default.func.isRequired
   }),
-  rehydrateState: _react2.default.PropTypes.shape({
-    resolved: _react2.default.PropTypes.object
+  rehydrateState: _propTypes2.default.shape({
+    resolved: _propTypes2.default.object
   })
 };
 AsyncComponentProvider.defaultProps = {
@@ -206,16 +216,16 @@ AsyncComponentProvider.defaultProps = {
   }
 };
 AsyncComponentProvider.childContextTypes = {
-  asyncComponents: _react2.default.PropTypes.shape({
-    getNextId: _react2.default.PropTypes.func.isRequired,
-    resolved: _react2.default.PropTypes.func.isRequired,
-    shouldRehydrate: _react2.default.PropTypes.func.isRequired
+  asyncComponents: _propTypes2.default.shape({
+    getNextId: _propTypes2.default.func.isRequired,
+    resolved: _propTypes2.default.func.isRequired,
+    shouldRehydrate: _propTypes2.default.func.isRequired
   }).isRequired
 };
 exports.default = AsyncComponentProvider;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -231,9 +241,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -457,18 +471,18 @@ function asyncComponent(config) {
 
   AsyncComponent.displayName = name || 'AsyncComponent';
   AsyncComponent.contextTypes = {
-    asyncComponentsAncestor: _react2.default.PropTypes.shape({
-      isBoundary: _react2.default.PropTypes.bool
+    asyncComponentsAncestor: _propTypes2.default.shape({
+      isBoundary: _propTypes2.default.bool
     }),
-    asyncComponents: _react2.default.PropTypes.shape({
-      getNextId: _react2.default.PropTypes.func.isRequired,
-      resolved: _react2.default.PropTypes.func.isRequired,
-      shouldRehydrate: _react2.default.PropTypes.func.isRequired
+    asyncComponents: _propTypes2.default.shape({
+      getNextId: _propTypes2.default.func.isRequired,
+      resolved: _propTypes2.default.func.isRequired,
+      shouldRehydrate: _propTypes2.default.func.isRequired
     })
   };
   AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: _react2.default.PropTypes.shape({
-      isBoundary: _react2.default.PropTypes.bool
+    asyncComponentsAncestor: _propTypes2.default.shape({
+      isBoundary: _propTypes2.default.bool
     })
   };
 
@@ -479,7 +493,7 @@ function asyncComponent(config) {
 exports.default = asyncComponent;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -490,7 +504,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.asyncComponent = exports.createAsyncContext = exports.AsyncComponentProvider = undefined;
 
-var _AsyncComponentProvider = __webpack_require__(2);
+var _AsyncComponentProvider = __webpack_require__(3);
 
 var _AsyncComponentProvider2 = _interopRequireDefault(_AsyncComponentProvider);
 
@@ -498,7 +512,7 @@ var _createAsyncContext = __webpack_require__(0);
 
 var _createAsyncContext2 = _interopRequireDefault(_createAsyncContext);
 
-var _asyncComponent = __webpack_require__(3);
+var _asyncComponent = __webpack_require__(4);
 
 var _asyncComponent2 = _interopRequireDefault(_asyncComponent);
 

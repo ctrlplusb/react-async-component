@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 const validSSRModes = ['resolve', 'defer', 'boundary']
 
@@ -62,19 +63,19 @@ function asyncComponent(config) {
     static displayName = name || 'AsyncComponent';
 
     static contextTypes = {
-      asyncComponentsAncestor: React.PropTypes.shape({
-        isBoundary: React.PropTypes.bool,
+      asyncComponentsAncestor: PropTypes.shape({
+        isBoundary: PropTypes.bool,
       }),
-      asyncComponents: React.PropTypes.shape({
-        getNextId: React.PropTypes.func.isRequired,
-        resolved: React.PropTypes.func.isRequired,
-        shouldRehydrate: React.PropTypes.func.isRequired,
+      asyncComponents: PropTypes.shape({
+        getNextId: PropTypes.func.isRequired,
+        resolved: PropTypes.func.isRequired,
+        shouldRehydrate: PropTypes.func.isRequired,
       }),
     };
 
     static childContextTypes = {
-      asyncComponentsAncestor: React.PropTypes.shape({
-        isBoundary: React.PropTypes.bool,
+      asyncComponentsAncestor: PropTypes.shape({
+        isBoundary: PropTypes.bool,
       }),
     };
 

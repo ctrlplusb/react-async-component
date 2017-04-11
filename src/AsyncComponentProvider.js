@@ -1,17 +1,18 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import createAsyncContext from './createAsyncContext'
 
 class AsyncComponentProvider extends React.Component {
   static propTypes = {
-    children: React.PropTypes.node.isRequired,
-    asyncContext: React.PropTypes.shape({
-      getNextId: React.PropTypes.func.isRequired,
-      resolved: React.PropTypes.func.isRequired,
-      getState: React.PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired,
+    asyncContext: PropTypes.shape({
+      getNextId: PropTypes.func.isRequired,
+      resolved: PropTypes.func.isRequired,
+      getState: PropTypes.func.isRequired,
     }),
-    rehydrateState: React.PropTypes.shape({
-      resolved: React.PropTypes.object,
+    rehydrateState: PropTypes.shape({
+      resolved: PropTypes.object,
     }),
   };
 
@@ -23,10 +24,10 @@ class AsyncComponentProvider extends React.Component {
   };
 
   static childContextTypes = {
-    asyncComponents: React.PropTypes.shape({
-      getNextId: React.PropTypes.func.isRequired,
-      resolved: React.PropTypes.func.isRequired,
-      shouldRehydrate: React.PropTypes.func.isRequired,
+    asyncComponents: PropTypes.shape({
+      getNextId: PropTypes.func.isRequired,
+      resolved: PropTypes.func.isRequired,
+      shouldRehydrate: PropTypes.func.isRequired,
     }).isRequired,
   };
 

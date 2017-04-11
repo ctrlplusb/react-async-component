@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 var _createAsyncContext = require('./createAsyncContext');
 
 var _createAsyncContext2 = _interopRequireDefault(_createAsyncContext);
@@ -65,14 +69,14 @@ var AsyncComponentProvider = function (_React$Component) {
 }(_react2.default.Component);
 
 AsyncComponentProvider.propTypes = {
-  children: _react2.default.PropTypes.node.isRequired,
-  asyncContext: _react2.default.PropTypes.shape({
-    getNextId: _react2.default.PropTypes.func.isRequired,
-    resolved: _react2.default.PropTypes.func.isRequired,
-    getState: _react2.default.PropTypes.func.isRequired
+  children: _propTypes2.default.node.isRequired,
+  asyncContext: _propTypes2.default.shape({
+    getNextId: _propTypes2.default.func.isRequired,
+    resolved: _propTypes2.default.func.isRequired,
+    getState: _propTypes2.default.func.isRequired
   }),
-  rehydrateState: _react2.default.PropTypes.shape({
-    resolved: _react2.default.PropTypes.object
+  rehydrateState: _propTypes2.default.shape({
+    resolved: _propTypes2.default.object
   })
 };
 AsyncComponentProvider.defaultProps = {
@@ -82,10 +86,10 @@ AsyncComponentProvider.defaultProps = {
   }
 };
 AsyncComponentProvider.childContextTypes = {
-  asyncComponents: _react2.default.PropTypes.shape({
-    getNextId: _react2.default.PropTypes.func.isRequired,
-    resolved: _react2.default.PropTypes.func.isRequired,
-    shouldRehydrate: _react2.default.PropTypes.func.isRequired
+  asyncComponents: _propTypes2.default.shape({
+    getNextId: _propTypes2.default.func.isRequired,
+    resolved: _propTypes2.default.func.isRequired,
+    shouldRehydrate: _propTypes2.default.func.isRequired
   }).isRequired
 };
 exports.default = AsyncComponentProvider;

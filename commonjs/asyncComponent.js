@@ -14,6 +14,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -236,18 +240,18 @@ function asyncComponent(config) {
 
   AsyncComponent.displayName = name || 'AsyncComponent';
   AsyncComponent.contextTypes = {
-    asyncComponentsAncestor: _react2.default.PropTypes.shape({
-      isBoundary: _react2.default.PropTypes.bool
+    asyncComponentsAncestor: _propTypes2.default.shape({
+      isBoundary: _propTypes2.default.bool
     }),
-    asyncComponents: _react2.default.PropTypes.shape({
-      getNextId: _react2.default.PropTypes.func.isRequired,
-      resolved: _react2.default.PropTypes.func.isRequired,
-      shouldRehydrate: _react2.default.PropTypes.func.isRequired
+    asyncComponents: _propTypes2.default.shape({
+      getNextId: _propTypes2.default.func.isRequired,
+      resolved: _propTypes2.default.func.isRequired,
+      shouldRehydrate: _propTypes2.default.func.isRequired
     })
   };
   AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: _react2.default.PropTypes.shape({
-      isBoundary: _react2.default.PropTypes.bool
+    asyncComponentsAncestor: _propTypes2.default.shape({
+      isBoundary: _propTypes2.default.bool
     })
   };
 
