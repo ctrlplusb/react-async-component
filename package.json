@@ -54,7 +54,8 @@
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0-0",
-    "react-dom": "^0.14.0 || ^15.0.0-0"
+    "react-dom": "^0.14.0 || ^15.0.0-0",
+    "prop-types": "^15.0.0-0"
   },
   "dependencies": {},
   "devDependencies": {
@@ -90,6 +91,7 @@
     "prettier-eslint": "4.4.0",
     "prettier-eslint-cli": "3.2.0",
     "pretty-bytes": "4.0.2",
+    "prop-types": "15.5.6",
     "ramda": "0.23.0",
     "react": "15.4.2",
     "react-addons-test-utils": "15.4.2",
