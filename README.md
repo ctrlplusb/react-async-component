@@ -270,7 +270,7 @@ Although this operation isn't as expensive as an actual render as we don't gener
 
 ### SSR Performance Optimisation
 
-As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asyncComponent-resolution-process) section above it is possible to have an inefficient implementation of your `asyncComponent` instances.  Therefore we introduced a new configuration object property for the `asyncComponent` factory, called `serverMode`, which provides you with a mechanism to optimise the configuration of your async Component instances.  Please see the API documentation for more information.
+As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asynccomponent-resolution-process) section above it is possible to have an inefficient implementation of your `asyncComponent` instances.  Therefore we introduced a new configuration object property for the `asyncComponent` factory, called `serverMode`, which provides you with a mechanism to optimise the configuration of your async Component instances.  Please see the API documentation for more information.
 
 Understand your own applications needs and use the options appropriately . I personally recommend using mostly "defer" and a bit of "boundary". Try to see code splitting as allowing you to server side render an application shell to give the user perceived performance. Of course there will be requirements otherwise (SEO), but try to isolate these components and use a "boundary" as soon as you feel you can.
 
