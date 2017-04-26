@@ -274,9 +274,10 @@ As discussed in the ["SSR AsyncComponent Resolution Process"](#ssr-asynccomponen
 
 Understand your own applications needs and use the options appropriately . I personally recommend using mostly "defer" and a bit of "boundary". Try to see code splitting as allowing you to server side render an application shell to give the user perceived performance. Of course there will be requirements otherwise (SEO), but try to isolate these components and use a "boundary" as soon as you feel you can.
 
-## Demo
 
-You can see a "live" version [here](https://react-universally.now.sh/). This is a deployment of the "next" branch of ["React, Universally"](https://github.com/ctrlplusb/react-universally). Open the network tab and then click the menu items to see the asynchronous component resolving in action.
+## Demo
+
+You can see a "live" version [here](https://react-universally.now.sh/). This is a deployment of the ["React, Universally"](https://github.com/ctrlplusb/react-universally) starter kit that makes use of this library. Open the network tab and then click the menu items to see the asynchronous component resolving in action.
 
 ## FAQs
 
