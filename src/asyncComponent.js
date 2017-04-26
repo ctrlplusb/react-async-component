@@ -11,6 +11,7 @@ function asyncComponent(config) {
     serverMode = 'resolve',
     LoadingComponent,
     ErrorComponent,
+    errorCallback,
   } = config
 
   if (validSSRModes.indexOf(serverMode) === -1) {
@@ -157,12 +158,17 @@ function asyncComponent(config) {
             return undefined
           }
           if (env === 'node' || (env === 'browser' && !ErrorComponent)) {
-            // We will at least log the error so that user isn't completely
-            // unaware of an error occurring.
-            // eslint-disable-next-line no-console
-            console.warn('Failed to resolve asyncComponent')
-            // eslint-disable-next-line no-console
-            console.warn(error)
+            if (errorCallback) {
+              // Allow user to decide how to log error
+              errorCallback(error); 
+            } else {
+              // We will at least log the error so that user isn't completely
+              // unaware of an error occurring.
+              // eslint-disable-next-line no-console
+              console.warn('Failed to resolve asyncComponent')
+              // eslint-disable-next-line no-console
+              console.warn(error)
+            }
           }
           sharedState.error = error
           this.registerErrorState(error)
