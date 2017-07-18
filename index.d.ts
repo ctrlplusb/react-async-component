@@ -9,8 +9,8 @@ export interface Configuration<P> {
 	ErrorComponent?: (props: P & { error: Error }) => JSX.Element;
 	name?: string;
 	autoResolveES2015Default?: boolean;
-	env?: string;
-	serverMode?: string;
+	env?: 'node' | 'browser';
+	serverMode?: 'resolve' | 'defer' | 'boundary';
 }
 
 /**
