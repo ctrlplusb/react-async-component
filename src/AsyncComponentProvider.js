@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import type { ExecContext, ProviderChildContext } from './types';
 
 type Props = {
@@ -28,19 +29,19 @@ class AsyncComponentProvider extends React.Component {
 }
 
 AsyncComponentProvider.propTypes = {
-  children: React.PropTypes.node.isRequired,
-  execContext: React.PropTypes.shape({
-    getNextId: React.PropTypes.func.isRequired,
-    getComponent: React.PropTypes.func.isRequired,
-    registerComponent: React.PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  execContext: PropTypes.shape({
+    getNextId: PropTypes.func.isRequired,
+    getComponent: PropTypes.func.isRequired,
+    registerComponent: PropTypes.func.isRequired,
   }).isRequired,
 };
 
 AsyncComponentProvider.childContextTypes = {
-  asyncComponents: React.PropTypes.shape({
-    getNextId: React.PropTypes.func.isRequired,
-    getComponent: React.PropTypes.func.isRequired,
-    registerComponent: React.PropTypes.func.isRequired,
+  asyncComponents: PropTypes.shape({
+    getNextId: PropTypes.func.isRequired,
+    getComponent: PropTypes.func.isRequired,
+    registerComponent: PropTypes.func.isRequired,
   }).isRequired,
 };
 

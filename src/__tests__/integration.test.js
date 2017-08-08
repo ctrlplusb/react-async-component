@@ -1,6 +1,7 @@
 /* @flow */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { mount } from 'enzyme';
 import { createAsyncComponent, withAsyncComponents } from '../';
@@ -9,7 +10,7 @@ import { STATE_IDENTIFIER } from '../constants';
 function Bob({ children }) {
   return (<div>{children}</div>);
 }
-Bob.propTypes = { children: React.PropTypes.node };
+Bob.propTypes = { children: PropTypes.node };
 Bob.defaultProps = { children: null };
 
 const AsyncBob = createAsyncComponent({

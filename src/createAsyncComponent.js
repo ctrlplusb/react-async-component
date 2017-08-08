@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 // Duck type promise check.
 const isPromise = x => typeof x === 'object' && typeof x.then === 'function';
@@ -115,16 +116,16 @@ function createAsyncComponent(args) {
   }
 
   AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: React.PropTypes.shape({
-      isBoundary: React.PropTypes.bool,
+    asyncComponentsAncestor: PropTypes.shape({
+      isBoundary: PropTypes.bool,
     }),
   };
 
   AsyncComponent.contextTypes = {
-    asyncComponents: React.PropTypes.shape({
-      getNextId: React.PropTypes.func.isRequired,
-      getComponent: React.PropTypes.func.isRequired,
-      registerComponent: React.PropTypes.func.isRequired,
+    asyncComponents: PropTypes.shape({
+      getNextId: PropTypes.func.isRequired,
+      getComponent: PropTypes.func.isRequired,
+      registerComponent: PropTypes.func.isRequired,
     }).isRequired,
   };
 
