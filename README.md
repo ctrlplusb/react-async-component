@@ -1,5 +1,3 @@
-> ___NOTE:___ This is an beta release of the library.  I am using it in production myself however it hasn't been used for a considerable length of time.  There _may_ be API changes, however, I expect them to be absolutely minimal.
-
 # react-async-component 📬
 
 Resolve components asynchronously, with support for code splitting and advanced server side rendering use cases.
