@@ -5,7 +5,7 @@
     "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "commonjs/index.js",
-  "files": ["*.js", "*.md", "umd", "commonjs"],
+  "files": ["index.d.ts", "*.js", "*.md", "umd", "commonjs"],
   "typings": "./index.d.ts",
   "repository": {
     "type": "git",
