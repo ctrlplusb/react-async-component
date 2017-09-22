@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("prop-types"), require("react"));
+		module.exports = factory(require("react"), require("prop-types"));
 	else if(typeof define === 'function' && define.amd)
-		define(["prop-types", "react"], factory);
+		define(["react", "prop-types"], factory);
 	else if(typeof exports === 'object')
-		exports["ReactAsyncComponent"] = factory(require("prop-types"), require("react"));
+		exports["ReactAsyncComponent"] = factory(require("react"), require("prop-types"));
 	else
-		root["ReactAsyncComponent"] = factory(root["PropTypes"], root["React"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__) {
+		root["ReactAsyncComponent"] = factory(root["React"], root["PropTypes"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_1__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -16,9 +16,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -42,9 +42,6 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
 /******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
@@ -73,11 +70,23 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_0__;
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -112,19 +121,37 @@ function createAsyncContext() {
 }
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
-
-/***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.asyncComponent = exports.createAsyncContext = exports.AsyncComponentProvider = undefined;
+
+var _AsyncComponentProvider = __webpack_require__(4);
+
+var _AsyncComponentProvider2 = _interopRequireDefault(_AsyncComponentProvider);
+
+var _createAsyncContext = __webpack_require__(2);
+
+var _createAsyncContext2 = _interopRequireDefault(_createAsyncContext);
+
+var _asyncComponent = __webpack_require__(5);
+
+var _asyncComponent2 = _interopRequireDefault(_asyncComponent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.AsyncComponentProvider = _AsyncComponentProvider2.default;
+exports.createAsyncContext = _createAsyncContext2.default;
+exports.asyncComponent = _asyncComponent2.default;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -136,7 +163,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -144,7 +171,7 @@ var _propTypes = __webpack_require__(1);
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
-var _createAsyncContext = __webpack_require__(0);
+var _createAsyncContext = __webpack_require__(2);
 
 var _createAsyncContext2 = _interopRequireDefault(_createAsyncContext);
 
@@ -225,7 +252,7 @@ AsyncComponentProvider.childContextTypes = {
 exports.default = AsyncComponentProvider;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -241,7 +268,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -288,11 +315,10 @@ function asyncComponent(config) {
     error: null,
     // Allows us to share the resolver promise across instances.
     resolver: null
-  };
 
-  // Takes the given module and if it has a ".default" the ".default" will
-  // be returned. i.e. handy when you could be dealing with es6 imports.
-  var es6Resolve = function es6Resolve(x) {
+    // Takes the given module and if it has a ".default" the ".default" will
+    // be returned. i.e. handy when you could be dealing with es6 imports.
+  };var es6Resolve = function es6Resolve(x) {
     return autoResolveES2015Default && x != null && (typeof x === 'function' || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object') && x.default ? x.default : x;
   };
 
@@ -372,7 +398,9 @@ function asyncComponent(config) {
     }, {
       key: 'componentWillMount',
       value: function componentWillMount() {
-        this.setState({ module: sharedState.module });
+        this.setState({
+          module: sharedState.module
+        });
         if (sharedState.error) {
           this.registerErrorState(sharedState.error);
         }
@@ -400,7 +428,9 @@ function asyncComponent(config) {
           }
           sharedState.module = module;
           if (env === 'browser') {
-            _this3.setState({ module: module });
+            _this3.setState({
+              module: module
+            });
           }
           _this3.resolving = false;
           return module;
@@ -435,7 +465,9 @@ function asyncComponent(config) {
         if (env === 'browser') {
           setTimeout(function () {
             if (!_this4.unmounted) {
-              _this4.setState({ error: error });
+              _this4.setState({
+                error: error
+              });
             }
           }, 16);
         }
@@ -461,7 +493,6 @@ function asyncComponent(config) {
         }
 
         var Component = es6Resolve(module);
-        // eslint-disable-next-line no-nested-ternary
         return Component ? _react2.default.createElement(Component, this.props) : LoadingComponent ? _react2.default.createElement(LoadingComponent, this.props) : null;
       }
     }]);
@@ -470,6 +501,7 @@ function asyncComponent(config) {
   }(_react2.default.Component);
 
   AsyncComponent.displayName = name || 'AsyncComponent';
+
   AsyncComponent.contextTypes = {
     asyncComponentsAncestor: _propTypes2.default.shape({
       isBoundary: _propTypes2.default.bool
@@ -480,47 +512,17 @@ function asyncComponent(config) {
       shouldRehydrate: _propTypes2.default.func.isRequired
     })
   };
+
   AsyncComponent.childContextTypes = {
     asyncComponentsAncestor: _propTypes2.default.shape({
       isBoundary: _propTypes2.default.bool
     })
   };
 
-
   return AsyncComponent;
 }
 
 exports.default = asyncComponent;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.asyncComponent = exports.createAsyncContext = exports.AsyncComponentProvider = undefined;
-
-var _AsyncComponentProvider = __webpack_require__(3);
-
-var _AsyncComponentProvider2 = _interopRequireDefault(_AsyncComponentProvider);
-
-var _createAsyncContext = __webpack_require__(0);
-
-var _createAsyncContext2 = _interopRequireDefault(_createAsyncContext);
-
-var _asyncComponent = __webpack_require__(4);
-
-var _asyncComponent2 = _interopRequireDefault(_asyncComponent);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.AsyncComponentProvider = _AsyncComponentProvider2.default;
-exports.createAsyncContext = _createAsyncContext2.default;
-exports.asyncComponent = _asyncComponent2.default;
 
 /***/ })
 /******/ ]);

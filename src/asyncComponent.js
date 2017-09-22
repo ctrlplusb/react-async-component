@@ -17,9 +17,10 @@ function asyncComponent(config) {
     throw new Error('Invalid serverMode provided to asyncComponent')
   }
 
-  const env = ['node', 'browser'].indexOf(config.env) > -1
-    ? config.env
-    : typeof window === 'undefined' ? 'node' : 'browser'
+  const env =
+    ['node', 'browser'].indexOf(config.env) > -1
+      ? config.env
+      : typeof window === 'undefined' ? 'node' : 'browser'
 
   const sharedState = {
     // A unique id we will assign to our async component which is especially
@@ -39,9 +40,9 @@ function asyncComponent(config) {
   // be returned. i.e. handy when you could be dealing with es6 imports.
   const es6Resolve = x =>
     autoResolveES2015Default &&
-      x != null &&
-      (typeof x === 'function' || typeof x === 'object') &&
-      x.default
+    x != null &&
+    (typeof x === 'function' || typeof x === 'object') &&
+    x.default
       ? x.default
       : x
 
@@ -60,25 +61,6 @@ function asyncComponent(config) {
   }
 
   class AsyncComponent extends React.Component {
-    static displayName = name || 'AsyncComponent';
-
-    static contextTypes = {
-      asyncComponentsAncestor: PropTypes.shape({
-        isBoundary: PropTypes.bool,
-      }),
-      asyncComponents: PropTypes.shape({
-        getNextId: PropTypes.func.isRequired,
-        resolved: PropTypes.func.isRequired,
-        shouldRehydrate: PropTypes.func.isRequired,
-      }),
-    };
-
-    static childContextTypes = {
-      asyncComponentsAncestor: PropTypes.shape({
-        isBoundary: PropTypes.bool,
-      }),
-    };
-
     constructor(props, context) {
       super(props, context)
 
@@ -104,8 +86,8 @@ function asyncComponent(config) {
       }
 
       // node
-      const isChildOfBoundary = asyncComponentsAncestor &&
-        asyncComponentsAncestor.isBoundary
+      const isChildOfBoundary =
+        asyncComponentsAncestor && asyncComponentsAncestor.isBoundary
       return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
@@ -122,7 +104,9 @@ function asyncComponent(config) {
     }
 
     componentWillMount() {
-      this.setState({ module: sharedState.module })
+      this.setState({
+        module: sharedState.module,
+      })
       if (sharedState.error) {
         this.registerErrorState(sharedState.error)
       }
@@ -138,7 +122,7 @@ function asyncComponent(config) {
       this.resolving = true
 
       return getResolver()
-        .then((module) => {
+        .then(module => {
           if (this.unmounted) {
             return undefined
           }
@@ -147,12 +131,14 @@ function asyncComponent(config) {
           }
           sharedState.module = module
           if (env === 'browser') {
-            this.setState({ module })
+            this.setState({
+              module,
+            })
           }
           this.resolving = false
           return module
         })
-        .catch((error) => {
+        .catch(error => {
           if (this.unmounted) {
             return undefined
           }
@@ -177,14 +163,13 @@ function asyncComponent(config) {
 
     registerErrorState(error) {
       if (env === 'browser') {
-        setTimeout(
-          () => {
-            if (!this.unmounted) {
-              this.setState({ error })
-            }
-          },
-          16,
-        )
+        setTimeout(() => {
+          if (!this.unmounted) {
+            this.setState({
+              error,
+            })
+          }
+        }, 16)
       }
     }
 
@@ -204,17 +189,37 @@ function asyncComponent(config) {
       }
 
       if (error) {
-        return ErrorComponent
-          ? <ErrorComponent {...this.props} error={error} />
-          : null
+        return ErrorComponent ? (
+          <ErrorComponent {...this.props} error={error} />
+        ) : null
       }
 
       const Component = es6Resolve(module)
-      // eslint-disable-next-line no-nested-ternary
-      return Component
-        ? <Component {...this.props} />
-        : LoadingComponent ? <LoadingComponent {...this.props} /> : null
+      return Component ? (
+        <Component {...this.props} />
+      ) : LoadingComponent ? (
+        <LoadingComponent {...this.props} />
+      ) : null
     }
+  }
+
+  AsyncComponent.displayName = name || 'AsyncComponent'
+
+  AsyncComponent.contextTypes = {
+    asyncComponentsAncestor: PropTypes.shape({
+      isBoundary: PropTypes.bool,
+    }),
+    asyncComponents: PropTypes.shape({
+      getNextId: PropTypes.func.isRequired,
+      resolved: PropTypes.func.isRequired,
+      shouldRehydrate: PropTypes.func.isRequired,
+    }),
+  }
+
+  AsyncComponent.childContextTypes = {
+    asyncComponentsAncestor: PropTypes.shape({
+      isBoundary: PropTypes.bool,
+    }),
   }
 
   return AsyncComponent

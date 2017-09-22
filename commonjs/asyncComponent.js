@@ -57,11 +57,10 @@ function asyncComponent(config) {
     error: null,
     // Allows us to share the resolver promise across instances.
     resolver: null
-  };
 
-  // Takes the given module and if it has a ".default" the ".default" will
-  // be returned. i.e. handy when you could be dealing with es6 imports.
-  var es6Resolve = function es6Resolve(x) {
+    // Takes the given module and if it has a ".default" the ".default" will
+    // be returned. i.e. handy when you could be dealing with es6 imports.
+  };var es6Resolve = function es6Resolve(x) {
     return autoResolveES2015Default && x != null && (typeof x === 'function' || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object') && x.default ? x.default : x;
   };
 
@@ -141,7 +140,9 @@ function asyncComponent(config) {
     }, {
       key: 'componentWillMount',
       value: function componentWillMount() {
-        this.setState({ module: sharedState.module });
+        this.setState({
+          module: sharedState.module
+        });
         if (sharedState.error) {
           this.registerErrorState(sharedState.error);
         }
@@ -169,7 +170,9 @@ function asyncComponent(config) {
           }
           sharedState.module = module;
           if (env === 'browser') {
-            _this3.setState({ module: module });
+            _this3.setState({
+              module: module
+            });
           }
           _this3.resolving = false;
           return module;
@@ -204,7 +207,9 @@ function asyncComponent(config) {
         if (env === 'browser') {
           setTimeout(function () {
             if (!_this4.unmounted) {
-              _this4.setState({ error: error });
+              _this4.setState({
+                error: error
+              });
             }
           }, 16);
         }
@@ -230,7 +235,6 @@ function asyncComponent(config) {
         }
 
         var Component = es6Resolve(module);
-        // eslint-disable-next-line no-nested-ternary
         return Component ? _react2.default.createElement(Component, this.props) : LoadingComponent ? _react2.default.createElement(LoadingComponent, this.props) : null;
       }
     }]);
@@ -239,6 +243,7 @@ function asyncComponent(config) {
   }(_react2.default.Component);
 
   AsyncComponent.displayName = name || 'AsyncComponent';
+
   AsyncComponent.contextTypes = {
     asyncComponentsAncestor: _propTypes2.default.shape({
       isBoundary: _propTypes2.default.bool
@@ -249,12 +254,12 @@ function asyncComponent(config) {
       shouldRehydrate: _propTypes2.default.func.isRequired
     })
   };
+
   AsyncComponent.childContextTypes = {
     asyncComponentsAncestor: _propTypes2.default.shape({
       isBoundary: _propTypes2.default.bool
     })
   };
-
 
   return AsyncComponent;
 }

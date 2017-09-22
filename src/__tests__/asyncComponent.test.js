@@ -10,7 +10,8 @@ describe('asyncComponent', () => {
     const Bob = asyncComponent({
       resolve: () =>
         new Promise(resolve =>
-          setTimeout(() => resolve(() => <div>bob</div>), resolveDelay)),
+          setTimeout(() => resolve(() => <div>bob</div>), resolveDelay),
+        ),
     })
     const setStateSpy = sinon.spy(Bob.prototype, 'setState')
     const renderWrapper = mount(<Bob />)
@@ -18,7 +19,7 @@ describe('asyncComponent', () => {
     expect(setStateSpy.callCount).toEqual(1)
     renderWrapper.unmount()
     return new Promise(resolve =>
-      setTimeout(resolve, resolveDelay + 10)).then(() =>
-      expect(setStateSpy.callCount).toEqual(1))
+      setTimeout(resolve, resolveDelay + 10),
+    ).then(() => expect(setStateSpy.callCount).toEqual(1))
   })
 })

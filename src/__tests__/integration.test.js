@@ -5,11 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
 import asyncBootstrapper from 'react-async-bootstrapper'
 
-import {
-  AsyncComponentProvider,
-  createAsyncContext,
-  asyncComponent,
-} from '../'
+import { AsyncComponentProvider, createAsyncContext, asyncComponent } from '../'
 
 const createApp = (asyncContext, stateForClient) => {
   // All the component creation needs to be within to respect the window
@@ -131,11 +127,13 @@ describe('integration tests', () => {
             .then(
               clientRenderWrapper =>
                 new Promise(resolve =>
-                  setTimeout(() => resolve(clientRenderWrapper), 100)),
+                  setTimeout(() => resolve(clientRenderWrapper), 100),
+                ),
             )
             // Now a full render should have occured on client
             .then(clientRenderWrapper =>
-              expect(clientRenderWrapper).toMatchSnapshot())
+              expect(clientRenderWrapper).toMatchSnapshot(),
+            )
         )
       })
   })
@@ -158,12 +156,11 @@ describe('integration tests', () => {
       return (
         asyncBootstrapper(app)
           .then(() => mount(app))
-          .then((render) => {
+          .then(render => {
             expect(render).toMatchSnapshot()
             // We give a bit of time for the error setState to propagate, and
             // then resolve with the enzyme mount render.
-            return new Promise(resolve =>
-              setTimeout(() => resolve(render), 16))
+            return new Promise(resolve => setTimeout(() => resolve(render), 16))
           })
           // The error should be in state and should render via the component
           .then(render => expect(render).toMatchSnapshot())
@@ -197,7 +194,8 @@ describe('integration tests', () => {
       const Foo = asyncComponent({
         resolve: () =>
           new Promise(resolve =>
-            setTimeout(() => resolve(() => <div>foo</div>), 100)),
+            setTimeout(() => resolve(() => <div>foo</div>), 100),
+          ),
         LoadingComponent,
       })
 

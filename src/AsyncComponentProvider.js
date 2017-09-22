@@ -14,14 +14,14 @@ class AsyncComponentProvider extends React.Component {
     rehydrateState: PropTypes.shape({
       resolved: PropTypes.object,
     }),
-  };
+  }
 
   static defaultProps = {
     asyncContext: undefined,
     rehydrateState: {
       resolved: {},
     },
-  };
+  }
 
   static childContextTypes = {
     asyncComponents: PropTypes.shape({
@@ -29,7 +29,7 @@ class AsyncComponentProvider extends React.Component {
       resolved: PropTypes.func.isRequired,
       shouldRehydrate: PropTypes.func.isRequired,
     }).isRequired,
-  };
+  }
 
   componentWillMount() {
     this.asyncContext = this.props.asyncContext || createAsyncContext()
@@ -41,7 +41,7 @@ class AsyncComponentProvider extends React.Component {
       asyncComponents: {
         getNextId: this.asyncContext.getNextId,
         resolved: this.asyncContext.resolved,
-        shouldRehydrate: (id) => {
+        shouldRehydrate: id => {
           const resolved = this.rehydrateState.resolved[id]
           delete this.rehydrateState.resolved[id]
           return resolved
