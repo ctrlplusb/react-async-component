@@ -79,12 +79,14 @@ AsyncComponentProvider.propTypes = {
     resolved: _propTypes2.default.object
   })
 };
+
 AsyncComponentProvider.defaultProps = {
   asyncContext: undefined,
   rehydrateState: {
     resolved: {}
   }
 };
+
 AsyncComponentProvider.childContextTypes = {
   asyncComponents: _propTypes2.default.shape({
     getNextId: _propTypes2.default.func.isRequired,
@@ -92,4 +94,5 @@ AsyncComponentProvider.childContextTypes = {
     shouldRehydrate: _propTypes2.default.func.isRequired
   }).isRequired
 };
+
 exports.default = AsyncComponentProvider;
