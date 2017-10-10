@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`asyncComponent in a browser environment when an error occurs resolving a component should render the ErrorComponent 1`] = `
+<AsyncComponent>
+  <ErrorComponent
+    error={[Error: failed to resolve]}
+  >
+    <div>
+      failed to resolve
+    </div>
+  </ErrorComponent>
+</AsyncComponent>
+`;
+
+exports[`asyncComponent in a server environment when an error occurs resolving a component should render the ErrorComponent 1`] = `
+<AsyncComponent>
+  <ErrorComponent
+    error={[Error: failed to resolve]}
+  >
+    <div>
+      failed to resolve
+    </div>
+  </ErrorComponent>
+</AsyncComponent>
+`;
