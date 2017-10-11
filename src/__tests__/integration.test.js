@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
 import asyncBootstrapper from 'react-async-bootstrapper'
@@ -14,7 +15,7 @@ const createApp = (asyncContext, stateForClient) => {
   function Bob({ children }) {
     return <div>{children}</div>
   }
-  Bob.propTypes = { children: React.PropTypes.node }
+  Bob.propTypes = { children: PropTypes.node }
   Bob.defaultProps = { children: null }
 
   const AsyncBob = asyncComponent({
@@ -86,6 +87,8 @@ const createApp = (asyncContext, stateForClient) => {
 const ErrorComponent = ({ error }) => <div>{error ? error.message : null}</div>
 const LoadingComponent = () => <div>Loading...</div>
 
+const errorResolveDelay = 16
+
 describe('integration tests', () => {
   it('render server and client', () => {
     // we have to delete the window to emulate a server only environment
@@ -131,9 +134,10 @@ describe('integration tests', () => {
                 ),
             )
             // Now a full render should have occured on client
-            .then(clientRenderWrapper =>
-              expect(clientRenderWrapper).toMatchSnapshot(),
-            )
+            .then(clientRenderWrapper => {
+              clientRenderWrapper.update()
+              expect(clientRenderWrapper).toMatchSnapshot()
+            })
         )
       })
   })
@@ -163,7 +167,10 @@ describe('integration tests', () => {
             return new Promise(resolve => setTimeout(() => resolve(render), 16))
           })
           // The error should be in state and should render via the component
-          .then(render => expect(render).toMatchSnapshot())
+          .then(render => {
+            render.update()
+            expect(render).toMatchSnapshot()
+          })
       )
     })
 
@@ -212,36 +219,21 @@ describe('integration tests', () => {
   })
 
   describe('server rendering', () => {
-    let windowTemp
-
-    beforeEach(() => {
-      // Ensure we delete the jest jsdom creation so as to emulate a node
-      // execution environment.
-      windowTemp = global.window
-      delete global.window
-    })
-
-    afterEach(() => {
-      global.window = windowTemp
-    })
-
-    it('should not render errors', () => {
+    it('should not render errors', async () => {
       const Foo = asyncComponent({
-        resolve: () => {
-          throw new Error('An error occurred')
-        },
+        resolve: () => Promise.reject(new Error('An error occurred')),
         ErrorComponent,
+        env: 'node',
       })
-
+      const asyncContext = createAsyncContext()
       const app = (
-        <AsyncComponentProvider asyncContext={createAsyncContext()}>
+        <AsyncComponentProvider asyncContext={asyncContext}>
           <Foo />
         </AsyncComponentProvider>
       )
-
-      return asyncBootstrapper(app)
-        .then(() => renderToStaticMarkup(app))
-        .then(render => expect(render).toMatchSnapshot())
+      const bootstrappedApp = await asyncBootstrapper(app)
+      await new Promise(resolve => setTimeout(resolve, errorResolveDelay + 1))
+      expect(renderToStaticMarkup(bootstrappedApp)).toMatchSnapshot()
     })
   })
 })

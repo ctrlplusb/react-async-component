@@ -68,7 +68,7 @@ function asyncComponent(config) {
       // to recycle the module and therefore the id closure will be null.
       // We can't put it in componentWillMount as RHL hot swaps the new code
       // so the mount call will not happen (but the ctor does).
-      if (this.context.asyncComponents && !sharedState.id) {
+      if (this.context.asyncComponents != null && !sharedState.id) {
         sharedState.id = this.context.asyncComponents.getNextId()
       }
     }
@@ -87,13 +87,15 @@ function asyncComponent(config) {
 
       // node
       const isChildOfBoundary =
-        asyncComponentsAncestor && asyncComponentsAncestor.isBoundary
+        asyncComponentsAncestor != null && asyncComponentsAncestor.isBoundary
       return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
     getChildContext() {
-      if (!this.context.asyncComponents) {
-        return undefined
+      if (this.context.asyncComponents == null) {
+        return {
+          asyncComponentsAncestor: null,
+        }
       }
 
       return {
@@ -113,9 +115,18 @@ function asyncComponent(config) {
     }
 
     componentDidMount() {
-      if (!this.state.module) {
+      if (this.shouldResolve()) {
         this.resolveModule()
       }
+    }
+
+    shouldResolve() {
+      return (
+        sharedState.module == null &&
+        sharedState.error == null &&
+        !this.resolving &&
+        typeof window !== 'undefined'
+      )
     }
 
     resolveModule() {
@@ -126,7 +137,7 @@ function asyncComponent(config) {
           if (this.unmounted) {
             return undefined
           }
-          if (this.context.asyncComponents) {
+          if (this.context.asyncComponents != null) {
             this.context.asyncComponents.resolved(sharedState.id)
           }
           sharedState.module = module
@@ -175,7 +186,6 @@ function asyncComponent(config) {
 
     render() {
       const { module, error } = this.state
-
       if (error) {
         return ErrorComponent ? (
           <ErrorComponent {...this.props} error={error} />
@@ -186,11 +196,7 @@ function asyncComponent(config) {
       // RHL the local component reference will be killed by any change
       // to the component, this will be our signal to know that we need to
       // re-resolve it.
-      if (
-        sharedState.module == null &&
-        !this.resolving &&
-        typeof window !== 'undefined'
-      ) {
+      if (this.shouldResolve()) {
         this.resolveModule()
       }
 
