@@ -4,7 +4,7 @@ import * as React from 'react';
  * The configuration for an asynchronous component.
  */
 export interface Configuration<P> {
-	resolve: () => Promise<React.Component<P>>;
+	resolve: () => Promise<React.ComponentType<P>>;
 	LoadingComponent?: (props: P) => JSX.Element;
 	ErrorComponent?: (props: P & { error: Error }) => JSX.Element;
 	name?: string;
@@ -40,7 +40,7 @@ export interface Context {
  *
  * @param config The configuration to use for the asynchronous component.
  */
-export function asyncComponent<T extends React.Component<P>, P>(config: Configuration<P>): React.ComponentClass<P>;
+export function asyncComponent<P>(config: Configuration<P>): React.ComponentType<P>;
 
 /**
  * Create a context for the asynchronous component resolving module.
