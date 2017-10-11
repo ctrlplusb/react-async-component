@@ -87,7 +87,7 @@ const createApp = (asyncContext, stateForClient) => {
 const ErrorComponent = ({ error }) => <div>{error ? error.message : null}</div>
 const LoadingComponent = () => <div>Loading...</div>
 
-const errorResolveDelay = 16
+const errorResolveDelay = 20
 
 describe('integration tests', () => {
   it('render server and client', () => {
@@ -164,7 +164,9 @@ describe('integration tests', () => {
             expect(render).toMatchSnapshot()
             // We give a bit of time for the error setState to propagate, and
             // then resolve with the enzyme mount render.
-            return new Promise(resolve => setTimeout(() => resolve(render), 16))
+            return new Promise(resolve =>
+              setTimeout(() => resolve(render), errorResolveDelay),
+            )
           })
           // The error should be in state and should render via the component
           .then(render => {
@@ -232,7 +234,7 @@ describe('integration tests', () => {
         </AsyncComponentProvider>
       )
       const bootstrappedApp = await asyncBootstrapper(app)
-      await new Promise(resolve => setTimeout(resolve, errorResolveDelay + 1))
+      await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
       expect(renderToStaticMarkup(bootstrappedApp)).toMatchSnapshot()
     })
   })

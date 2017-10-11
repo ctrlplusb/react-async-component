@@ -7,7 +7,7 @@ import { mount } from 'enzyme'
 import asyncComponent from '../asyncComponent'
 
 describe('asyncComponent', () => {
-  const errorResolveDelay = 16
+  const errorResolveDelay = 20
 
   it('should handle unmounting ensuring that resolved promises do not call setState', async () => {
     const Bob = asyncComponent({
