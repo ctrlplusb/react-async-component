@@ -33,7 +33,7 @@ describe('asyncComponent', () => {
       global.window = oldWindow
     })
     describe('when an error occurs resolving a component', () => {
-      it.only('should render the ErrorComponent', () => {
+      it('should render the ErrorComponent', () => {
         const resolveDelay = 10
         const Bob = asyncComponent({
           resolve: () =>
