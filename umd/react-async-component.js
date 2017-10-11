@@ -351,7 +351,7 @@ function asyncComponent(config) {
       // so the mount call will not happen (but the ctor does).
       var _this = _possibleConstructorReturn(this, (AsyncComponent.__proto__ || Object.getPrototypeOf(AsyncComponent)).call(this, props, context));
 
-      if (_this.context.asyncComponents && !sharedState.id) {
+      if (_this.context.asyncComponents != null && !sharedState.id) {
         sharedState.id = _this.context.asyncComponents.getNextId();
       }
       return _this;
@@ -382,14 +382,16 @@ function asyncComponent(config) {
         }
 
         // node
-        var isChildOfBoundary = asyncComponentsAncestor && asyncComponentsAncestor.isBoundary;
+        var isChildOfBoundary = asyncComponentsAncestor != null && asyncComponentsAncestor.isBoundary;
         return serverMode === 'defer' || isChildOfBoundary ? false : doResolve();
       }
     }, {
       key: 'getChildContext',
       value: function getChildContext() {
-        if (!this.context.asyncComponents) {
-          return undefined;
+        if (this.context.asyncComponents == null) {
+          return {
+            asyncComponentsAncestor: null
+          };
         }
 
         return {
@@ -411,9 +413,14 @@ function asyncComponent(config) {
     }, {
       key: 'componentDidMount',
       value: function componentDidMount() {
-        if (!this.state.module) {
+        if (this.shouldResolve()) {
           this.resolveModule();
         }
+      }
+    }, {
+      key: 'shouldResolve',
+      value: function shouldResolve() {
+        return sharedState.module == null && sharedState.error == null && !this.resolving && typeof window !== 'undefined';
       }
     }, {
       key: 'resolveModule',
@@ -426,7 +433,7 @@ function asyncComponent(config) {
           if (_this3.unmounted) {
             return undefined;
           }
-          if (_this3.context.asyncComponents) {
+          if (_this3.context.asyncComponents != null) {
             _this3.context.asyncComponents.resolved(sharedState.id);
           }
           sharedState.module = module;
@@ -482,7 +489,6 @@ function asyncComponent(config) {
             module = _state.module,
             error = _state.error;
 
-
         if (error) {
           return ErrorComponent ? _react2.default.createElement(ErrorComponent, _extends({}, this.props, { error: error })) : null;
         }
@@ -491,7 +497,7 @@ function asyncComponent(config) {
         // RHL the local component reference will be killed by any change
         // to the component, this will be our signal to know that we need to
         // re-resolve it.
-        if (sharedState.module == null && !this.resolving && typeof window !== 'undefined') {
+        if (this.shouldResolve()) {
           this.resolveModule();
         }
 
