@@ -176,6 +176,12 @@ function asyncComponent(config) {
     render() {
       const { module, error } = this.state
 
+      if (error) {
+        return ErrorComponent ? (
+          <ErrorComponent {...this.props} error={error} />
+        ) : null
+      }
+
       // This is as workaround for React Hot Loader support.  When using
       // RHL the local component reference will be killed by any change
       // to the component, this will be our signal to know that we need to
@@ -186,12 +192,6 @@ function asyncComponent(config) {
         typeof window !== 'undefined'
       ) {
         this.resolveModule()
-      }
-
-      if (error) {
-        return ErrorComponent ? (
-          <ErrorComponent {...this.props} error={error} />
-        ) : null
       }
 
       const Component = es6Resolve(module)
