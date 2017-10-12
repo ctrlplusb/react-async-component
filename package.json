@@ -1,11 +1,16 @@
 {
   "name": "react-async-component",
   "version": "1.0.2",
-  "description":
-    "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
+  "description": "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "commonjs/index.js",
-  "files": ["index.d.ts", "*.js", "*.md", "umd", "commonjs"],
+  "files": [
+    "index.d.ts",
+    "*.js",
+    "*.md",
+    "umd",
+    "commonjs"
+  ],
   "typings": "./index.d.ts",
   "repository": {
     "type": "git",
@@ -24,8 +29,7 @@
     "precommit": "lint-staged && npm run test",
     "build": "babel-node ./tools/scripts/build.js",
     "check": "npm run lint && npm run test",
-    "clean":
-      "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./flow-coverage && rimraf ./umd",
+    "clean": "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./flow-coverage && rimraf ./umd",
     "lint": "eslint src,tools",
     "prepublish": "npm run build",
     "test": "jest",
@@ -74,7 +78,7 @@
     "raf": "^3.4.0",
     "ramda": "^0.25.0",
     "react": "^16.0.0",
-    "react-async-bootstrapper": "^1.1.1",
+    "react-async-bootstrapper": "^1.1.2",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
     "readline-sync": "1.4.7",
@@ -85,15 +89,25 @@
     "webpack-hot-middleware": "^2.19.1"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-    "setupFiles": ["raf/polyfill", "<rootDir>/tools/tests/setup.js"],
-    "snapshotSerializers": ["<rootDir>/node_modules/enzyme-to-json/serializer"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "raf/polyfill",
+      "<rootDir>/tools/tests/setup.js"
+    ],
+    "snapshotSerializers": [
+      "<rootDir>/node_modules/enzyme-to-json/serializer"
+    ],
     "testPathIgnorePatterns": [
       "<rootDir>/(commonjs|coverage|flow-typed|node_modules|tools|umd)/"
     ]
   },
   "lint-staged": {
-    "src/**/*.js": ["prettier --write", "git add"]
+    "src/**/*.js": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "eslintConfig": {
     "root": true,
@@ -104,7 +118,10 @@
       "node": true,
       "jest": true
     },
-    "extends": ["airbnb", "prettier"],
+    "extends": [
+      "airbnb",
+      "prettier"
+    ],
     "rules": {
       "camelcase": 0,
       "import/prefer-default-export": 0,
@@ -113,7 +130,10 @@
       "no-underscore-dangle": 0,
       "react/no-array-index-key": 0,
       "react/react-in-jsx-scope": 0,
-      "semi": [2, "never"],
+      "semi": [
+        2,
+        "never"
+      ],
       "react/forbid-prop-types": 0,
       "react/jsx-filename-extension": 0,
       "react/sort-comp": 0
