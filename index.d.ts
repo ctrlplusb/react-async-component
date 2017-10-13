@@ -4,7 +4,7 @@ import * as React from 'react';
  * The configuration for an asynchronous component.
  */
 export interface Configuration<P> {
-	resolve: () => Promise<React.ComponentType<P>>;
+	resolve: () => Promise<React.ReactNode>;
 	LoadingComponent?: (props: P) => JSX.Element;
 	ErrorComponent?: (props: P & { error: Error }) => JSX.Element;
 	name?: string;
