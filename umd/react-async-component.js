@@ -294,6 +294,8 @@ function asyncComponent(config) {
       resolve = config.resolve,
       _config$autoResolveES = config.autoResolveES2015Default,
       autoResolveES2015Default = _config$autoResolveES === undefined ? true : _config$autoResolveES,
+      _config$throwError = config.throwError,
+      throwError = _config$throwError === undefined ? true : _config$throwError,
       _config$serverMode = config.serverMode,
       serverMode = _config$serverMode === undefined ? 'resolve' : _config$serverMode,
       LoadingComponent = config.LoadingComponent,
@@ -490,6 +492,9 @@ function asyncComponent(config) {
             error = _state.error;
 
         if (error) {
+          if (throwError) {
+            throw error;
+          }
           return ErrorComponent ? _react2.default.createElement(ErrorComponent, _extends({}, this.props, { error: error })) : null;
         }
 

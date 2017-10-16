@@ -87,6 +87,24 @@ const createApp = (asyncContext, stateForClient) => {
 const ErrorComponent = ({ error }) => <div>{error ? error.message : null}</div>
 const LoadingComponent = () => <div>Loading...</div>
 
+const ErrorBoundaryComponent = ({ error }) => <div>{error.message}</div>
+class ErrorBoundary extends React.Component {
+  state = {
+    error: null,
+  }
+  componentDidCatch(error) {
+    this.setState({ error })
+  }
+
+  render() {
+    return this.state.error ? (
+      <ErrorBoundaryComponent error={this.state.error} />
+    ) : (
+      this.props.children
+    )
+  }
+}
+
 const errorResolveDelay = 20
 
 describe('integration tests', () => {
@@ -169,6 +187,40 @@ describe('integration tests', () => {
             )
           })
           // The error should be in state and should render via the component
+          .then(render => {
+            render.update()
+            expect(render).toMatchSnapshot()
+          })
+      )
+    })
+
+    it('throws an error to be rendered by the Error Boundary component', () => {
+      const error = new Error('An error occured down the tree')
+      const Foo = asyncComponent({
+        resolve: () => {
+          throw error
+        },
+        throwError: true,
+      })
+
+      const app = (
+        <AsyncComponentProvider asyncContext={createAsyncContext()}>
+          <ErrorBoundary>
+            <Foo />
+          </ErrorBoundary>
+        </AsyncComponentProvider>
+      )
+
+      return (
+        asyncBootstrapper(app)
+          .then(() => mount(app))
+          .then(render => {
+            expect(render).toMatchSnapshot()
+            return new Promise(resolve =>
+              setTimeout(() => resolve(render), errorResolveDelay),
+            )
+          })
+          // The error should be in state and should render via the boundary component
           .then(render => {
             render.update()
             expect(render).toMatchSnapshot()
