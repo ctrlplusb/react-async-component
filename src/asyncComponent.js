@@ -8,6 +8,7 @@ function asyncComponent(config) {
     name,
     resolve,
     autoResolveES2015Default = true,
+    throwError = false,
     serverMode = 'resolve',
     LoadingComponent,
     ErrorComponent,
@@ -187,6 +188,9 @@ function asyncComponent(config) {
     render() {
       const { module, error } = this.state
       if (error) {
+        if (throwError) {
+          throw error
+        }
         return ErrorComponent ? (
           <ErrorComponent {...this.props} error={error} />
         ) : null
