@@ -90,6 +90,13 @@ const LoadingComponent = () => <div>Loading...</div>
 const errorResolveDelay = 20
 
 describe('integration tests', () => {
+  let consoleSpy;
+
+  beforeEach(() => {
+    consoleSpy = jest
+      .spyOn(console, 'warn')
+      .mockImplementation(() => true)
+  })
   it('render server and client', () => {
     // we have to delete the window to emulate a server only environment
     let windowTemp = global.window
@@ -233,6 +240,7 @@ describe('integration tests', () => {
           <Foo />
         </AsyncComponentProvider>
       )
+      expect(consoleSpy).toHaveBeenCalledWith('Failed to resolve asyncComponent')
       const bootstrappedApp = await asyncBootstrapper(app)
       await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
       expect(renderToStaticMarkup(bootstrappedApp)).toMatchSnapshot()

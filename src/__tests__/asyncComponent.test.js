@@ -40,6 +40,9 @@ describe('asyncComponent', () => {
   describe('in a server environment', () => {
     describe('when an error occurs resolving a component', () => {
       it('should not render the ErrorComponent', async () => {
+        const consoleSpy = jest
+          .spyOn(console, 'warn')
+          .mockImplementation(() => true)
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
@@ -48,6 +51,9 @@ describe('asyncComponent', () => {
         const renderWrapper = mount(<Bob />)
         await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
         expect(renderWrapper.html()).toMatchSnapshot()
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Failed to resolve asyncComponent',
+        )
       })
     })
   })
