@@ -24,7 +24,7 @@ describe('asyncComponent', () => {
 
   describe('in a browser environment', () => {
     describe('when an error occurs resolving a component', () => {
-      it.only('should render the ErrorComponent', async () => {
+      it('should render the ErrorComponent', async () => {
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
@@ -34,12 +34,49 @@ describe('asyncComponent', () => {
         await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
         expect(renderWrapper.html()).toMatchSnapshot()
       })
+
+      it('can retry resolving', async () => {
+        class RetryingError extends React.Component {
+          componentDidMount() {
+            setTimeout(() => this.props.retry(), 1)
+          }
+          render() {
+            return <div>{this.props.error.message}</div>
+          }
+        }
+        const asyncProps = {
+          resolve: jest.fn(() =>
+            Promise.reject(new Error('failed to resolve')),
+          ),
+          ErrorComponent: RetryingError,
+          env: 'browser',
+        }
+        const Bob = asyncComponent(asyncProps)
+        const renderWrapper = mount(<Bob />)
+
+        asyncProps.resolve.mockImplementation(() =>
+          Promise.resolve(() => <h1>I loaded now!</h1>),
+        )
+
+        await new Promise(resolve =>
+          setTimeout(() => {
+            expect(renderWrapper.html()).toMatchSnapshot()
+            setTimeout(() => {
+              expect(renderWrapper.html()).toMatchSnapshot()
+              resolve()
+            }, errorResolveDelay)
+          }, errorResolveDelay),
+        )
+      })
     })
   })
 
   describe('in a server environment', () => {
     describe('when an error occurs resolving a component', () => {
       it('should not render the ErrorComponent', async () => {
+        const consoleSpy = jest
+          .spyOn(console, 'warn')
+          .mockImplementation(() => true)
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
@@ -48,6 +85,9 @@ describe('asyncComponent', () => {
         const renderWrapper = mount(<Bob />)
         await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
         expect(renderWrapper.html()).toMatchSnapshot()
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'Failed to resolve asyncComponent',
+        )
       })
     })
   })

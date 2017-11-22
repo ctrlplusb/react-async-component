@@ -1,5 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`asyncComponent in a browser environment when an error occurs resolving a component can retry resolving 1`] = `"<div>failed to resolve</div>"`;
+
+exports[`asyncComponent in a browser environment when an error occurs resolving a component can retry resolving 2`] = `"<h1>I loaded now!</h1>"`;
+
 exports[`asyncComponent in a browser environment when an error occurs resolving a component should render the ErrorComponent 1`] = `"<div>failed to resolve</div>"`;
 
 exports[`asyncComponent in a server environment when an error occurs resolving a component should not render the ErrorComponent 1`] = `null`;
