@@ -24,7 +24,7 @@ describe('asyncComponent', () => {
 
   describe('in a browser environment', () => {
     describe('when an error occurs resolving a component', () => {
-      it.only('should render the ErrorComponent', async () => {
+      it('should render the ErrorComponent', async () => {
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
