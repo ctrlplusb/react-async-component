@@ -463,6 +463,16 @@ function asyncComponent(config) {
         });
       }
     }, {
+      key: 'retryResolvingModule',
+      value: function retryResolvingModule() {
+        // clear existing errors
+        this.registerErrorState(null);
+        sharedState.error = null;
+        // clear resolver so it'll be retried
+        sharedState.resolver = null;
+        this.resolveModule();
+      }
+    }, {
       key: 'componentWillUnmount',
       value: function componentWillUnmount() {
         this.unmounted = true;
@@ -485,12 +495,16 @@ function asyncComponent(config) {
     }, {
       key: 'render',
       value: function render() {
+        var _this5 = this;
+
         var _state = this.state,
             module = _state.module,
             error = _state.error;
 
         if (error) {
-          return ErrorComponent ? _react2.default.createElement(ErrorComponent, _extends({}, this.props, { error: error })) : null;
+          return ErrorComponent ? _react2.default.createElement(ErrorComponent, _extends({}, this.props, { retry: function retry() {
+              return _this5.retryResolvingModule();
+            }, error: error })) : null;
         }
 
         // This is as workaround for React Hot Loader support.  When using

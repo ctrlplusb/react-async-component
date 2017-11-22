@@ -34,6 +34,40 @@ describe('asyncComponent', () => {
         await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
         expect(renderWrapper.html()).toMatchSnapshot()
       })
+
+      it('can retry resolving', async () => {
+        class RetryingError extends React.Component {
+          componentDidMount() {
+            setTimeout(() => this.props.retry(), 1)
+          }
+          render() {
+            return <div>{this.props.error.message}</div>
+          }
+        }
+        const asyncProps = {
+          resolve: jest.fn(() =>
+            Promise.reject(new Error('failed to resolve')),
+          ),
+          ErrorComponent: RetryingError,
+          env: 'browser',
+        }
+        const Bob = asyncComponent(asyncProps)
+        const renderWrapper = mount(<Bob />)
+
+        asyncProps.resolve.mockImplementation(() =>
+          Promise.resolve(() => <h1>I loaded now!</h1>),
+        )
+
+        await new Promise(resolve =>
+          setTimeout(() => {
+            expect(renderWrapper.html()).toMatchSnapshot()
+            setTimeout(() => {
+              expect(renderWrapper.html()).toMatchSnapshot()
+              resolve()
+            }, errorResolveDelay)
+          }, errorResolveDelay),
+        )
+      })
     })
   })
 

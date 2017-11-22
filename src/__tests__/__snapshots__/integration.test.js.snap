@@ -37,6 +37,7 @@ exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
   <AsyncComponent>
     <ErrorComponent
       error={[Error: An error occurred]}
+      retry={[Function]}
     >
       <div>
         An error occurred
@@ -194,6 +195,7 @@ exports[`integration tests render server and client 4`] = `
           <ErrorAsyncComponent>
             <ErrorComponent
               error={[Error: This always errors]}
+              retry={[Function]}
             >
               <div>
                 This always errors
