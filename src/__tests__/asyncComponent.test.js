@@ -11,6 +11,7 @@ describe('asyncComponent', () => {
 
   it('should handle unmounting ensuring that resolved promises do not call setState', async () => {
     const Bob = asyncComponent({
+      chunkName: 'bob',
       resolve: () => Promise.resolve(() => <div>bob</div>),
     })
     const setStateSpy = sinon.spy(Bob.prototype, 'setState')
@@ -26,6 +27,7 @@ describe('asyncComponent', () => {
     describe('when an error occurs resolving a component', () => {
       it.only('should render the ErrorComponent', async () => {
         const Bob = asyncComponent({
+          chunkName: 'bob',
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
           env: 'browser',
@@ -41,6 +43,7 @@ describe('asyncComponent', () => {
     describe('when an error occurs resolving a component', () => {
       it('should not render the ErrorComponent', async () => {
         const Bob = asyncComponent({
+          chunkName: 'bob',
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
           env: 'node',

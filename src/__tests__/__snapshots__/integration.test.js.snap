@@ -4,7 +4,6 @@ exports[`integration tests browser rendering renders the ErrorComponent 1`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
     }
@@ -23,7 +22,6 @@ exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
     }
@@ -50,7 +48,6 @@ exports[`integration tests browser rendering renders the LoadingComponent 1`] = 
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
     }
@@ -76,9 +73,9 @@ exports[`integration tests render server and client 1`] = `"<div><div><div><span
 exports[`integration tests render server and client 2`] = `
 Object {
   "resolved": Object {
-    "1": true,
-    "2": true,
-    "4": true,
+    "async-bob": true,
+    "async-bob-two": true,
+    "boundary-async-bob": true,
   },
 }
 `;
@@ -87,7 +84,6 @@ exports[`integration tests render server and client 3`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
     }
@@ -140,7 +136,6 @@ exports[`integration tests render server and client 4`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
-      "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
     }
