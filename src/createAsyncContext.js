@@ -1,13 +1,8 @@
 export default function createAsyncContext() {
-  let idPointer = 0
   const registry = {}
   return {
-    getNextId: () => {
-      idPointer += 1
-      return idPointer
-    },
-    resolved(id) {
-      registry[id] = true
+    resolved(chunkName) {
+      registry[chunkName] = true
     },
     getState() {
       return {

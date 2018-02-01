@@ -19,21 +19,25 @@ const createApp = (asyncContext, stateForClient) => {
   Bob.defaultProps = { children: null }
 
   const AsyncBob = asyncComponent({
+    chunkName: 'async-bob',
     resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
     name: 'AsyncBob',
   })
 
   const AsyncBobTwo = asyncComponent({
+    chunkName: 'async-bob-two',
     resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
     name: 'AsyncBobTwo',
   })
 
   const AsyncBobThree = asyncComponent({
+    chunkName: 'async-bob-three',
     resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
     name: 'AsyncBobThree',
   })
 
   const DeferredAsyncBob = asyncComponent({
+    chunkName: 'deferred-async-bob',
     resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
     serverMode: 'defer',
     name: 'DeferredAsyncBob',
@@ -41,12 +45,14 @@ const createApp = (asyncContext, stateForClient) => {
   })
 
   const BoundaryAsyncBob = asyncComponent({
+    chunkName: 'boundary-async-bob',
     resolve: () => new Promise(resolve => setTimeout(() => resolve(Bob), 10)),
     serverMode: 'boundary',
     name: 'BoundaryAsyncBob',
   })
 
   const ErrorAsyncComponent = asyncComponent({
+    chunkName: 'error-async-component',
     resolve: () =>
       new Promise(() => {
         throw new Error('This always errors')
@@ -145,6 +151,7 @@ describe('integration tests', () => {
   describe('browser rendering', () => {
     it('renders the ErrorComponent', () => {
       const Foo = asyncComponent({
+        chunkName: 'error-component',
         resolve: () => {
           throw new Error('An error occurred')
         },
@@ -180,6 +187,7 @@ describe('integration tests', () => {
       let resolveCount = 0
 
       const Foo = asyncComponent({
+        chunkName: 'foo',
         resolve: () => {
           resolveCount += 1
           return () => <div>foo</div>
@@ -201,6 +209,7 @@ describe('integration tests', () => {
 
     it('renders the LoadingComponent', () => {
       const Foo = asyncComponent({
+        chunkName: 'foo',
         resolve: () =>
           new Promise(resolve =>
             setTimeout(() => resolve(() => <div>foo</div>), 100),
@@ -223,6 +232,7 @@ describe('integration tests', () => {
   describe('server rendering', () => {
     it('should not render errors', async () => {
       const Foo = asyncComponent({
+        chunkName: 'foo',
         resolve: () => Promise.reject(new Error('An error occurred')),
         ErrorComponent,
         env: 'node',

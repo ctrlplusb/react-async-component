@@ -100,15 +100,10 @@ exports.default = createAsyncContext;
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function createAsyncContext() {
-  var idPointer = 0;
   var registry = {};
   return {
-    getNextId: function getNextId() {
-      idPointer += 1;
-      return idPointer;
-    },
-    resolved: function resolved(id) {
-      registry[id] = true;
+    resolved: function resolved(chunkName) {
+      registry[chunkName] = true;
     },
     getState: function getState() {
       return {
@@ -205,11 +200,10 @@ var AsyncComponentProvider = function (_React$Component) {
 
       return {
         asyncComponents: {
-          getNextId: this.asyncContext.getNextId,
           resolved: this.asyncContext.resolved,
-          shouldRehydrate: function shouldRehydrate(id) {
-            var resolved = _this2.rehydrateState.resolved[id];
-            delete _this2.rehydrateState.resolved[id];
+          shouldRehydrate: function shouldRehydrate(chunkName) {
+            var resolved = _this2.rehydrateState.resolved[chunkName];
+            delete _this2.rehydrateState.resolved[chunkName];
             return resolved;
           }
         }
@@ -228,7 +222,6 @@ var AsyncComponentProvider = function (_React$Component) {
 AsyncComponentProvider.propTypes = {
   children: _propTypes2.default.node.isRequired,
   asyncContext: _propTypes2.default.shape({
-    getNextId: _propTypes2.default.func.isRequired,
     resolved: _propTypes2.default.func.isRequired,
     getState: _propTypes2.default.func.isRequired
   }),
@@ -246,7 +239,6 @@ AsyncComponentProvider.defaultProps = {
 
 AsyncComponentProvider.childContextTypes = {
   asyncComponents: _propTypes2.default.shape({
-    getNextId: _propTypes2.default.func.isRequired,
     resolved: _propTypes2.default.func.isRequired,
     shouldRehydrate: _propTypes2.default.func.isRequired
   }).isRequired
@@ -291,6 +283,7 @@ var validSSRModes = ['resolve', 'defer', 'boundary'];
 
 function asyncComponent(config) {
   var name = config.name,
+      chunkName = config.chunkName,
       resolve = config.resolve,
       _config$autoResolveES = config.autoResolveES2015Default,
       autoResolveES2015Default = _config$autoResolveES === undefined ? true : _config$autoResolveES,
@@ -307,9 +300,6 @@ function asyncComponent(config) {
   var env = ['node', 'browser'].indexOf(config.env) > -1 ? config.env : typeof window === 'undefined' ? 'node' : 'browser';
 
   var sharedState = {
-    // A unique id we will assign to our async component which is especially
-    // useful when rehydrating server side rendered async components.
-    id: null,
     // This will be use to hold the resolved module allowing sharing across
     // instances.
     // NOTE: When using React Hot Loader this reference will become null.
@@ -317,7 +307,9 @@ function asyncComponent(config) {
     // If an error occurred during a resolution it will be stored here.
     error: null,
     // Allows us to share the resolver promise across instances.
-    resolver: null
+    resolver: null,
+    // A unique chunkName
+    chunkName: chunkName
 
     // Takes the given module and if it has a ".default" the ".default" will
     // be returned. i.e. handy when you could be dealing with es6 imports.
@@ -342,26 +334,16 @@ function asyncComponent(config) {
   var AsyncComponent = function (_React$Component) {
     _inherits(AsyncComponent, _React$Component);
 
-    function AsyncComponent(props, context) {
+    function AsyncComponent() {
       _classCallCheck(this, AsyncComponent);
 
-      // We have to set the id in the constructor because a RHL seems
-      // to recycle the module and therefore the id closure will be null.
-      // We can't put it in componentWillMount as RHL hot swaps the new code
-      // so the mount call will not happen (but the ctor does).
-      var _this = _possibleConstructorReturn(this, (AsyncComponent.__proto__ || Object.getPrototypeOf(AsyncComponent)).call(this, props, context));
-
-      if (_this.context.asyncComponents != null && !sharedState.id) {
-        sharedState.id = _this.context.asyncComponents.getNextId();
-      }
-      return _this;
+      return _possibleConstructorReturn(this, (AsyncComponent.__proto__ || Object.getPrototypeOf(AsyncComponent)).apply(this, arguments));
     }
-
-    // @see react-async-bootstrapper
-
 
     _createClass(AsyncComponent, [{
       key: 'asyncBootstrap',
+
+      // @see react-async-bootstrapper
       value: function asyncBootstrap() {
         var _this2 = this;
 
@@ -378,7 +360,7 @@ function asyncComponent(config) {
         };
 
         if (env === 'browser') {
-          return shouldRehydrate(sharedState.id) ? doResolve() : false;
+          return shouldRehydrate(sharedState.chunkName) ? doResolve() : false;
         }
 
         // node
@@ -434,7 +416,7 @@ function asyncComponent(config) {
             return undefined;
           }
           if (_this3.context.asyncComponents != null) {
-            _this3.context.asyncComponents.resolved(sharedState.id);
+            _this3.context.asyncComponents.resolved(sharedState.chunkName);
           }
           sharedState.module = module;
           if (env === 'browser') {
@@ -516,7 +498,6 @@ function asyncComponent(config) {
       isBoundary: _propTypes2.default.bool
     }),
     asyncComponents: _propTypes2.default.shape({
-      getNextId: _propTypes2.default.func.isRequired,
       resolved: _propTypes2.default.func.isRequired,
       shouldRehydrate: _propTypes2.default.func.isRequired
     })
