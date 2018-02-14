@@ -1,5 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`integration tests browser rendering can resolve dynamic components - bar 1`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent
+    name="test"
+  />
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering can resolve dynamic components - bar 2`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent
+    name="test"
+  >
+    <a
+      href="http://google.de/test"
+    >
+      <Component
+        name="test"
+      >
+        <div>
+          barComponent: 
+          test
+        </div>
+      </Component>
+    </a>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering can resolve dynamic components - foo 1`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent
+    name="foo"
+  />
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering can resolve dynamic components - foo 2`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent
+    name="foo"
+  >
+    <a
+      href="http://google.de/foo"
+    >
+      <Component
+        name="foo"
+      >
+        <div>
+          fooComponent: 
+          foo
+        </div>
+      </Component>
+    </a>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
 exports[`integration tests browser rendering renders the ErrorComponent 1`] = `
 <AsyncComponentProvider
   asyncContext={
@@ -67,6 +177,31 @@ exports[`integration tests browser rendering renders the LoadingComponent 1`] = 
         Loading...
       </div>
     </LoadingComponent>
+  </AsyncComponent>
+</AsyncComponentProvider>
+`;
+
+exports[`integration tests browser rendering renders the LoadingComponent 2`] = `
+<AsyncComponentProvider
+  asyncContext={
+    Object {
+      "getNextId": [Function],
+      "getState": [Function],
+      "resolved": [Function],
+    }
+  }
+  rehydrateState={
+    Object {
+      "resolved": Object {},
+    }
+  }
+>
+  <AsyncComponent>
+    <Component>
+      <div>
+        foo
+      </div>
+    </Component>
   </AsyncComponent>
 </AsyncComponentProvider>
 `;

@@ -199,6 +199,57 @@ describe('integration tests', () => {
         .then(() => expect(resolveCount).toEqual(1))
     })
 
+    const Dynamic = asyncComponent({
+      resolve: props => {
+        if (props.name === 'foo') {
+          return ({ name }) => <div>fooComponent:&nbsp;{name}</div>
+        } else {
+          return ({ name }) => <div>barComponent:&nbsp;{name}</div>
+        }
+      },
+      render: (ResolvedComponent, props) => (
+        <a href={`http://google.de/${props.name}`}>
+          <ResolvedComponent {...props} />
+        </a>
+      ),
+    })
+
+    it('can resolve dynamic components - bar', () => {
+      const app = () => (
+        <AsyncComponentProvider asyncContext={createAsyncContext()}>
+          <Dynamic name="test" />
+        </AsyncComponentProvider>
+      )
+
+      return asyncBootstrapper(app())
+        .then(() => mount(app()))
+        .then(render => {
+          // async component with props
+          expect(render).toMatchSnapshot()
+          // resolve to bar
+          render.update()
+          expect(render).toMatchSnapshot()
+        })
+    })
+
+    it.only('can resolve dynamic components - foo', () => {
+      const app = () => (
+        <AsyncComponentProvider asyncContext={createAsyncContext()}>
+          <Dynamic name="foo" />
+        </AsyncComponentProvider>
+      )
+
+      return asyncBootstrapper(app())
+        .then(() => mount(app()))
+        .then(render => {
+          // async component with props
+          expect(render).toMatchSnapshot()
+          // resolve to foo
+          render.update()
+          expect(render).toMatchSnapshot()
+        })
+    })
+
     it('renders the LoadingComponent', () => {
       const Foo = asyncComponent({
         resolve: () =>
@@ -216,7 +267,15 @@ describe('integration tests', () => {
 
       return asyncBootstrapper(app)
         .then(() => mount(app))
-        .then(render => expect(render).toMatchSnapshot())
+        .then(render => {
+          expect(render).toMatchSnapshot()
+          return new Promise(resolve => setTimeout(() => resolve(render), 150))
+        })
+        .then(render => {
+          render.update()
+          // rendered after loading
+          expect(render).toMatchSnapshot()
+        })
     })
   })
 
