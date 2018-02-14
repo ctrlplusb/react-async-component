@@ -200,6 +200,7 @@ describe('integration tests', () => {
     })
 
     const Dynamic = asyncComponent({
+      getModuleId: props => props.name,
       resolve: props => {
         if (props.name === 'foo') {
           return ({ name }) => <div>fooComponent:&nbsp;{name}</div>
