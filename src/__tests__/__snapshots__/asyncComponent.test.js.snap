@@ -2,4 +2,34 @@
 
 exports[`asyncComponent in a browser environment when an error occurs resolving a component should render the ErrorComponent 1`] = `"<div>failed to resolve</div>"`;
 
+exports[`asyncComponent in a browser environment when resolving dynamic imports should resolve module again on module id change 1`] = `
+<AsyncComponent
+  name="test"
+>
+  <Component
+    name="test"
+  >
+    <div>
+      barComponent: 
+      test
+    </div>
+  </Component>
+</AsyncComponent>
+`;
+
+exports[`asyncComponent in a browser environment when resolving dynamic imports should resolve module again on module id change 2`] = `
+<AsyncComponent
+  name="foo"
+>
+  <Component
+    name="foo"
+  >
+    <div>
+      fooComponent: 
+      foo
+    </div>
+  </Component>
+</AsyncComponent>
+`;
+
 exports[`asyncComponent in a server environment when an error occurs resolving a component should not render the ErrorComponent 1`] = `null`;

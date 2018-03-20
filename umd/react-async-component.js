@@ -288,6 +288,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var validSSRModes = ['resolve', 'defer', 'boundary'];
+var staticModuleId = Symbol();
 
 function asyncComponent(config) {
   var name = config.name,
@@ -297,7 +298,12 @@ function asyncComponent(config) {
       _config$serverMode = config.serverMode,
       serverMode = _config$serverMode === undefined ? 'resolve' : _config$serverMode,
       LoadingComponent = config.LoadingComponent,
-      ErrorComponent = config.ErrorComponent;
+      ErrorComponent = config.ErrorComponent,
+      _render = config.render,
+      _config$getModuleId = config.getModuleId,
+      getModuleId = _config$getModuleId === undefined ? function () {
+    return staticModuleId;
+  } : _config$getModuleId;
 
 
   if (validSSRModes.indexOf(serverMode) === -1) {
@@ -313,7 +319,7 @@ function asyncComponent(config) {
     // This will be use to hold the resolved module allowing sharing across
     // instances.
     // NOTE: When using React Hot Loader this reference will become null.
-    module: null,
+    modules: {},
     // If an error occurred during a resolution it will be stored here.
     error: null,
     // Allows us to share the resolver promise across instances.
@@ -325,12 +331,15 @@ function asyncComponent(config) {
     return autoResolveES2015Default && x != null && (typeof x === 'function' || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) === 'object') && x.default ? x.default : x;
   };
 
-  var getResolver = function getResolver() {
-    if (sharedState.resolver == null) {
+  var getResolver = function getResolver(props) {
+    // FIXME can we make "sharedState.resover" like "sharedState.modules" to get rid of `getModuleId(props) !== staticModuleId`?
+    // Because atm it calls `resolver` two times on first render. This is no problem for dynamic `import` thing of webpack,
+    // but other promise based api.
+    if (sharedState.resolver == null || getModuleId(props) !== staticModuleId) {
       try {
         // Wrap whatever the user returns in Promise.resolve to ensure a Promise
         // is always returned.
-        var resolver = resolve();
+        var resolver = resolve(props);
         sharedState.resolver = Promise.resolve(resolver);
       } catch (err) {
         sharedState.resolver = Promise.reject(err);
@@ -403,9 +412,7 @@ function asyncComponent(config) {
     }, {
       key: 'componentWillMount',
       value: function componentWillMount() {
-        this.setState({
-          module: sharedState.module
-        });
+        this.setState({ modules: sharedState.modules });
         if (sharedState.error) {
           this.registerErrorState(sharedState.error);
         }
@@ -420,27 +427,28 @@ function asyncComponent(config) {
     }, {
       key: 'shouldResolve',
       value: function shouldResolve() {
-        return sharedState.module == null && sharedState.error == null && !this.resolving && typeof window !== 'undefined';
+        return sharedState.modules[getModuleId(this.props)] !== null && sharedState.error == null && !this.resolving && typeof window !== 'undefined';
       }
     }, {
       key: 'resolveModule',
       value: function resolveModule() {
         var _this3 = this;
 
+        var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.props;
+
         this.resolving = true;
 
-        return getResolver().then(function (module) {
+        var moduleId = getModuleId(props);
+        return getResolver(props).then(function (module) {
           if (_this3.unmounted) {
             return undefined;
           }
           if (_this3.context.asyncComponents != null) {
             _this3.context.asyncComponents.resolved(sharedState.id);
           }
-          sharedState.module = module;
+          sharedState.modules[moduleId] = module;
           if (env === 'browser') {
-            _this3.setState({
-              module: module
-            });
+            _this3.setState({ modules: sharedState.modules });
           }
           _this3.resolving = false;
           return module;
@@ -461,6 +469,16 @@ function asyncComponent(config) {
           _this3.resolving = false;
           return undefined;
         });
+      }
+    }, {
+      key: 'componentWillReceiveProps',
+      value: function componentWillReceiveProps(nextProps) {
+        var lastModuleId = getModuleId(this.props);
+        var nextModuleId = getModuleId(nextProps);
+        if (lastModuleId !== nextModuleId && !sharedState.modules[nextModuleId]) {
+          // FIXME add LoadingComponent logic to show old module for X ms (to prevent flash of content) and then show a loading component till the new module is loaded, make this configurable as for some cases it makes no sense to show the old content, like for icons
+          this.resolveModule(nextProps);
+        }
       }
     }, {
       key: 'componentWillUnmount',
@@ -486,7 +504,7 @@ function asyncComponent(config) {
       key: 'render',
       value: function render() {
         var _state = this.state,
-            module = _state.module,
+            modules = _state.modules,
             error = _state.error;
 
         if (error) {
@@ -501,8 +519,9 @@ function asyncComponent(config) {
           this.resolveModule();
         }
 
-        var Component = es6Resolve(module);
-        return Component ? _react2.default.createElement(Component, this.props) : LoadingComponent ? _react2.default.createElement(LoadingComponent, this.props) : null;
+        var Component = es6Resolve(modules[getModuleId(this.props)]);
+        // eslint-disable-next-line no-nested-ternary
+        return Component ? _render ? _render(Component, this.props) : _react2.default.createElement(Component, this.props) : LoadingComponent ? _react2.default.createElement(LoadingComponent, this.props) : null;
       }
     }]);
 

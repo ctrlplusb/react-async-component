@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 const validSSRModes = ['resolve', 'defer', 'boundary']
+const staticModuleId = Symbol()
 
 function asyncComponent(config) {
   const {
@@ -11,6 +12,8 @@ function asyncComponent(config) {
     serverMode = 'resolve',
     LoadingComponent,
     ErrorComponent,
+    render,
+    getModuleId = () => staticModuleId,
   } = config
 
   if (validSSRModes.indexOf(serverMode) === -1) {
@@ -29,7 +32,7 @@ function asyncComponent(config) {
     // This will be use to hold the resolved module allowing sharing across
     // instances.
     // NOTE: When using React Hot Loader this reference will become null.
-    module: null,
+    modules: {},
     // If an error occurred during a resolution it will be stored here.
     error: null,
     // Allows us to share the resolver promise across instances.
@@ -46,12 +49,12 @@ function asyncComponent(config) {
       ? x.default
       : x
 
-  const getResolver = () => {
-    if (sharedState.resolver == null) {
+  const getResolver = props => {
+    if (sharedState.resolver == null || getModuleId(props) !== staticModuleId) {
       try {
         // Wrap whatever the user returns in Promise.resolve to ensure a Promise
         // is always returned.
-        const resolver = resolve()
+        const resolver = resolve(props)
         sharedState.resolver = Promise.resolve(resolver)
       } catch (err) {
         sharedState.resolver = Promise.reject(err)
@@ -106,9 +109,7 @@ function asyncComponent(config) {
     }
 
     componentWillMount() {
-      this.setState({
-        module: sharedState.module,
-      })
+      this.setState({ modules: sharedState.modules })
       if (sharedState.error) {
         this.registerErrorState(sharedState.error)
       }
@@ -122,17 +123,18 @@ function asyncComponent(config) {
 
     shouldResolve() {
       return (
-        sharedState.module == null &&
+        sharedState.modules[getModuleId(this.props)] !== null &&
         sharedState.error == null &&
         !this.resolving &&
         typeof window !== 'undefined'
       )
     }
 
-    resolveModule() {
+    resolveModule(props = this.props) {
       this.resolving = true
 
-      return getResolver()
+      let moduleId = getModuleId(props)
+      return getResolver(props)
         .then(module => {
           if (this.unmounted) {
             return undefined
@@ -140,11 +142,9 @@ function asyncComponent(config) {
           if (this.context.asyncComponents != null) {
             this.context.asyncComponents.resolved(sharedState.id)
           }
-          sharedState.module = module
+          sharedState.modules[moduleId] = module
           if (env === 'browser') {
-            this.setState({
-              module,
-            })
+            this.setState({ modules: sharedState.modules })
           }
           this.resolving = false
           return module
@@ -168,6 +168,14 @@ function asyncComponent(config) {
         })
     }
 
+    componentWillReceiveProps(nextProps) {
+      let lastModuleId = getModuleId(this.props)
+      let nextModuleId = getModuleId(nextProps)
+      if (lastModuleId !== nextModuleId && !sharedState.modules[nextModuleId]) {
+        this.resolveModule(nextProps)
+      }
+    }
+
     componentWillUnmount() {
       this.unmounted = true
     }
@@ -185,7 +193,7 @@ function asyncComponent(config) {
     }
 
     render() {
-      const { module, error } = this.state
+      const { modules, error } = this.state
       if (error) {
         return ErrorComponent ? (
           <ErrorComponent {...this.props} error={error} />
@@ -200,9 +208,14 @@ function asyncComponent(config) {
         this.resolveModule()
       }
 
-      const Component = es6Resolve(module)
+      const Component = es6Resolve(modules[getModuleId(this.props)])
+      // eslint-disable-next-line no-nested-ternary
       return Component ? (
-        <Component {...this.props} />
+        render ? (
+          render(Component, this.props)
+        ) : (
+          <Component {...this.props} />
+        )
       ) : LoadingComponent ? (
         <LoadingComponent {...this.props} />
       ) : null

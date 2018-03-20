@@ -24,7 +24,7 @@ describe('asyncComponent', () => {
 
   describe('in a browser environment', () => {
     describe('when an error occurs resolving a component', () => {
-      it.only('should render the ErrorComponent', async () => {
+      it('should render the ErrorComponent', async () => {
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
@@ -33,6 +33,41 @@ describe('asyncComponent', () => {
         const renderWrapper = mount(<Bob />)
         await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
         expect(renderWrapper.html()).toMatchSnapshot()
+      })
+    })
+    describe('when resolving dynamic imports', () => {
+      it('should resolve module again on module id change', async () => {
+        const Dynamic = asyncComponent({
+          getModuleId: props => props.name,
+          resolve: props => {
+            if (props.name === 'foo') {
+              return ({ name }) => <div>fooComponent:&nbsp;{name}</div>
+            } else {
+              return ({ name }) => <div>barComponent:&nbsp;{name}</div>
+            }
+          },
+          render: (ResolvedComponent, props) => (
+            <ResolvedComponent {...props} />
+          ),
+          env: 'browser',
+        })
+
+        const renderWrapper = mount(<Dynamic name="test" />)
+        await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
+        renderWrapper.update()
+        expect(renderWrapper).toMatchSnapshot()
+        await new Promise(resolve => {
+          renderWrapper.setProps(
+            {
+              name: 'foo',
+            },
+            () => {
+              setTimeout(resolve, errorResolveDelay)
+            },
+          )
+        })
+        renderWrapper.update()
+        expect(renderWrapper).toMatchSnapshot()
       })
     })
   })
