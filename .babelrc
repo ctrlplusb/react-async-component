@@ -1,32 +1,3 @@
 {
-  "presets": [
-    ["env", { "targets": { "node": true } }],
-    "stage-3",
-    "react"
-  ],
-  "plugins": [
-    "transform-class-properties"
-  ],
-  "env": {
-    "commonjs": {
-      "presets": [
-        "latest",
-        "stage-3",
-        "react"
-      ],
-      "plugins": [
-        "transform-class-properties"
-      ]
-    },
-    "umd": {
-      "presets": [
-        ["latest", { "es2015": { "modules": false } }],
-        "stage-3",
-        "react"
-      ],
-      "plugins": [
-        "transform-class-properties"
-      ]
-    }
-  }
+  "presets": [["env", { "targets": { "node": true } }], "stage-3", "react"]
 }

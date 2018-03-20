@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 
 import React from 'react'
-import sinon from 'sinon'
 import { mount } from 'enzyme'
 
 import asyncComponent from '../asyncComponent'
@@ -13,18 +12,18 @@ describe('asyncComponent', () => {
     const Bob = asyncComponent({
       resolve: () => Promise.resolve(() => <div>bob</div>),
     })
-    const setStateSpy = sinon.spy(Bob.prototype, 'setState')
+    const setStateSpy = jest.spyOn(Bob.prototype, 'setState')
     const renderWrapper = mount(<Bob />)
     // Should have 1 initial setState call for mounting
-    expect(setStateSpy.callCount).toEqual(1)
+    expect(setStateSpy).toHaveBeenCalledTimes(1)
     renderWrapper.unmount()
     await new Promise(resolve => setTimeout(resolve, 1))
-    expect(setStateSpy.callCount).toEqual(1)
+    expect(setStateSpy).toHaveBeenCalledTimes(1)
   })
 
   describe('in a browser environment', () => {
     describe('when an error occurs resolving a component', () => {
-      it.only('should render the ErrorComponent', async () => {
+      it('should render the ErrorComponent', async () => {
         const Bob = asyncComponent({
           resolve: () => Promise.reject(new Error('failed to resolve')),
           ErrorComponent: ({ error }) => <div>{error.message}</div>,
