@@ -74,7 +74,7 @@ function asyncComponent(config) {
     }
 
     // @see react-async-bootstrapper
-    asyncBootstrap() {
+    bootstrap() {
       const { asyncComponents, asyncComponentsAncestor } = this.context
       const { shouldRehydrate } = asyncComponents
 
