@@ -1,11 +1,15 @@
 {
   "name": "react-async-component",
   "version": "1.0.2",
-  "description":
-    "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
+  "description": "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "commonjs/index.js",
-  "files": ["index.d.ts", "*.js", "*.md", "dist"],
+  "files": [
+    "index.d.ts",
+    "*.js",
+    "*.md",
+    "dist"
+  ],
   "typings": "./index.d.ts",
   "repository": {
     "type": "git",
@@ -22,8 +26,7 @@
   ],
   "scripts": {
     "build": "node ./tools/scripts/build.js",
-    "clean":
-      "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./umd",
+    "clean": "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./umd",
     "lint": "eslint src",
     "precommit": "lint-staged && npm run test",
     "prepublish": "npm run build",
@@ -32,16 +35,16 @@
     "test:coverage:deploy": "npm run test:coverage && codecov"
   },
   "peerDependencies": {
+    "prop-types": "^15.0.0",
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0",
-    "react-dom": "^0.14.0 || ^15.0.0 || ^16.0.0",
-    "prop-types": "^15.0.0"
+    "react-dom": "^0.14.0 || ^15.0.0 || ^16.0.0"
   },
   "devDependencies": {
     "app-root-dir": "1.0.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
-    "babel-jest": "^21.2.0",
+    "babel-jest": "^22.4.3",
     "babel-loader": "^7.1.2",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
@@ -65,8 +68,8 @@
     "gzip-size": "^4.0.0",
     "husky": "^0.14.3",
     "in-publish": "2.0.0",
-    "jest": "^21.2.1",
-    "lint-staged": "^4.2.3",
+    "jest": "^22.4.3",
+    "lint-staged": "^7.0.0",
     "memory-fs": "0.4.1",
     "prettier": "^1.7.4",
     "pretty-bytes": "4.0.2",
@@ -74,20 +77,29 @@
     "raf": "^3.4.0",
     "ramda": "^0.25.0",
     "react": "^16.0.0",
-    "react-async-bootstrapper": "^1.1.2",
+    "react-async-bootstrapper": "^2.1.0",
     "react-dom": "^16.0.0",
     "react-test-renderer": "^16.0.0",
-    "readline-sync": "1.4.7",
+    "readline-sync": "1.4.9",
     "rimraf": "^2.6.2",
-    "rollup": "^0.56.5",
+    "rollup": "^0.57.1",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-uglify": "^3.0.0"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-    "setupFiles": ["raf/polyfill", "<rootDir>/tools/tests/setup.js"],
-    "snapshotSerializers": ["<rootDir>/node_modules/enzyme-to-json/serializer"],
-    "testPathIgnorePatterns": ["<rootDir>/(coverage|dist|node_modules|tools)/"]
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "raf/polyfill",
+      "<rootDir>/tools/tests/setup.js"
+    ],
+    "snapshotSerializers": [
+      "<rootDir>/node_modules/enzyme-to-json/serializer"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/(coverage|dist|node_modules|tools)/"
+    ]
   },
   "eslintConfig": {
     "root": true,
@@ -98,7 +110,10 @@
       "node": true,
       "jest": true
     },
-    "extends": ["airbnb", "prettier"],
+    "extends": [
+      "airbnb",
+      "prettier"
+    ],
     "rules": {
       "camelcase": 0,
       "import/prefer-default-export": 0,
@@ -107,19 +122,29 @@
       "no-underscore-dangle": 0,
       "react/no-array-index-key": 0,
       "react/react-in-jsx-scope": 0,
-      "semi": [2, "never"],
+      "semi": [
+        2,
+        "never"
+      ],
       "react/forbid-prop-types": 0,
       "react/jsx-filename-extension": 0,
       "react/sort-comp": 0
     }
   },
-  "eslintIgnore": ["node_modules/", "coverage/", "dist/"],
+  "eslintIgnore": [
+    "node_modules/",
+    "coverage/",
+    "dist/"
+  ],
   "prettier": {
     "semi": false,
     "singleQuote": true,
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": ["prettier --write \"src/**/*.js\"", "git add"]
+    "*.js": [
+      "prettier --write \"src/**/*.js\"",
+      "git add"
+    ]
   }
 }

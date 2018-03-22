@@ -4,6 +4,7 @@ exports[`integration tests browser rendering renders the ErrorComponent 1`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
+      "failed": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
@@ -23,6 +24,7 @@ exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
+      "failed": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
@@ -36,7 +38,46 @@ exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
 >
   <AsyncComponent>
     <ErrorComponent
-      error={[Error: An error occurred]}
+      error={
+        Object {
+          "message": "An error occurred",
+          "stack": "Error: An error occurred
+    at resolve (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/__tests__/integration.test.js:149:17)
+    at getResolver (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:64:42)
+    at AsyncComponent.resolveModule (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:152:14)
+    at AsyncComponent.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:202:14)
+    at finishClassComponent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:7873:31)
+    at updateClassComponent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:7850:12)
+    at beginWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:8225:16)
+    at performUnitOfWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10224:16)
+    at workLoop (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10288:26)
+    at HTMLUnknownElement.callCallback (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:542:14)
+    at invokeEventListeners (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:193:27)
+    at HTMLUnknownElementImpl._dispatch (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:119:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:82:17)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:30:27)
+    at HTMLUnknownElement.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:157:21)
+    at Object.invokeGuardedCallbackDev (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:581:16)
+    at invokeGuardedCallback (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:438:27)
+    at renderRoot (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10366:7)
+    at performWorkOnRoot (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11014:24)
+    at performWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10967:7)
+    at requestWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10878:7)
+    at scheduleWorkImpl (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10732:11)
+    at scheduleWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10689:12)
+    at scheduleTopLevelUpdate (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11193:5)
+    at Object.updateContainer (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11231:7)
+    at /Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15226:19
+    at Object.unbatchedUpdates (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11102:12)
+    at renderSubtreeIntoContainer (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15225:17)
+    at Object.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15290:12)
+    at Object.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme-adapter-react-16/build/ReactSixteenAdapter.js:218:50)
+    at new ReactWrapper (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme/build/ReactWrapper.js:98:16)
+    at mount (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme/build/mount.js:19:10)
+    at then (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/__tests__/integration.test.js:162:23)
+    at <anonymous>",
+        }
+      }
     >
       <div>
         An error occurred
@@ -50,6 +91,7 @@ exports[`integration tests browser rendering renders the LoadingComponent 1`] = 
 <AsyncComponentProvider
   asyncContext={
     Object {
+      "failed": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
@@ -75,6 +117,7 @@ exports[`integration tests render server and client 1`] = `"<div><div><div><span
 
 exports[`integration tests render server and client 2`] = `
 Object {
+  "errors": Object {},
   "resolved": Object {
     "1": true,
     "2": true,
@@ -87,6 +130,7 @@ exports[`integration tests render server and client 3`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
+      "failed": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
@@ -94,13 +138,14 @@ exports[`integration tests render server and client 3`] = `
   }
   rehydrateState={
     Object {
+      "errors": Object {},
       "resolved": Object {},
     }
   }
 >
-  <AsyncBob>
-    <Bob>
-      <div>
+  <div>
+    <AsyncBob>
+      <Bob>
         <div>
           <AsyncBobTwo>
             <Bob>
@@ -128,11 +173,10 @@ exports[`integration tests render server and client 3`] = `
               </div>
             </Bob>
           </BoundaryAsyncBob>
-          <ErrorAsyncComponent />
         </div>
-      </div>
-    </Bob>
-  </AsyncBob>
+      </Bob>
+    </AsyncBob>
+  </div>
 </AsyncComponentProvider>
 `;
 
@@ -140,6 +184,7 @@ exports[`integration tests render server and client 4`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
+      "failed": [Function],
       "getNextId": [Function],
       "getState": [Function],
       "resolved": [Function],
@@ -147,13 +192,14 @@ exports[`integration tests render server and client 4`] = `
   }
   rehydrateState={
     Object {
+      "errors": Object {},
       "resolved": Object {},
     }
   }
 >
-  <AsyncBob>
-    <Bob>
-      <div>
+  <div>
+    <AsyncBob>
+      <Bob>
         <div>
           <AsyncBobTwo>
             <Bob>
@@ -191,19 +237,10 @@ exports[`integration tests render server and client 4`] = `
               </div>
             </Bob>
           </BoundaryAsyncBob>
-          <ErrorAsyncComponent>
-            <ErrorComponent
-              error={[Error: This always errors]}
-            >
-              <div>
-                This always errors
-              </div>
-            </ErrorComponent>
-          </ErrorAsyncComponent>
         </div>
-      </div>
-    </Bob>
-  </AsyncBob>
+      </Bob>
+    </AsyncBob>
+  </div>
 </AsyncComponentProvider>
 `;
 

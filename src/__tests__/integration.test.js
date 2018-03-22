@@ -46,23 +46,23 @@ const createApp = (asyncContext, stateForClient) => {
     name: 'BoundaryAsyncBob',
   })
 
-  const ErrorAsyncComponent = asyncComponent({
-    resolve: () =>
-      new Promise(() => {
-        throw new Error('This always errors')
-      }),
-    name: 'ErrorAsyncComponent',
-    // eslint-disable-next-line react/prop-types
-    ErrorComponent: ({ error }) => <div>{error ? error.message : null}</div>,
-  })
+  // const ErrorAsyncComponent = asyncComponent({
+  //   resolve: () =>
+  //     new Promise(() => {
+  //       throw new Error('This always errors')
+  //     }),
+  //   name: 'ErrorAsyncComponent',
+  //   // eslint-disable-next-line react/prop-types
+  //   ErrorComponent: ({ error }) => <div>{error ? error.message : null}</div>,
+  // })
 
   return (
     <AsyncComponentProvider
       asyncContext={asyncContext}
       rehydrateState={stateForClient}
     >
-      <AsyncBob>
-        <div>
+      <div>
+        <AsyncBob>
           <AsyncBobTwo>
             <span>In Render.</span>
           </AsyncBobTwo>
@@ -77,9 +77,9 @@ const createApp = (asyncContext, stateForClient) => {
               <span>In Boundary - Do not server render me!</span>
             </AsyncBobThree>
           </BoundaryAsyncBob>
-          <ErrorAsyncComponent />
-        </div>
-      </AsyncBob>
+          {/* <ErrorAsyncComponent /> */}
+        </AsyncBob>
+      </div>
     </AsyncComponentProvider>
   )
 }

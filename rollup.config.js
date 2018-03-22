@@ -20,7 +20,7 @@ module.exports = {
       babelrc: false,
       exclude: 'node_modules/**',
       presets: [['env', { modules: false }], 'stage-3', 'react'],
-      plugins: ['external-helpers'],
+      plugins: ['transform-class-properties', 'external-helpers'],
     }),
   ],
 }

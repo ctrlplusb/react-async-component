@@ -22,7 +22,7 @@ function asyncComponent(config) {
       ? config.env
       : typeof window === 'undefined' ? 'node' : 'browser'
 
-  const sharedState = {
+  const state = {
     // A unique id we will assign to our async component which is especially
     // useful when rehydrating server side rendered async components.
     id: null,
@@ -34,7 +34,18 @@ function asyncComponent(config) {
     error: null,
     // Allows us to share the resolver promise across instances.
     resolver: null,
+    // Indicates whether resolving is taking place
+    resolving: false,
+    // Handle on the contexts so we don't lose it during async resolution
+    asyncComponents: null,
+    asyncComponentsAncestor: null,
   }
+
+  const needToResolveOnBrowser = () =>
+    state.module == null &&
+    state.error == null &&
+    !state.resolving &&
+    typeof window !== 'undefined'
 
   // Takes the given module and if it has a ".default" the ".default" will
   // be returned. i.e. handy when you could be dealing with es6 imports.
@@ -47,20 +58,37 @@ function asyncComponent(config) {
       : x
 
   const getResolver = () => {
-    if (sharedState.resolver == null) {
+    if (state.resolver == null) {
+      state.resolving = true
       try {
-        // Wrap whatever the user returns in Promise.resolve to ensure a Promise
-        // is always returned.
-        const resolver = resolve()
-        sharedState.resolver = Promise.resolve(resolver)
+        state.resolver = Promise.resolve(resolve())
       } catch (err) {
-        sharedState.resolver = Promise.reject(err)
+        state.resolver = Promise.reject(err)
       }
     }
-    return sharedState.resolver
+    return state.resolver
   }
 
-  class AsyncComponent extends React.Component {
+  return class AsyncComponent extends React.Component {
+    static displayName = name || 'AsyncComponent'
+
+    static contextTypes = {
+      asyncComponentsAncestor: PropTypes.shape({
+        isBoundary: PropTypes.bool,
+      }),
+      asyncComponents: PropTypes.shape({
+        getNextId: PropTypes.func.isRequired,
+        resolved: PropTypes.func.isRequired,
+        shouldRehydrate: PropTypes.func.isRequired,
+      }),
+    }
+
+    static childContextTypes = {
+      asyncComponentsAncestor: PropTypes.shape({
+        isBoundary: PropTypes.bool,
+      }),
+    }
+
     constructor(props, context) {
       super(props, context)
 
@@ -68,103 +96,88 @@ function asyncComponent(config) {
       // to recycle the module and therefore the id closure will be null.
       // We can't put it in componentWillMount as RHL hot swaps the new code
       // so the mount call will not happen (but the ctor does).
-      if (this.context.asyncComponents != null && !sharedState.id) {
-        sharedState.id = this.context.asyncComponents.getNextId()
+      if (this.context.asyncComponents != null) {
+        state.asyncComponents = this.context.asyncComponents
+        state.asyncComponentsAncestor = this.context.asyncComponentsAncestor
+        if (!state.id) {
+          state.id = this.context.asyncComponents.getNextId()
+        }
       }
     }
 
-    // @see react-async-bootstrapper
-    asyncBootstrap() {
-      const { asyncComponents, asyncComponentsAncestor } = this.context
-      const { shouldRehydrate } = asyncComponents
-
+    // react-async-bootstrapper
+    bootstrap() {
       const doResolve = () =>
-        this.resolveModule().then(module => module !== undefined)
+        this.resolveModule().then(
+          module => (module === undefined ? false : undefined),
+        )
 
+      // browser
       if (env === 'browser') {
-        return shouldRehydrate(sharedState.id) ? doResolve() : false
+        const { shouldRehydrate, getError } = state.asyncComponents
+        const error = getError(state.id)
+        if (error) {
+          state.error = error
+          return false
+        }
+        return shouldRehydrate(state.id) ? doResolve() : false
       }
 
       // node
       const isChildOfBoundary =
-        asyncComponentsAncestor != null && asyncComponentsAncestor.isBoundary
+        state.asyncComponentsAncestor != null &&
+        state.asyncComponentsAncestor.isBoundary
+
       return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
     getChildContext() {
-      if (this.context.asyncComponents == null) {
-        return {
-          asyncComponentsAncestor: null,
-        }
-      }
-
       return {
-        asyncComponentsAncestor: {
-          isBoundary: serverMode === 'boundary',
-        },
-      }
-    }
-
-    componentWillMount() {
-      this.setState({
-        module: sharedState.module,
-      })
-      if (sharedState.error) {
-        this.registerErrorState(sharedState.error)
+        asyncComponentsAncestor:
+          state.asyncComponents == null
+            ? null
+            : {
+                isBoundary: serverMode === 'boundary',
+              },
       }
     }
 
     componentDidMount() {
-      if (this.shouldResolve()) {
+      if (needToResolveOnBrowser()) {
         this.resolveModule()
       }
     }
 
-    shouldResolve() {
-      return (
-        sharedState.module == null &&
-        sharedState.error == null &&
-        !this.resolving &&
-        typeof window !== 'undefined'
-      )
-    }
-
     resolveModule() {
-      this.resolving = true
-
       return getResolver()
         .then(module => {
-          if (this.unmounted) {
-            return undefined
+          if (state.asyncComponents != null) {
+            state.asyncComponents.resolved(state.id)
           }
-          if (this.context.asyncComponents != null) {
-            this.context.asyncComponents.resolved(sharedState.id)
-          }
-          sharedState.module = module
-          if (env === 'browser') {
-            this.setState({
-              module,
-            })
-          }
-          this.resolving = false
+          state.module = module
+          state.error = null
+          state.resolving = false
           return module
         })
-        .catch(error => {
+        .catch(({ message, stack }) => {
+          const error = { message, stack }
+          if (state.asyncComponents != null) {
+            state.asyncComponents.failed(state.id, error)
+          }
+          state.error = error
+          state.resolving = false
+        })
+        .then(result => {
           if (this.unmounted) {
             return undefined
           }
-          if (env === 'node' || (env === 'browser' && !ErrorComponent)) {
-            // We will at least log the error so that user isn't completely
-            // unaware of an error occurring.
-            // eslint-disable-next-line no-console
-            console.warn('Failed to resolve asyncComponent')
-            // eslint-disable-next-line no-console
-            console.warn(error)
+          if (
+            !this.context.reactAsyncBootstrapperRunning &&
+            env === 'browser'
+          ) {
+            this.forceUpdate()
           }
-          sharedState.error = error
-          this.registerErrorState(error)
-          this.resolving = false
-          return undefined
+          return result
         })
     }
 
@@ -172,20 +185,9 @@ function asyncComponent(config) {
       this.unmounted = true
     }
 
-    registerErrorState(error) {
-      if (env === 'browser') {
-        setTimeout(() => {
-          if (!this.unmounted) {
-            this.setState({
-              error,
-            })
-          }
-        }, 16)
-      }
-    }
-
     render() {
-      const { module, error } = this.state
+      const { module, error } = state
+
       if (error) {
         return ErrorComponent ? (
           <ErrorComponent {...this.props} error={error} />
@@ -196,7 +198,7 @@ function asyncComponent(config) {
       // RHL the local component reference will be killed by any change
       // to the component, this will be our signal to know that we need to
       // re-resolve it.
-      if (this.shouldResolve()) {
+      if (needToResolveOnBrowser()) {
         this.resolveModule()
       }
 
@@ -208,27 +210,6 @@ function asyncComponent(config) {
       ) : null
     }
   }
-
-  AsyncComponent.displayName = name || 'AsyncComponent'
-
-  AsyncComponent.contextTypes = {
-    asyncComponentsAncestor: PropTypes.shape({
-      isBoundary: PropTypes.bool,
-    }),
-    asyncComponents: PropTypes.shape({
-      getNextId: PropTypes.func.isRequired,
-      resolved: PropTypes.func.isRequired,
-      shouldRehydrate: PropTypes.func.isRequired,
-    }),
-  }
-
-  AsyncComponent.childContextTypes = {
-    asyncComponentsAncestor: PropTypes.shape({
-      isBoundary: PropTypes.bool,
-    }),
-  }
-
-  return AsyncComponent
 }
 
 export default asyncComponent
