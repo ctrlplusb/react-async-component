@@ -1,10 +1,10 @@
 {
   "name": "react-async-component",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-alpha.0",
   "description":
     "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
-  "main": "commonjs/index.js",
+  "main": "dist/react-async-component.js",
   "files": ["index.d.ts", "*.js", "*.md", "dist"],
   "typings": "./index.d.ts",
   "repository": {
@@ -22,8 +22,7 @@
   ],
   "scripts": {
     "build": "node ./tools/scripts/build.js",
-    "clean":
-      "rimraf ./commonjs && rimraf ./umd && rimraf ./coverage && rimraf ./umd",
+    "clean": "rimraf ./dist && rimraf ./coverage",
     "lint": "eslint src",
     "precommit": "lint-staged && npm run test",
     "prepublish": "npm run build",
