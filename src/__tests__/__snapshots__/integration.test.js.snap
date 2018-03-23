@@ -1,121 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`integration tests browser rendering renders the ErrorComponent 1`] = `
-<AsyncComponentProvider
-  asyncContext={
-    Object {
-      "failed": [Function],
-      "getNextId": [Function],
-      "getState": [Function],
-      "resolved": [Function],
-    }
-  }
-  rehydrateState={
-    Object {
-      "resolved": Object {},
-    }
-  }
->
-  <AsyncComponent />
-</AsyncComponentProvider>
-`;
+exports[`integration tests server rendering with client rehydration 1`] = `"<div><div><div><span>In Render.</span></div><div>DeferredAsyncBob Loading</div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
 
-exports[`integration tests browser rendering renders the ErrorComponent 2`] = `
-<AsyncComponentProvider
-  asyncContext={
-    Object {
-      "failed": [Function],
-      "getNextId": [Function],
-      "getState": [Function],
-      "resolved": [Function],
-    }
-  }
-  rehydrateState={
-    Object {
-      "resolved": Object {},
-    }
-  }
->
-  <AsyncComponent>
-    <ErrorComponent
-      error={
-        Object {
-          "message": "An error occurred",
-          "stack": "Error: An error occurred
-    at resolve (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/__tests__/integration.test.js:149:17)
-    at getResolver (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:64:42)
-    at AsyncComponent.resolveModule (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:152:14)
-    at AsyncComponent.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/asyncComponent.js:202:14)
-    at finishClassComponent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:7873:31)
-    at updateClassComponent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:7850:12)
-    at beginWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:8225:16)
-    at performUnitOfWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10224:16)
-    at workLoop (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10288:26)
-    at HTMLUnknownElement.callCallback (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:542:14)
-    at invokeEventListeners (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:193:27)
-    at HTMLUnknownElementImpl._dispatch (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:119:9)
-    at HTMLUnknownElementImpl.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:82:17)
-    at HTMLUnknownElementImpl.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/nodes/HTMLElement-impl.js:30:27)
-    at HTMLUnknownElement.dispatchEvent (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:157:21)
-    at Object.invokeGuardedCallbackDev (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:581:16)
-    at invokeGuardedCallback (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:438:27)
-    at renderRoot (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10366:7)
-    at performWorkOnRoot (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11014:24)
-    at performWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10967:7)
-    at requestWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10878:7)
-    at scheduleWorkImpl (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10732:11)
-    at scheduleWork (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:10689:12)
-    at scheduleTopLevelUpdate (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11193:5)
-    at Object.updateContainer (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11231:7)
-    at /Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15226:19
-    at Object.unbatchedUpdates (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:11102:12)
-    at renderSubtreeIntoContainer (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15225:17)
-    at Object.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/react-dom/cjs/react-dom.development.js:15290:12)
-    at Object.render (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme-adapter-react-16/build/ReactSixteenAdapter.js:218:50)
-    at new ReactWrapper (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme/build/ReactWrapper.js:98:16)
-    at mount (/Users/seanmatheson/Development/ctrlplusb/react-async-component/node_modules/enzyme/build/mount.js:19:10)
-    at then (/Users/seanmatheson/Development/ctrlplusb/react-async-component/src/__tests__/integration.test.js:162:23)
-    at <anonymous>",
-        }
-      }
-    >
-      <div>
-        An error occurred
-      </div>
-    </ErrorComponent>
-  </AsyncComponent>
-</AsyncComponentProvider>
-`;
-
-exports[`integration tests browser rendering renders the LoadingComponent 1`] = `
-<AsyncComponentProvider
-  asyncContext={
-    Object {
-      "failed": [Function],
-      "getNextId": [Function],
-      "getState": [Function],
-      "resolved": [Function],
-    }
-  }
-  rehydrateState={
-    Object {
-      "resolved": Object {},
-    }
-  }
->
-  <AsyncComponent>
-    <LoadingComponent>
-      <div>
-        Loading...
-      </div>
-    </LoadingComponent>
-  </AsyncComponent>
-</AsyncComponentProvider>
-`;
-
-exports[`integration tests render server and client 1`] = `"<div><div><div><span>In Render.</span></div><div>DeferredAsyncBob Loading</div><div><span>In Boundary but outside an AsyncComponent, server render me!</span></div></div></div>"`;
-
-exports[`integration tests render server and client 2`] = `
+exports[`integration tests server rendering with client rehydration 2`] = `
 Object {
   "errors": Object {},
   "resolved": Object {
@@ -126,7 +13,7 @@ Object {
 }
 `;
 
-exports[`integration tests render server and client 3`] = `
+exports[`integration tests server rendering with client rehydration 3`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
@@ -180,7 +67,7 @@ exports[`integration tests render server and client 3`] = `
 </AsyncComponentProvider>
 `;
 
-exports[`integration tests render server and client 4`] = `
+exports[`integration tests server rendering with client rehydration 4`] = `
 <AsyncComponentProvider
   asyncContext={
     Object {
@@ -243,5 +130,3 @@ exports[`integration tests render server and client 4`] = `
   </div>
 </AsyncComponentProvider>
 `;
-
-exports[`integration tests server rendering should not render errors 1`] = `""`;

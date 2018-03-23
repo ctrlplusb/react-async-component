@@ -5,21 +5,8 @@ import { mount } from 'enzyme'
 
 import asyncComponent from '../asyncComponent'
 
-xdescribe('asyncComponent', () => {
+describe('asyncComponent', () => {
   const errorResolveDelay = 20
-
-  it('should handle unmounting ensuring that resolved promises do not call setState', async () => {
-    const Bob = asyncComponent({
-      resolve: () => Promise.resolve(() => <div>bob</div>),
-    })
-    const setStateSpy = jest.spyOn(Bob.prototype, 'setState')
-    const renderWrapper = mount(<Bob />)
-    // Should have 1 initial setState call for mounting
-    expect(setStateSpy).toHaveBeenCalledTimes(1)
-    renderWrapper.unmount()
-    await new Promise(resolve => setTimeout(resolve, 1))
-    expect(setStateSpy).toHaveBeenCalledTimes(1)
-  })
 
   describe('in a browser environment', () => {
     describe('when an error occurs resolving a component', () => {

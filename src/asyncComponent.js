@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 const validSSRModes = ['resolve', 'defer', 'boundary']
 
-function asyncComponent(config) {
+export default function asyncComponent(config) {
   const {
     name,
     resolve,
@@ -89,13 +89,18 @@ function asyncComponent(config) {
       }),
     }
 
-    constructor(props, context) {
-      super(props, context)
+    getChildContext() {
+      return {
+        asyncComponentsAncestor:
+          state.asyncComponents == null
+            ? null
+            : {
+                isBoundary: serverMode === 'boundary',
+              },
+      }
+    }
 
-      // We have to set the id in the constructor because a RHL seems
-      // to recycle the module and therefore the id closure will be null.
-      // We can't put it in componentWillMount as RHL hot swaps the new code
-      // so the mount call will not happen (but the ctor does).
+    componentWillMount() {
       if (this.context.asyncComponents != null) {
         state.asyncComponents = this.context.asyncComponents
         state.asyncComponentsAncestor = this.context.asyncComponentsAncestor
@@ -131,17 +136,6 @@ function asyncComponent(config) {
       return serverMode === 'defer' || isChildOfBoundary ? false : doResolve()
     }
 
-    getChildContext() {
-      return {
-        asyncComponentsAncestor:
-          state.asyncComponents == null
-            ? null
-            : {
-                isBoundary: serverMode === 'boundary',
-              },
-      }
-    }
-
     componentDidMount() {
       if (needToResolveOnBrowser()) {
         this.resolveModule()
@@ -166,6 +160,10 @@ function asyncComponent(config) {
           }
           state.error = error
           state.resolving = false
+          if (!ErrorComponent) {
+            // eslint-disable-next-line no-console
+            console.error(error)
+          }
         })
         .then(result => {
           if (this.unmounted) {
@@ -194,14 +192,6 @@ function asyncComponent(config) {
         ) : null
       }
 
-      // This is as workaround for React Hot Loader support.  When using
-      // RHL the local component reference will be killed by any change
-      // to the component, this will be our signal to know that we need to
-      // re-resolve it.
-      if (needToResolveOnBrowser()) {
-        this.resolveModule()
-      }
-
       const Component = es6Resolve(module)
       return Component ? (
         <Component {...this.props} />
@@ -211,5 +201,3 @@ function asyncComponent(config) {
     }
   }
 }
-
-export default asyncComponent

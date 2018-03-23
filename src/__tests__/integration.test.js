@@ -5,8 +5,9 @@ import PropTypes from 'prop-types'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { mount } from 'enzyme'
 import asyncBootstrapper from 'react-async-bootstrapper'
-
 import { AsyncComponentProvider, createAsyncContext, asyncComponent } from '../'
+
+const waitFor = time => new Promise(resolve => setTimeout(resolve, time))
 
 const createApp = (asyncContext, stateForClient) => {
   // All the component creation needs to be within to respect the window
@@ -46,58 +47,52 @@ const createApp = (asyncContext, stateForClient) => {
     name: 'BoundaryAsyncBob',
   })
 
-  // const ErrorAsyncComponent = asyncComponent({
-  //   resolve: () =>
-  //     new Promise(() => {
-  //       throw new Error('This always errors')
-  //     }),
-  //   name: 'ErrorAsyncComponent',
-  //   // eslint-disable-next-line react/prop-types
-  //   ErrorComponent: ({ error }) => <div>{error ? error.message : null}</div>,
-  // })
-
-  return (
-    <AsyncComponentProvider
-      asyncContext={asyncContext}
-      rehydrateState={stateForClient}
-    >
-      <div>
-        <AsyncBob>
-          <AsyncBobTwo>
-            <span>In Render.</span>
-          </AsyncBobTwo>
-          <DeferredAsyncBob>
-            <span>In Defer.</span>
-          </DeferredAsyncBob>
-          <BoundaryAsyncBob>
-            <span>
-              In Boundary but outside an AsyncComponent, server render me!
-            </span>
-            <AsyncBobThree>
-              <span>In Boundary - Do not server render me!</span>
-            </AsyncBobThree>
-          </BoundaryAsyncBob>
-          {/* <ErrorAsyncComponent /> */}
-        </AsyncBob>
-      </div>
-    </AsyncComponentProvider>
-  )
+  return {
+    AsyncBob,
+    AsyncBobTwo,
+    AsyncBobThree,
+    DeferredAsyncBob,
+    BoundaryAsyncBob,
+    app: (
+      <AsyncComponentProvider
+        asyncContext={asyncContext}
+        rehydrateState={stateForClient}
+      >
+        <div>
+          <AsyncBob>
+            <AsyncBobTwo>
+              <span>In Render.</span>
+            </AsyncBobTwo>
+            <DeferredAsyncBob>
+              <span>In Defer.</span>
+            </DeferredAsyncBob>
+            <BoundaryAsyncBob>
+              <span>
+                In Boundary but outside an AsyncComponent, server render me!
+              </span>
+              <AsyncBobThree>
+                <span>In Boundary - Do not server render me!</span>
+              </AsyncBobThree>
+            </BoundaryAsyncBob>
+          </AsyncBob>
+        </div>
+      </AsyncComponentProvider>
+    ),
+  }
 }
 
 const ErrorComponent = ({ error }) => <div>{error ? error.message : null}</div>
 const LoadingComponent = () => <div>Loading...</div>
 
-const errorResolveDelay = 20
-
 describe('integration tests', () => {
-  it('render server and client', () => {
+  it('server rendering with client rehydration', () => {
     // we have to delete the window to emulate a server only environment
     let windowTemp = global.window
     delete global.window
 
     // "Server" side render...
     const serverContext = createAsyncContext()
-    const serverApp = createApp(serverContext)
+    const { app: serverApp } = createApp(serverContext)
     return asyncBootstrapper(serverApp)
       .then(() => {
         const serverString = renderToStaticMarkup(serverApp)
@@ -112,7 +107,7 @@ describe('integration tests', () => {
       .then(({ serverHTML, stateForClient }) => {
         // "Client" side render...
         const clientContext = createAsyncContext()
-        const clientApp = createApp(clientContext, stateForClient)
+        const { app: clientApp } = createApp(clientContext, stateForClient)
         return (
           asyncBootstrapper(clientApp)
             .then(() => {
@@ -143,86 +138,66 @@ describe('integration tests', () => {
   })
 
   describe('browser rendering', () => {
-    it('renders the ErrorComponent', () => {
-      const Foo = asyncComponent({
+    it('renders the ErrorComponent', async () => {
+      const AsyncComponent = asyncComponent({
         resolve: () => {
           throw new Error('An error occurred')
         },
         ErrorComponent,
       })
-
       const app = (
         <AsyncComponentProvider asyncContext={createAsyncContext()}>
-          <Foo />
+          <AsyncComponent />
         </AsyncComponentProvider>
       )
-
-      return (
-        asyncBootstrapper(app)
-          .then(() => mount(app))
-          .then(render => {
-            expect(render).toMatchSnapshot()
-            // We give a bit of time for the error setState to propagate, and
-            // then resolve with the enzyme mount render.
-            return new Promise(resolve =>
-              setTimeout(() => resolve(render), errorResolveDelay),
-            )
-          })
-          // The error should be in state and should render via the component
-          .then(render => {
-            render.update()
-            expect(render).toMatchSnapshot()
-          })
-      )
+      await asyncBootstrapper(app)
+      const wrapper = mount(app)
+      await waitFor(1)
+      expect(wrapper.html()).toContain('An error occurred')
     })
 
-    it('a component only gets resolved once', () => {
+    it('a component only gets resolved once', async () => {
       let resolveCount = 0
-
-      const Foo = asyncComponent({
+      const AsyncComponent = asyncComponent({
         resolve: () => {
           resolveCount += 1
           return () => <div>foo</div>
         },
       })
-
       const app = (
         <AsyncComponentProvider asyncContext={createAsyncContext()}>
-          <Foo />
+          <AsyncComponent />
         </AsyncComponentProvider>
       )
-
-      return asyncBootstrapper(app)
-        .then(() => mount(app))
-        .then(() => expect(resolveCount).toEqual(1))
-        .then(() => mount(app))
-        .then(() => expect(resolveCount).toEqual(1))
+      await asyncBootstrapper(app)
+      mount(app)
+      expect(resolveCount).toEqual(1)
+      mount(app)
+      expect(resolveCount).toEqual(1)
     })
 
-    it('renders the LoadingComponent', () => {
-      const Foo = asyncComponent({
+    it('renders the LoadingComponent', async () => {
+      const AsyncComponent = asyncComponent({
         resolve: () =>
           new Promise(resolve =>
             setTimeout(() => resolve(() => <div>foo</div>), 100),
           ),
         LoadingComponent,
       })
-
       const app = (
         <AsyncComponentProvider asyncContext={createAsyncContext()}>
-          <Foo />
+          <AsyncComponent />
         </AsyncComponentProvider>
       )
-
-      return asyncBootstrapper(app)
-        .then(() => mount(app))
-        .then(render => expect(render).toMatchSnapshot())
+      await asyncBootstrapper(app)
+      const wrapper = mount(app)
+      expect(wrapper.html()).toContain('Loading...')
     })
   })
 
   describe('server rendering', () => {
-    it('should not render errors', async () => {
-      const Foo = asyncComponent({
+    it('should render errors', async () => {
+      const AsyncComponent = asyncComponent({
         resolve: () => Promise.reject(new Error('An error occurred')),
         ErrorComponent,
         env: 'node',
@@ -230,12 +205,11 @@ describe('integration tests', () => {
       const asyncContext = createAsyncContext()
       const app = (
         <AsyncComponentProvider asyncContext={asyncContext}>
-          <Foo />
+          <AsyncComponent />
         </AsyncComponentProvider>
       )
-      const bootstrappedApp = await asyncBootstrapper(app)
-      await new Promise(resolve => setTimeout(resolve, errorResolveDelay))
-      expect(renderToStaticMarkup(bootstrappedApp)).toMatchSnapshot()
+      await asyncBootstrapper(app)
+      expect(renderToStaticMarkup(app)).toContain('An error occurred')
     })
   })
 })
