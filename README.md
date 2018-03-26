@@ -61,6 +61,16 @@ export default asyncComponent({
 });
 ```
 
+If you're using typescript, you may need to explicitly return the default import from your resolve function, like so:
+
+```tsx
+import { asyncComponent } from 'react-async-component';
+
+export default asyncComponent({
+  resolve: () => System.import('./Product').then((product) => product.default)
+});
+```
+
 I recommend that you use the following folder/file structure:
 
 ```
