@@ -1,11 +1,15 @@
 {
   "name": "react-async-component",
   "version": "2.0.0-alpha.1",
-  "description":
-    "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
+  "description": "Create Components that resolve asynchronously, with support for server side rendering and code splitting.",
   "license": "MIT",
   "main": "dist/react-async-component.js",
-  "files": ["index.d.ts", "*.js", "*.md", "dist"],
+  "files": [
+    "index.d.ts",
+    "*.js",
+    "*.md",
+    "dist"
+  ],
   "typings": "./index.d.ts",
   "repository": {
     "type": "git",
@@ -50,12 +54,12 @@
     "babel-preset-stage-3": "^6.24.1",
     "babel-register": "^6.26.0",
     "change-case": "^3.0.2",
-    "codecov": "^2.3.0",
+    "codecov": "^3.0.0",
     "cross-env": "^5.0.5",
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-16": "^1.0.1",
     "enzyme-to-json": "^3.1.2",
-    "eslint": "^4.8.0",
+    "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.0.0",
     "eslint-config-prettier": "^2.6.0",
     "eslint-plugin-import": "^2.7.0",
@@ -83,10 +87,19 @@
     "rollup-plugin-uglify": "^3.0.0"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx}"],
-    "setupFiles": ["raf/polyfill", "<rootDir>/tools/tests/setup.js"],
-    "snapshotSerializers": ["<rootDir>/node_modules/enzyme-to-json/serializer"],
-    "testPathIgnorePatterns": ["<rootDir>/(coverage|dist|node_modules|tools)/"]
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx}"
+    ],
+    "setupFiles": [
+      "raf/polyfill",
+      "<rootDir>/tools/tests/setup.js"
+    ],
+    "snapshotSerializers": [
+      "<rootDir>/node_modules/enzyme-to-json/serializer"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/(coverage|dist|node_modules|tools)/"
+    ]
   },
   "eslintConfig": {
     "root": true,
@@ -97,7 +110,10 @@
       "node": true,
       "jest": true
     },
-    "extends": ["airbnb", "prettier"],
+    "extends": [
+      "airbnb",
+      "prettier"
+    ],
     "rules": {
       "camelcase": 0,
       "import/prefer-default-export": 0,
@@ -106,19 +122,29 @@
       "no-underscore-dangle": 0,
       "react/no-array-index-key": 0,
       "react/react-in-jsx-scope": 0,
-      "semi": [2, "never"],
+      "semi": [
+        2,
+        "never"
+      ],
       "react/forbid-prop-types": 0,
       "react/jsx-filename-extension": 0,
       "react/sort-comp": 0
     }
   },
-  "eslintIgnore": ["node_modules/", "coverage/", "dist/"],
+  "eslintIgnore": [
+    "node_modules/",
+    "coverage/",
+    "dist/"
+  ],
   "prettier": {
     "semi": false,
     "singleQuote": true,
     "trailingComma": "all"
   },
   "lint-staged": {
-    "*.js": ["prettier --write \"src/**/*.js\"", "git add"]
+    "*.js": [
+      "prettier --write \"src/**/*.js\"",
+      "git add"
+    ]
   }
 }
