@@ -24,7 +24,7 @@ const AsyncProduct = asyncComponent({
   - [Usage](#usage)
   - [API](#api)
     - [asyncComponent(config)](#asynccomponentconfig)
-    - [AsyncComponentProvider](#asynccomponentprovider)
+    - [AsyncComponentProvider](#asynccomponentprovider-)
     - [createAsyncContext](#createasynccontext)
   - [Server Side Rendering](#server-side-rendering)
   - [FAQs](#faqs)
