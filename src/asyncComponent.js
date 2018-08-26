@@ -89,6 +89,17 @@ export default function asyncComponent(config) {
       }),
     }
 
+    constructor(props, context) {
+      super(props, context)
+      if (context.asyncComponents != null) {
+        state.asyncComponents = context.asyncComponents
+        state.asyncComponentsAncestor = context.asyncComponentsAncestor
+        if (!state.id) {
+          state.id = this.context.asyncComponents.getNextId()
+        }
+      }
+    }
+
     getChildContext() {
       return {
         asyncComponentsAncestor:
@@ -97,16 +108,6 @@ export default function asyncComponent(config) {
             : {
                 isBoundary: serverMode === 'boundary',
               },
-      }
-    }
-
-    componentWillMount() {
-      if (this.context.asyncComponents != null) {
-        state.asyncComponents = this.context.asyncComponents
-        state.asyncComponentsAncestor = this.context.asyncComponentsAncestor
-        if (!state.id) {
-          state.id = this.context.asyncComponents.getNextId()
-        }
       }
     }
 
