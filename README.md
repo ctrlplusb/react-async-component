@@ -8,6 +8,8 @@ Resolve components asynchronously, with support for code splitting and advanced 
 [![Codecov](https://img.shields.io/codecov/c/github/ctrlplusb/react-async-component.svg?style=flat-square)](https://codecov.io/github/ctrlplusb/react-async-component)
 
 ```jsx
+import { asyncComponent } from "react-async-component";
+
 const AsyncProduct = asyncComponent({
   resolve: () => System.import('./Product'),
   LoadingComponent: ({ productId }) => <div>Loading {productId}</div>, // Optional
