@@ -42,10 +42,7 @@ export default function asyncComponent(config) {
   }
 
   const needToResolveOnBrowser = () =>
-    state.module == null &&
-    state.error == null &&
-    !state.resolving &&
-    typeof window !== 'undefined'
+    state.module == null && state.error == null && typeof window !== 'undefined'
 
   // Takes the given module and if it has a ".default" the ".default" will
   // be returned. i.e. handy when you could be dealing with es6 imports.
@@ -87,6 +84,13 @@ export default function asyncComponent(config) {
       asyncComponentsAncestor: PropTypes.shape({
         isBoundary: PropTypes.bool,
       }),
+    }
+
+    constructor() {
+      super()
+      this.state = {
+        resolving: state.resolving,
+      }
     }
 
     getChildContext() {
@@ -137,7 +141,9 @@ export default function asyncComponent(config) {
     }
 
     componentDidMount() {
-      if (needToResolveOnBrowser()) {
+      const { resolving } = this.state
+
+      if (!resolving && needToResolveOnBrowser()) {
         this.resolveModule()
       }
     }

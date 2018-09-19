@@ -2,4 +2,8 @@
 
 exports[`asyncComponent in a browser environment when an error occurs resolving a component should render the ErrorComponent 1`] = `"<div>failed to resolve</div>"`;
 
+exports[`asyncComponent in a browser environment when multiple instances of component are present should render all instances of the component 1`] = `"<div><div>Component</div><div>Component</div></div>"`;
+
+exports[`asyncComponent in a browser environment when multiple instances of component are present should render multiple ErrorComponent 1`] = `"<div><div>failed to resolve</div><div>failed to resolve</div></div>"`;
+
 exports[`asyncComponent in a server environment when an error occurs resolving a component should not render the ErrorComponent 1`] = `null`;
