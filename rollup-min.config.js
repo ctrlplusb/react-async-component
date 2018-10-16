@@ -1,9 +1,8 @@
-const uglify = require('rollup-plugin-uglify')
-const packageJson = require('./package.json')
-
-const baseConfig = require('./rollup.config.js')
+import { uglify } from 'rollup-plugin-uglify'
+import packageJson from './package.json'
+import baseConfig from './rollup.config'
 
 baseConfig.plugins.push(uglify())
 baseConfig.output.file = `dist/${packageJson.name}.min.js`
 
-module.exports = baseConfig
+export default baseConfig
