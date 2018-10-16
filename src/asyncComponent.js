@@ -20,7 +20,9 @@ export default function asyncComponent(config) {
   const env =
     ['node', 'browser'].indexOf(config.env) > -1
       ? config.env
-      : typeof window === 'undefined' ? 'node' : 'browser'
+      : typeof window === 'undefined'
+        ? 'node'
+        : 'browser'
 
   const state = {
     // A unique id we will assign to our async component which is especially
