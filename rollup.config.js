@@ -1,10 +1,10 @@
-const babel = require('rollup-plugin-babel')
-const changeCase = require('change-case')
-const packageJson = require('./package.json')
+import babel from 'rollup-plugin-babel'
+import changeCase from 'change-case'
+import packageJson from './package.json'
 
 process.env.BABEL_ENV = 'production'
 
-module.exports = {
+export default {
   external: ['react', 'prop-types'],
   input: 'src/index.js',
   output: {
@@ -15,12 +15,5 @@ module.exports = {
       .titleCase(packageJson.name.replace(/-/g, ' '))
       .replace(/ /g, ''),
   },
-  plugins: [
-    babel({
-      babelrc: false,
-      exclude: 'node_modules/**',
-      presets: [['env', { modules: false }], 'stage-3', 'react'],
-      plugins: ['transform-class-properties', 'external-helpers'],
-    }),
-  ],
+  plugins: [babel()],
 }
