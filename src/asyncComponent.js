@@ -44,7 +44,6 @@ export default function asyncComponent(config) {
   const needToResolveOnBrowser = () =>
     state.module == null &&
     state.error == null &&
-    !state.resolving &&
     typeof window !== 'undefined'
 
   // Takes the given module and if it has a ".default" the ".default" will
