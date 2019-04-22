@@ -212,7 +212,7 @@ describe('integration tests', () => {
         compKey: '2',
       })
       expect(wrapper.html()).toContain('Loading...')
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise(resolve => setTimeout(resolve, 150))
       expect(wrapper.html()).not.toContain('Loading...')
     })
   })
