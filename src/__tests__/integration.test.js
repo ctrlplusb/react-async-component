@@ -193,6 +193,28 @@ describe('integration tests', () => {
       const wrapper = mount(app)
       expect(wrapper.html()).toContain('Loading...')
     })
+
+    it('renders the LoadingComponent without bootstrapper', async () => {
+      const AsyncComponent = asyncComponent({
+        resolve: () =>
+          new Promise(resolve =>
+            setTimeout(() => resolve(() => <div>foo</div>), 100),
+          ),
+        LoadingComponent,
+      })
+      const Comp = ({ compKey }) => (
+        <div>{compKey ? <AsyncComponent key={compKey} /> : null}</div>
+      )
+      const wrapper = mount(<Comp compKey="1" />)
+      expect(wrapper.html()).toContain('Loading...')
+      // Unmount the component immediately
+      wrapper.setProps({
+        compKey: '2',
+      })
+      expect(wrapper.html()).toContain('Loading...')
+      await new Promise(resolve => setTimeout(resolve, 100))
+      expect(wrapper.html()).not.toContain('Loading...')
+    })
   })
 
   describe('server rendering', () => {
